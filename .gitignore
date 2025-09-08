@@ -1,0 +1,11 @@
+/.idea/
+/.git/
+/cmake-build-debug/
+/CMakeLists.txt
+/build.bat
+
+/sfml-audio-3.dll
+/sfml-graphics-3.dll
+/sfml-system-3.dll
+/sfml-window-3.dll
+/game_beta.exe
