@@ -4,6 +4,7 @@
 
 namespace game {
     static sf::Music main_theme;
+    static bool virtualKeyboard;
 
     class Game {
     public:
