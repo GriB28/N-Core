@@ -1,10 +1,10 @@
 #include "game.h"
-#pragma comment(linker, "/SUBSYSTEM:WINDOWS")
+#include <iostream>
+using std::cout;
 
 
 int main() {
+    cout << "RUNE-0 is starting...\n";
     auto g = game::Game();
-    g.loop();
     return 0;
 }
-// https://github.com/GriB28/game-beta.git
