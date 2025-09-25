@@ -4,7 +4,7 @@ using std::cout;
 
 
 int main() {
-    cout << "RUNE-0 is starting...\n";
-    auto g = game::Game();
+    cout << "R-0 is starting...\n";
+    auto g = game::Engine(1280, 720);
     return 0;
 }

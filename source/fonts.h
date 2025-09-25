@@ -3,9 +3,17 @@
 #include <SFML/Graphics/Font.hpp>
 
 namespace game {
-    struct Fonts {
-        static sf::Font XKCD;
-        static sf::Font Arial;
+    class Fonts {
+    public:
+        static Fonts* instance();
+        ~Fonts();
+
+        sf::Font* XKCD();
+        sf::Font* Arial();
+    private:
+        Fonts();
+        static sf::Font *XKCD_origin;
+        static sf::Font *Arial_origin;
     };
 }
 #endif
