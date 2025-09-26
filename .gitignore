@@ -17,3 +17,10 @@
 /sfml-window-d-2.dll
 /sfml-window-3.dll
 /game_beta.exe
+/openal32.dll
+
+game_beta
+game.o
+loading.o
+fonts.o
+main.o
