@@ -8,3 +8,4 @@
 /game_beta
 /*.dll
 /*.o
+/makefile
