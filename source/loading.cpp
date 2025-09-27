@@ -25,24 +25,37 @@ game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link) {
     logo_sound.openFromFile("music/DSC0.flac");
     logo_sound.setLoop(false);
 }
-game::Loading::~Loading() = default;
+game::Loading::~Loading() {
+    delete window;
+    delete fonts;
+}
 
-void game::Loading::event(const sf::Event &event) {
-    cout << "  > caught this event at 'Loading' class source\n    > ";
+unsigned short game::Loading::event(const sf::Event &event) {
+    unsigned short return_code;
     if (event.type == sf::Event::KeyPressed) {
         switch (event.key.code) {
             case sf::Keyboard::A:
                 cout << "<A> is pressed\n";
+                return_code = 0;
+                break;
             case sf::Keyboard::Space:
                 cout << "<space> is pressed\n";
+                return_code = 0;
+                break;
             default:
                 cout << "another key is pressed\n";
+                return_code = 0;
+                break;
         }
     }
+    else {
+        return_code = 0;
+    }
     cout << "\n\n";
+    return return_code;
 }
-void game::Loading::proceed() {
-    cout << "  > now at 'Loading' class source\n    > ";
+unsigned short game::Loading::proceed() {
+    unsigned short return_code = 0;
     window->draw(loading_text);
-    cout << "\n\n";
+    return return_code;
 }

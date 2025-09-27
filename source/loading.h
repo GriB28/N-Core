@@ -12,8 +12,8 @@ namespace game {
         explicit Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link);
         ~Loading();
 
-        void event(const sf::Event &event);
-        void proceed();
+        unsigned short event(const sf::Event &event);
+        unsigned short proceed();
     private:
         static sf::RenderWindow *window;
         static Fonts *fonts;
