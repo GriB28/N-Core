@@ -1,5 +1,5 @@
-#ifndef GAME_LOADING_H
-#define GAME_LOADING_H
+#ifndef LOADING_H
+#define LOADING_H
 #include "fonts.h"
 
 #include <SFML/Audio/Music.hpp>
@@ -12,8 +12,9 @@ namespace game {
         explicit Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link);
         ~Loading();
 
-        unsigned short event(const sf::Event &event);
-        unsigned short proceed();
+        int event(const sf::Event &event);
+        int proceed();
+        int on_start();
     private:
         static sf::RenderWindow *window;
         static Fonts *fonts;

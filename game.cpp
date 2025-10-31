@@ -5,22 +5,22 @@
 #include <SFML/Window/Event.hpp>
 
 
-unsigned short game::Engine::current_scene_index;
-unsigned game::Engine::event_counter;
+int game::Engine::current_scene_index;
 sf::RenderWindow *game::Engine::window;
-game::Loading *game::Engine::loading_scene;
 game::Fonts *game::Engine::fonts;
+
+game::Loading *game::Engine::loading_scene;
 
 game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link) {
     if (fonts_link == nullptr) Engine(x, y, Fonts::instance());
     else {
-        current_scene_index = 0;
-        event_counter = 0;
+        current_scene_index = -1;
 
         window = new sf::RenderWindow(sf::VideoMode({x, y}), "R");
         fonts = fonts_link;
         loading_scene = new Loading(window, fonts);
 
+        update_scene_index(1);
         loop();
     }
 }
@@ -37,7 +37,6 @@ void game::Engine::loop() {
         window->clear();
 
         while (window->pollEvent(event)) {
-            event_counter++;
             proceed_event_on_scenes(event);
             if (event.type == sf::Event::Closed)
                 window->close();
@@ -49,7 +48,7 @@ void game::Engine::loop() {
 }
 
 void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
-    unsigned short return_code;
+    short return_code;
     switch (current_scene_index) {
         case 0:
             return_code = loading_scene->event(event);
@@ -58,10 +57,10 @@ void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
             return_code = 0;
             break;
     }
-    current_scene_index += return_code;
+    update_scene_index(return_code);
 }
 void game::Engine::proceed_scenes() {
-    unsigned short return_code;
+    short return_code;
     switch (current_scene_index) {
         case 0:
             return_code = loading_scene->proceed();
@@ -70,8 +69,22 @@ void game::Engine::proceed_scenes() {
             return_code = 0;
             break;
     }
-    current_scene_index += return_code;
+    update_scene_index(return_code);
 }
+
+void game::Engine::update_scene_index(const short &return_code) {
+    if (return_code != 0) {
+        current_scene_index += return_code;
+        switch (current_scene_index) {
+            case 0:
+                loading_scene->on_start();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 
 /*
 void game::Engine::edit_window(const sf::Vector2u &new_size)  { window -> setSize(new_size); }

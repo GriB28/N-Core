@@ -1,11 +1,12 @@
 /.idea/
 /.git/
 /cmake-build-debug/
-/CMakeLists.txt
-/build.bat
+/*.txt
+/*.bat
+/*.cmd
 
-/game_beta.exe
-/game_beta
+/.build/
+/game_beta*
 /*.dll
 /*.o
 /makefile

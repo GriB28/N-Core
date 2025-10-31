@@ -13,7 +13,7 @@ namespace game {
         Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link = nullptr);
         ~Engine();
 
-        static unsigned short current_scene_index;
+        static int current_scene_index;
 
         /*
         static void edit_window(const sf::Vector2u &new_size);
@@ -21,15 +21,15 @@ namespace game {
         static void edit_window(const unsigned &height, const unsigned &width, const sf::Uint8 *&pixels);
         */
     private:
-
         static Loading *loading_scene;
         static sf::RenderWindow *window;
         static Fonts *fonts;
-        static unsigned event_counter;
 
         static void loop();
         static void proceed_event_on_scenes(const sf::Event &event);
         static void proceed_scenes();
+
+        static void update_scene_index(const short &return_code);
     };
 }
 

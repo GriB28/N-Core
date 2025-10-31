@@ -26,12 +26,11 @@ game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link) {
     logo_sound.setLoop(false);
 }
 game::Loading::~Loading() {
-    delete window;
     delete fonts;
 }
 
-unsigned short game::Loading::event(const sf::Event &event) {
-    unsigned short return_code;
+int game::Loading::event(const sf::Event &event) {
+    int return_code;
     if (event.type == sf::Event::KeyPressed) {
         switch (event.key.code) {
             case sf::Keyboard::A:
@@ -54,8 +53,13 @@ unsigned short game::Loading::event(const sf::Event &event) {
     cout << "\n\n";
     return return_code;
 }
-unsigned short game::Loading::proceed() {
-    unsigned short return_code = 0;
+int game::Loading::proceed() {
+    int return_code = 0;
     window->draw(loading_text);
+    return return_code;
+}
+int game::Loading::on_start() {
+    int return_code = 0;
+    logo_sound.play();
     return return_code;
 }
