@@ -1,15 +1,6 @@
 #include "game.h"
-#include "source/fonts.h"
-#include "source/loading.h"
-
 #include <SFML/Window/Event.hpp>
 
-
-int game::Engine::current_scene_index;
-sf::RenderWindow *game::Engine::window;
-game::Fonts *game::Engine::fonts;
-
-game::Loading *game::Engine::loading_scene;
 
 game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link) {
     if (fonts_link == nullptr) Engine(x, y, Fonts::instance());
@@ -19,6 +10,7 @@ game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fo
         window = new sf::RenderWindow(sf::VideoMode({x, y}), "R");
         fonts = fonts_link;
         loading_scene = new Loading(window, fonts);
+        main_menu_scene = new MainMenu(window, fonts);
 
         update_scene_index(1);
         loop();
@@ -48,7 +40,7 @@ void game::Engine::loop() {
 }
 
 void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
-    short return_code;
+    int return_code;
     switch (current_scene_index) {
         case 0:
             return_code = loading_scene->event(event);
@@ -60,7 +52,7 @@ void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
     update_scene_index(return_code);
 }
 void game::Engine::proceed_scenes() {
-    short return_code;
+    int return_code;
     switch (current_scene_index) {
         case 0:
             return_code = loading_scene->proceed();
@@ -72,8 +64,15 @@ void game::Engine::proceed_scenes() {
     update_scene_index(return_code);
 }
 
-void game::Engine::update_scene_index(const short &return_code) {
+void game::Engine::update_scene_index(const int &return_code) {
     if (return_code != 0) {
+        switch (current_scene_index) {
+            case 0:
+                loading_scene->on_end();
+                break;
+            default:
+                break;
+        }
         current_scene_index += return_code;
         switch (current_scene_index) {
             case 0:
@@ -84,12 +83,3 @@ void game::Engine::update_scene_index(const short &return_code) {
         }
     }
 }
-
-
-/*
-void game::Engine::edit_window(const sf::Vector2u &new_size)  { window -> setSize(new_size); }
-void game::Engine::edit_window(const string &new_name)        { window -> setTitle(new_name); }
-void game::Engine::edit_window(const unsigned &height, const unsigned &width, const sf::Uint8 *&pixels) {
-    window -> setIcon(width, height, pixels);
-}
-*/

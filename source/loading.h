@@ -5,6 +5,8 @@
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 namespace game {
     class Loading {
@@ -14,12 +16,22 @@ namespace game {
 
         int event(const sf::Event &event);
         int proceed();
-        int on_start();
+        void on_start();
+        void on_end();
     private:
-        static sf::RenderWindow *window;
-        static Fonts *fonts;
-        static sf::Music logo_sound;
-        static sf::Text loading_text;
+        sf::RenderWindow *window;
+        Fonts *fonts;
+
+        sf::Music logo_sound;
+
+        sf::Text loading_text, awaiting_text;
+        bool awaiting_flag;
+
+        sf::Texture frogl2_texture;
+        sf::Sprite frogl2;
+        short frogl2_counter;
+        bool frogl2_fading_flag;
+        char frogl2_alpha_fading;
     };
 }
 #endif

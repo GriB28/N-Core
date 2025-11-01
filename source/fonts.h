@@ -9,11 +9,11 @@ namespace game {
         ~Fonts();
 
         sf::Font* XKCD();
-        sf::Font* Arial();
+        sf::Font* PAG();
     private:
         Fonts();
         static sf::Font *XKCD_origin;
-        static sf::Font *Arial_origin;
+        static sf::Font *PAG_origin;
     };
 }
 #endif
