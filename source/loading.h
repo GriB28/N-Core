@@ -32,6 +32,8 @@ namespace game {
         short frogl2_counter;
         bool frogl2_fading_flag;
         char frogl2_alpha_fading;
+        long long frogl2_timer;
+        unsigned short frogl2_frame_timestamp;
     };
 }
 #endif

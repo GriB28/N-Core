@@ -1,4 +1,5 @@
 #include "game.h"
+
 #include <SFML/Window/Event.hpp>
 
 
@@ -7,7 +8,7 @@ game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fo
     else {
         current_scene_index = -1;
 
-        window = new sf::RenderWindow(sf::VideoMode({x, y}), "R");
+        window = new sf::RenderWindow(sf::VideoMode({x, y}), "DSC");
         fonts = fonts_link;
         loading_scene = new Loading(window, fonts);
         main_menu_scene = new MainMenu(window, fonts);
@@ -19,12 +20,14 @@ game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fo
 game::Engine::~Engine() {
     delete window;
     delete loading_scene;
+    delete main_menu_scene;
     delete fonts;
 }
 
 
 void game::Engine::loop() {
     sf::Event event{};
+
     while (window->isOpen()) {
         window->clear();
 
@@ -45,6 +48,9 @@ void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
         case 0:
             return_code = loading_scene->event(event);
             break;
+        case 1:
+            return_code = main_menu_scene->event(event);
+            break;
         default:
             return_code = 0;
             break;
@@ -56,6 +62,9 @@ void game::Engine::proceed_scenes() {
     switch (current_scene_index) {
         case 0:
             return_code = loading_scene->proceed();
+            break;
+        case 1:
+            return_code = main_menu_scene->proceed();
             break;
         default:
             return_code = 0;
@@ -70,13 +79,20 @@ void game::Engine::update_scene_index(const int &return_code) {
             case 0:
                 loading_scene->on_end();
                 break;
+            case 1:
+                main_menu_scene->on_end();
+                break;
             default:
                 break;
         }
         current_scene_index += return_code;
-        switch (current_scene_index) {
+        if (current_scene_index < 0) window->close();
+        else switch (current_scene_index) {
             case 0:
                 loading_scene->on_start();
+                break;
+            case 1:
+                main_menu_scene->on_start();
                 break;
             default:
                 break;

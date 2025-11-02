@@ -3,6 +3,7 @@
 #include "fonts.h"
 
 #include <SFML/Audio/Music.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 namespace game {
@@ -18,6 +19,9 @@ namespace game {
     private:
         sf::RenderWindow *window;
         Fonts *fonts;
+
+        sf::Texture bg_texture;
+        sf::Sprite bg;
 
         sf::Music main_theme;
     };

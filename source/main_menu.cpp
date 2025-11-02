@@ -14,6 +14,10 @@ game::MainMenu::MainMenu(sf::RenderWindow *&window_link, Fonts *&fonts_link) {
     window = window_link;
     fonts = fonts_link;
 
+    bg_texture = sf::Texture();
+    bg_texture.loadFromFile("resources/tr.jpg");
+    bg.setTexture(bg_texture);
+
     main_theme.openFromFile("music/DSC2.flac");
     main_theme.setLoop(true);
 }
@@ -22,12 +26,13 @@ game::MainMenu::~MainMenu() {
 }
 
 int game::MainMenu::event(const Event &event) {
-    int return_code;
-    return_code = 0;
+    int return_code = 0;
+    if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) return_code = -2056;
     return return_code;
 }
 int game::MainMenu::proceed() {
     int return_code = 0;
+    window->draw(bg);
     return return_code;
 }
 

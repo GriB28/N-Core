@@ -10,10 +10,12 @@ namespace game {
 
         sf::Font* XKCD();
         sf::Font* PAG();
+        sf::Font* OCRA();
     private:
         Fonts();
         static sf::Font *XKCD_origin;
         static sf::Font *PAG_origin;
+        static sf::Font *OCRA_origin;
     };
 }
 #endif
