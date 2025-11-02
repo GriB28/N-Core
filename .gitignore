@@ -10,3 +10,5 @@
 /*.dll
 /*.o
 /makefile
+/icon rendering/
+/*.res
