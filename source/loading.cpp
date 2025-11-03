@@ -109,7 +109,7 @@ void game::Loading::on_end() {
     logo_sound.stop();
     window->close();
     delete window;
-    window = new sf::RenderWindow(sf::VideoMode::getDesktopMode(), "Exomyth", sf::Style::Fullscreen);
+    window = new sf::RenderWindow(sf::VideoMode::getDesktopMode(), "N-Core", sf::Style::Fullscreen);
     auto icon = sf::Image();
     icon.loadFromFile("icons/test.png");
     window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());

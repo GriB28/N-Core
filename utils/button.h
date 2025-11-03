@@ -4,16 +4,22 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <string>
 using std::string;
-namespace utils {
+namespace game::utils {
     class Button {
     public:
-        Button(const sf::Texture* default_texture, const sf::Texture* clicked_texture, const sf::Text* text, sf::Vector2f position);
+        Button();
         ~Button() = default;
 
-        void checkClick(const sf::Vector2f &mouse);
-        void setState(const bool &new_state);
+        void set_default_sprite(const sf::Texture* default_texture);
+        void set_clicked_sprite(const sf::Texture* clicked_texture);
+        void set_text(const sf::Text* text);
 
-        sf::Sprite* getSprite() const;
+        void check_click(const sf::Vector2f &click);
+        void check_click(const float &x, const float &y);
+        void set_state(const bool &new_state);
+        void set_position(const sf::Vector2f &position);
+        bool is_clicked() const;
+        sf::Sprite* get_sprite() const;
     private:
         sf::Sprite default_;
         sf::Sprite clicked_;

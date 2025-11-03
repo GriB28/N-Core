@@ -4,29 +4,39 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 
-utils::Button::Button(const sf::Texture* default_texture, const sf::Texture* clicked_texture, const sf::Text* text, const sf::Vector2f position) {
-    default_.setTexture(*default_texture);
-    clicked_.setTexture(*clicked_texture);
-    text_ = *text;
-
-    default_.setPosition(position);
-    clicked_.setPosition(position);
-    text_.setPosition(position.x + 3, position.y + 3);
-
-    current_sprite = &default_;
+game::utils::Button::Button() {
+    current_sprite = nullptr;
     state = false;
 }
 
-void utils::Button::checkClick(const sf::Vector2f &mouse) {
-    if (mouse.x > current_sprite->getPosition().x && mouse.x < current_sprite->getPosition().x + current_sprite->getScale().x &&
-        mouse.y > current_sprite->getPosition().y && mouse.y < current_sprite->getPosition().y + current_sprite->getScale().y)
-            setState(!state);
+void game::utils::Button::set_text(const sf::Text* text) { text_ = *text; }
+void game::utils::Button::set_default_sprite(const sf::Texture* default_texture) {
+    default_.setTexture(*default_texture);
 }
-void utils::Button::setState(const bool &new_state) {
+void game::utils::Button::set_clicked_sprite(const sf::Texture* clicked_texture) {
+    clicked_.setTexture(*clicked_texture);
+}
+
+void game::utils::Button::check_click(const sf::Vector2f &click) {
+    if (click.x > current_sprite->getPosition().x && click.x < current_sprite->getPosition().x + current_sprite->getScale().x &&
+        click.y > current_sprite->getPosition().y && click.y < current_sprite->getPosition().y + current_sprite->getScale().y)
+        set_state(!state);
+}
+void game::utils::Button::check_click(const float &x, const float &y) {
+    if (x > current_sprite->getPosition().x && x < current_sprite->getPosition().x + current_sprite->getScale().x &&
+        y > current_sprite->getPosition().y && y < current_sprite->getPosition().y + current_sprite->getScale().y)
+            set_state(!state);
+}
+bool game::utils::Button::is_clicked() const { return state; }
+
+void game::utils::Button::set_state(const bool &new_state) {
     state = new_state;
     if (state) current_sprite = &clicked_;
     else current_sprite = &default_;
 }
-sf::Sprite* utils::Button::getSprite() const {
-    return current_sprite;
+void game::utils::Button::set_position(const sf::Vector2f &position) {
+    default_.setPosition(position);
+    clicked_.setPosition(position);
+    text_.setPosition(position.x + 3, position.y + 3);
 }
+sf::Sprite* game::utils::Button::get_sprite() const { return current_sprite; }
