@@ -1,6 +1,7 @@
 #ifndef LOADING_H
 #define LOADING_H
 #include "fonts.h"
+#include "../utils/button.h"
 
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -24,8 +25,12 @@ namespace game {
 
         sf::Music logo_sound;
 
-        sf::Text loading_text, awaiting_text;
+        sf::Text loading_text;
+
         bool awaiting_flag;
+        utils::Button awaiting_button;
+        sf::Text *awaiting_text;
+        sf::Texture *awaiting_text_void_texture;
 
         sf::Texture frogl2_texture;
         sf::Sprite frogl2;

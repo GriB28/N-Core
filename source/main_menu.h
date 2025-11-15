@@ -24,9 +24,11 @@ namespace game {
         sf::Texture bg_texture;
         sf::Sprite bg;
 
+        std::vector<utils::Button*> buttons1;
+
         utils::Button load_level;
-        sf::Texture load_level_default_texture, load_level_clicked_texture;
-        sf::Text load_level_txt;
+        sf::Texture *load_level_default_texture, *load_level_clicked_texture;
+        sf::Text* load_level_txt;
 
         sf::Music main_theme;
     };

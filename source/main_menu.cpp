@@ -18,16 +18,20 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link) {
     bg_texture.loadFromFile("resources/tr.jpg");
     bg.setTexture(bg_texture);
 
-    load_level_default_texture = sf::Texture();
-    load_level_default_texture.loadFromFile("resources/btns/loadlvl_d.jpg");
-    load_level_clicked_texture = sf::Texture();
-    load_level_clicked_texture.loadFromFile("resources/btns/loadlvl_c.jpg");
-    load_level_txt.setString("Load Level");
-    load_level_txt.setFont(*fonts->OCRA());
-    load_level.set_default_sprite(&load_level_default_texture);
-    load_level.set_clicked_sprite(&load_level_clicked_texture);
-    load_level.set_text(&load_level_txt);
+    load_level_default_texture = new sf::Texture;
+    load_level_default_texture->loadFromFile("resources/btns/loadlvl_d.jpg");
+    load_level_clicked_texture = new sf::Texture;
+    load_level_clicked_texture->loadFromFile("resources/btns/loadlvl_c.jpg");
+    load_level_txt = new sf::Text;
+    load_level_txt->setString("Load Level");
+    load_level_txt->setFont(*fonts->OCRA());
+    load_level_txt->setCharacterSize(20);
+    load_level_txt->setFillColor(sf::Color(20, 20, 20));
+    load_level.init(&load_level_txt, &load_level_default_texture, &load_level_clicked_texture, false);
     load_level.set_position(sf::Vector2f(500, 500));
+
+    buttons1.push_back(&load_level);
+
     // (window->getSize().x - load_level_txt.getScale().x) / 2, 500));
 
     main_theme.openFromFile("music/DSC2.flac");
@@ -43,15 +47,22 @@ int game::MainMenu::event(const Event &event) {
     if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) return_code = -2056;
     else if (event.type == Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Button::Left)
-            load_level.check_click(event.mouseButton.x, event.mouseButton.y);
+            for (const auto btn : buttons1)
+                btn->check_click(event.mouseButton.x, event.mouseButton.y);
+    }
+    else if (event.type == Event::MouseButtonReleased) {
+        if (event.mouseButton.button == sf::Mouse::Button::Left)
+            for (const auto btn : buttons1)
+                btn->check_release(event.mouseButton.x, event.mouseButton.y);
     }
     return return_code;
 }
 int game::MainMenu::proceed() {
     int return_code = 0;
+
     window->draw(bg);
-    cout << "\b\r" << (load_level.is_clicked());
-    window->draw(*load_level.get_sprite());
+    load_level.draw_at(window);
+
     return return_code;
 }
 

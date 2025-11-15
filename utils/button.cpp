@@ -5,38 +5,102 @@
 
 
 game::utils::Button::Button() {
+    default_texture = nullptr;
+    clicked_texture = nullptr;
+
+    default_sprite = new sf::Sprite;
+    clicked_sprite = new sf::Sprite;
     current_sprite = nullptr;
+
+    text_ = nullptr;
     state = false;
+    sticky = false;
+}
+game::utils::Button::~Button() {
+    delete default_sprite;
+    delete clicked_sprite;
 }
 
-void game::utils::Button::set_text(const sf::Text* text) { text_ = *text; }
-void game::utils::Button::set_default_sprite(const sf::Texture* default_texture) {
-    default_.setTexture(*default_texture);
+void game::utils::Button::init(sf::Text** text, sf::Texture** default_, sf::Texture** clicked_, const bool &is_sticky) {
+    set_text(text);
+    set_default_texture(default_);
+    set_clicked_texture(clicked_);
+    sticky = is_sticky;
 }
-void game::utils::Button::set_clicked_sprite(const sf::Texture* clicked_texture) {
-    clicked_.setTexture(*clicked_texture);
+
+void game::utils::Button::set_text(sf::Text** text) { text_ = *text; }
+void game::utils::Button::set_default_texture(sf::Texture** default_, const float &scale_x, const float &scale_y) {
+    default_texture = *default_;
+    default_sprite->setTexture(*default_texture);
+    set_default_sprite_scale(scale_x, scale_y);
+    current_sprite = &default_sprite;
 }
+void game::utils::Button::set_clicked_texture(sf::Texture** clicked_, const float &scale_x, const float &scale_y) {
+    clicked_texture = *clicked_;
+    clicked_sprite->setTexture(*clicked_texture);
+    set_clicked_sprite_scale(scale_x, scale_y);
+}
+void game::utils::Button::set_default_sprite_scale(const float &scale_x, const float &scale_y) const {
+    default_sprite->setScale(scale_x, scale_y);
+}
+void game::utils::Button::set_clicked_sprite_scale(const float &scale_x, const float &scale_y) const {
+    clicked_sprite->setScale(scale_x, scale_y);
+}
+void game::utils::Button::set_stickiness(const bool &stickiness) { sticky = stickiness; }
+
+
+float game::utils::Button::delta_border_x() const { return (*current_sprite)->getScale().x * (*current_sprite)->getLocalBounds().getSize().x; }
+float game::utils::Button::delta_border_y() const { return (*current_sprite)->getScale().y * (*current_sprite)->getLocalBounds().getSize().y; }
+
 
 void game::utils::Button::check_click(const sf::Vector2f &click) {
-    if (click.x > current_sprite->getPosition().x && click.x < current_sprite->getPosition().x + current_sprite->getScale().x &&
-        click.y > current_sprite->getPosition().y && click.y < current_sprite->getPosition().y + current_sprite->getScale().y)
+    if (click.x > (*current_sprite)->getPosition().x && click.x < (*current_sprite)->getPosition().x + delta_border_x() &&
+        click.y > (*current_sprite)->getPosition().y && click.y < (*current_sprite)->getPosition().y + delta_border_y())
         set_state(!state);
 }
 void game::utils::Button::check_click(const float &x, const float &y) {
-    if (x > current_sprite->getPosition().x && x < current_sprite->getPosition().x + current_sprite->getScale().x &&
-        y > current_sprite->getPosition().y && y < current_sprite->getPosition().y + current_sprite->getScale().y)
+    if (x > (*current_sprite)->getPosition().x && x < (*current_sprite)->getPosition().x + delta_border_x() &&
+        y > (*current_sprite)->getPosition().y && y < (*current_sprite)->getPosition().y + delta_border_y())
             set_state(!state);
+}
+void game::utils::Button::check_release(const sf::Vector2f &release) {
+    if (release.x > (*current_sprite)->getPosition().x && release.x < (*current_sprite)->getPosition().x + delta_border_x() &&
+        release.y > (*current_sprite)->getPosition().y && release.y < (*current_sprite)->getPosition().y + delta_border_y() &&
+        !sticky)
+        set_state(!state);
+}
+void game::utils::Button::check_release(const float &x, const float &y) {
+    if (x > (*current_sprite)->getPosition().x && x < (*current_sprite)->getPosition().x + delta_border_x() &&
+        y > (*current_sprite)->getPosition().y && y < (*current_sprite)->getPosition().y + delta_border_y() &&
+        !sticky)
+        set_state(!state);
 }
 bool game::utils::Button::is_clicked() const { return state; }
 
+
 void game::utils::Button::set_state(const bool &new_state) {
     state = new_state;
-    if (state) current_sprite = &clicked_;
-    else current_sprite = &default_;
+    if (state) current_sprite = &clicked_sprite;
+    else current_sprite = &default_sprite;
 }
-void game::utils::Button::set_position(const sf::Vector2f &position) {
-    default_.setPosition(position);
-    clicked_.setPosition(position);
-    text_.setPosition(position.x + 3, position.y + 3);
+
+
+void game::utils::Button::set_position(const sf::Vector2f &position) const {
+    default_sprite->setPosition(position);
+    clicked_sprite->setPosition(position);
+    text_->setPosition(position.x + 3, position.y + 3);
 }
-sf::Sprite* game::utils::Button::get_sprite() const { return current_sprite; }
+void game::utils::Button::set_position(const float &x, const float &y) const {
+    default_sprite->setPosition(sf::Vector2f(x, y));
+    clicked_sprite->setPosition(sf::Vector2f(x, y));
+    text_->setPosition(x + 3, y + 3);
+}
+
+
+sf::Sprite** game::utils::Button::get_sprite() const { return current_sprite; }
+
+
+void game::utils::Button::draw_at(sf::RenderWindow* window_origin) const {
+    window_origin->draw(**current_sprite);
+    window_origin->draw(*text_);
+}

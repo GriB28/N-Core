@@ -22,6 +22,13 @@ namespace game {
         sf::RenderWindow *window;
         Fonts *fonts;
 
+        sf::Text fps, fps_delta;
+        short frames;
+        long long last_fps_update;
+        short last_fps_update_value;
+
+        sf::Text mouse_position;
+
         void loop();
         void proceed_event_on_scenes(const sf::Event &event);
         void proceed_scenes();

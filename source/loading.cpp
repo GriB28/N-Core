@@ -23,15 +23,21 @@ game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link) {
     logo_sound.setLoop(false);
 
     loading_text.setFont(*fonts->XKCD());
-    loading_text.setString("project DSC");
+    loading_text.setString("|GriB28| presents...");
     loading_text.setCharacterSize(60);
     loading_text.setPosition((window->getSize().x - loading_text.getGlobalBounds().width) / 2, 300);
 
-    awaiting_text.setFont(*fonts->PAG());
-    awaiting_text.setString("press Space to continue");
-    awaiting_text.setCharacterSize(20);
-    awaiting_text.setPosition((window->getSize().x - awaiting_text.getGlobalBounds().width) / 2, 600);
-    awaiting_text.setFillColor(sf::Color(255, 255, 255, 0));
+    awaiting_text = new sf::Text;
+    awaiting_text->setFont(*fonts->PAG());
+    awaiting_text->setString("press Space to continue");
+    awaiting_text->setCharacterSize(20);
+    awaiting_text->setFillColor(sf::Color(255, 255, 255, 0));
+    awaiting_text_void_texture = new sf::Texture();
+    awaiting_text_void_texture->loadFromFile("sprites/void.png");
+    awaiting_button.init(&awaiting_text, &awaiting_text_void_texture, &awaiting_text_void_texture);
+    awaiting_button.set_default_sprite_scale(250, 30);
+    awaiting_button.set_clicked_sprite_scale(250, 30);
+    awaiting_button.set_position((window->getSize().x - awaiting_text->getGlobalBounds().width) / 2, 600);
     awaiting_flag = false;
 
     frogl2_counter = 0;
@@ -47,33 +53,25 @@ game::Loading::~Loading() {
 
 int game::Loading::event(const Event &event) {
     int return_code;
-    if (event.type == Event::KeyPressed) {
+    if (event.type == Event::KeyPressed)
         switch (event.key.code) {
-            case Keyboard::A:
-                cout << "<A> is pressed\n";
-                return_code = 0;
+            case Keyboard::Escape:
+                return_code = -2056;
                 break;
             case Keyboard::Space:
-                cout << "<space> is pressed\n";
                 return_code = awaiting_flag;
                 break;
             default:
-                cout << "another key is pressed\n";
                 return_code = 0;
                 break;
         }
-    }
     else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left) {
-        if (awaiting_text.getGlobalBounds().left - 10 <= event.touch.x &&
-            event.touch.x <= awaiting_text.getGlobalBounds().left + awaiting_text.getGlobalBounds().width + 10 &&
-            awaiting_text.getGlobalBounds().top + 10 >= event.touch.y &&
-            event.touch.y >= awaiting_text.getGlobalBounds().top - awaiting_text.getGlobalBounds().height - 10)
-            return_code = awaiting_flag;
+        awaiting_button.check_click(event.mouseButton.x, event.mouseButton.y);
+        if (awaiting_button.is_clicked()) return_code = awaiting_flag;
         else return_code = 0;
     }
-    else {
-        return_code = 0;
-    }
+    else return_code = 0;
+
     return return_code;
 }
 int game::Loading::proceed() {
@@ -85,20 +83,22 @@ int game::Loading::proceed() {
             frogl2_timer = get_time();
         }
     }
-    if (frogl2_counter == 96 / 8 * 7) frogl2_fading_flag = true;
+    if (frogl2_counter == 96 * 7 / 8) frogl2_fading_flag = true;
 
-    if (frogl2_fading_flag && frogl2.getColor().a > 1)
+    if (frogl2_fading_flag && frogl2.getColor().a > 1) {
+        loading_text.setFillColor(sf::Color(255, 255, 255, frogl2.getColor().a - 1));
         frogl2.setColor(sf::Color(255, 255, 255, frogl2.getColor().a - 1));
+    }
     else if (frogl2.getColor().a == 1) frogl2.setColor(sf::Color(255, 255, 255, 0));
     if (frogl2.getColor().a == 0) awaiting_flag = true;
 
-    if (awaiting_flag && awaiting_text.getFillColor().a < 255)
-        awaiting_text.setFillColor(sf::Color(255, 255, 255, awaiting_text.getFillColor().a + 1));
+    if (awaiting_flag && awaiting_text->getFillColor().a < 255)
+        awaiting_text->setFillColor(sf::Color(255, 255, 255, awaiting_text->getFillColor().a + 1));
 
 
     window->draw(frogl2);
     window->draw(loading_text);
-    window->draw(awaiting_text);
+    awaiting_button.draw_at(window);
     return 0;
 }
 
