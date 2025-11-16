@@ -13,6 +13,7 @@ game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fo
         fonts = fonts_link;
         loading_scene = new Loading(window, fonts);
         main_menu_scene = new MainMenu(window, fonts);
+        level_scene = new Level(window, fonts);
 
         fps.setCharacterSize(10);
         fps.setFont(*fonts->OCRA());
@@ -34,6 +35,7 @@ game::Engine::~Engine() {
     delete window;
     delete loading_scene;
     delete main_menu_scene;
+    delete level_scene;
     delete fonts;
 }
 
@@ -98,6 +100,9 @@ void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
         case 1:
             return_code = main_menu_scene->event(event);
             break;
+        case 2:
+            return_code = level_scene->event(event);
+            break;
         default:
             return_code = 0;
             break;
@@ -112,6 +117,9 @@ void game::Engine::proceed_scenes() {
             break;
         case 1:
             return_code = main_menu_scene->proceed();
+            break;
+        case 2:
+            return_code = level_scene->proceed();
             break;
         default:
             return_code = 0;
@@ -129,6 +137,9 @@ void game::Engine::update_scene_index(const int &return_code) {
             case 1:
                 main_menu_scene->on_end();
                 break;
+            case 2:
+                level_scene->on_end();
+                break;
             default:
                 break;
         }
@@ -140,6 +151,9 @@ void game::Engine::update_scene_index(const int &return_code) {
                 break;
             case 1:
                 main_menu_scene->on_start();
+                break;
+            case 2:
+                level_scene->on_start();
                 break;
             default:
                 break;

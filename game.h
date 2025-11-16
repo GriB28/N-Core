@@ -3,6 +3,7 @@
 #include "source/fonts.h"
 #include "source/loading.h"
 #include "source/main_menu.h"
+#include "source/level.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <string>
@@ -19,6 +20,7 @@ namespace game {
     private:
         Loading *loading_scene;
         MainMenu *main_menu_scene;
+        Level *level_scene;
         sf::RenderWindow *window;
         Fonts *fonts;
 

@@ -61,7 +61,7 @@ void game::utils::Button::check_click(const sf::Vector2f &click) {
 void game::utils::Button::check_click(const float &x, const float &y) {
     if (x > (*current_sprite)->getPosition().x && x < (*current_sprite)->getPosition().x + delta_border_x() &&
         y > (*current_sprite)->getPosition().y && y < (*current_sprite)->getPosition().y + delta_border_y())
-            set_state(!state);
+        set_state(!state);
 }
 void game::utils::Button::check_release(const sf::Vector2f &release) {
     if (release.x > (*current_sprite)->getPosition().x && release.x < (*current_sprite)->getPosition().x + delta_border_x() &&
