@@ -33,7 +33,7 @@ game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link) {
     awaiting_text->setCharacterSize(20);
     awaiting_text->setFillColor(sf::Color(255, 255, 255, 0));
     awaiting_text_void_texture = new sf::Texture();
-    awaiting_text_void_texture->loadFromFile("sprites/void.png");
+    awaiting_text_void_texture->loadFromFile("resources/sprites/void.png");
     awaiting_button.init(&awaiting_text, &awaiting_text_void_texture, &awaiting_text_void_texture);
     awaiting_button.set_default_sprite_scale(250, 30);
     awaiting_button.set_clicked_sprite_scale(250, 30);
@@ -59,7 +59,7 @@ int game::Loading::event(const Event &event) {
                 return_code = -2056;
                 break;
             case Keyboard::Space:
-                return_code = awaiting_flag;
+                return_code = awaiting_flag * 2;
                 break;
             default:
                 return_code = 0;
@@ -67,7 +67,7 @@ int game::Loading::event(const Event &event) {
         }
     else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left) {
         awaiting_button.check_click(event.mouseButton.x, event.mouseButton.y);
-        if (awaiting_button.is_clicked()) return_code = awaiting_flag;
+        if (awaiting_button.is_clicked()) return_code = awaiting_flag * 2;
         else return_code = 0;
     }
     else return_code = 0;

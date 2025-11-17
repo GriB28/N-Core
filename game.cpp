@@ -7,7 +7,7 @@
 game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link) {
     if (fonts_link == nullptr) Engine(x, y, Fonts::instance());
     else {
-        current_scene_index = -1;
+        current_scene_index = 0;
 
         window = new sf::RenderWindow(sf::VideoMode({x, y}), "DSC");
         fonts = fonts_link;
@@ -55,7 +55,8 @@ void game::Engine::loop() {
 
         if (const auto t = std::chrono::duration_cast<std::chrono::microseconds>(
             std::chrono::steady_clock::now().time_since_epoch()
-            ).count(); t - last_fps_update >= 1000000) {
+            ).count(); t - last_fps_update >= 500'000) {
+            frames *= 2;
             const auto window_x_size = static_cast<float>(window->getSize().x);
 
             if (last_fps_update_value < frames)
@@ -94,13 +95,13 @@ void game::Engine::loop() {
 void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
     int return_code;
     switch (current_scene_index) {
-        case 0:
+        case 1:
             return_code = loading_scene->event(event);
             break;
-        case 1:
+        case 2:
             return_code = main_menu_scene->event(event);
             break;
-        case 2:
+        case 3:
             return_code = level_scene->event(event);
             break;
         default:
@@ -112,13 +113,13 @@ void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
 void game::Engine::proceed_scenes() {
     int return_code;
     switch (current_scene_index) {
-        case 0:
+        case 1:
             return_code = loading_scene->proceed();
             break;
-        case 1:
+        case 2:
             return_code = main_menu_scene->proceed();
             break;
-        case 2:
+        case 3:
             return_code = level_scene->proceed();
             break;
         default:
@@ -131,28 +132,28 @@ void game::Engine::proceed_scenes() {
 void game::Engine::update_scene_index(const int &return_code) {
     if (return_code != 0) {
         switch (current_scene_index) {
-            case 0:
+            case 1:
                 loading_scene->on_end();
                 break;
-            case 1:
+            case 2:
                 main_menu_scene->on_end();
                 break;
-            case 2:
+            case 3:
                 level_scene->on_end();
                 break;
             default:
                 break;
         }
-        current_scene_index += return_code;
+        current_scene_index = return_code;
         if (current_scene_index < 0) window->close();
         else switch (current_scene_index) {
-            case 0:
+            case 1:
                 loading_scene->on_start();
                 break;
-            case 1:
+            case 2:
                 main_menu_scene->on_start();
                 break;
-            case 2:
+            case 3:
                 level_scene->on_start();
                 break;
             default:

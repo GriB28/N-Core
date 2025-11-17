@@ -29,6 +29,8 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link) {
     load_level_txt->setFillColor(sf::Color(20, 20, 20));
     load_level.init(&load_level_txt, &load_level_default_texture, &load_level_clicked_texture, false);
     load_level.set_position(sf::Vector2f(500, 500));
+    first_load_click = false;
+    release_await = false;
 
     buttons1.push_back(&load_level);
 
@@ -55,6 +57,19 @@ int game::MainMenu::event(const Event &event) {
             for (const auto btn : buttons1)
                 btn->check_release(event.mouseButton.x, event.mouseButton.y);
     }
+
+    if (load_level.is_clicked()) {
+        if (!first_load_click) {
+            first_load_click = true;
+            release_await = true;
+        }
+        else if (!release_await)
+            return_code = 3;
+    }
+    else
+        if (first_load_click)
+            release_await = false;
+
     return return_code;
 }
 int game::MainMenu::proceed() {
