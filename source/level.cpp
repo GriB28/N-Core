@@ -43,7 +43,7 @@ void game::Level::on_start() {
     level_generator = new object::Generator("test");
     level_generator->set_scale(0.125);
     level_generator->set_offset(300, 100);
-    // level_theme.play();
+    level_theme.play();
 }
 void game::Level::on_end() {
     level_theme.stop();

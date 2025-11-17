@@ -26,6 +26,7 @@ namespace game {
         sf::Music logo_sound;
 
         sf::Text loading_text;
+        sf::Text alliance_text;
 
         bool awaiting_flag;
         utils::Button awaiting_button;

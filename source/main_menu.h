@@ -29,7 +29,7 @@ namespace game {
         utils::Button load_level;
         sf::Texture *load_level_default_texture, *load_level_clicked_texture;
         sf::Text* load_level_txt;
-        bool first_load_click, release_await;
+        bool load_3_scene_flag;
 
         sf::Music main_theme;
     };

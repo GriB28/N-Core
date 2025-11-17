@@ -22,9 +22,10 @@ game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link) {
     logo_sound.openFromFile("music/DSC2.flac");
     logo_sound.setLoop(false);
 
-    loading_text.setFont(*fonts->XKCD());
+    loading_text.setFont(*fonts->OCRA());
     loading_text.setString("|GriB28| presents...");
-    loading_text.setCharacterSize(60);
+    loading_text.setFillColor(sf::Color(220, 220, 220));
+    loading_text.setCharacterSize(50);
     loading_text.setPosition((window->getSize().x - loading_text.getGlobalBounds().width) / 2, 300);
 
     awaiting_text = new sf::Text;
@@ -46,6 +47,16 @@ game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link) {
     frogl2_timer = get_time();
     frogl2_frame_timestamp = 1000000 / 25;
     frogl2.setPosition(1280 * .8 / 2, 400);
+
+    alliance_text.setFont(*fonts->Penacony());
+    alliance_text.setString("For Alliance");
+    alliance_text.setCharacterSize(10);
+    alliance_text.setFillColor(sf::Color(50, 50, 50));
+    alliance_text.setRotation(90);
+    alliance_text.setPosition(
+        window->getSize().x - alliance_text.getGlobalBounds().width / 2.0f,
+        window->getSize().y - alliance_text.getGlobalBounds().height * 1.1f
+        );
 }
 game::Loading::~Loading() {
     delete fonts;
@@ -86,7 +97,7 @@ int game::Loading::proceed() {
     if (frogl2_counter == 96 * 7 / 8) frogl2_fading_flag = true;
 
     if (frogl2_fading_flag && frogl2.getColor().a > 1) {
-        loading_text.setFillColor(sf::Color(255, 255, 255, frogl2.getColor().a - 1));
+        loading_text.setFillColor(sf::Color(220, 220, 220, frogl2.getColor().a - 1));
         frogl2.setColor(sf::Color(255, 255, 255, frogl2.getColor().a - 1));
     }
     else if (frogl2.getColor().a == 1) frogl2.setColor(sf::Color(255, 255, 255, 0));
@@ -98,6 +109,7 @@ int game::Loading::proceed() {
 
     window->draw(frogl2);
     window->draw(loading_text);
+    window->draw(alliance_text);
     awaiting_button.draw_at(window);
     return 0;
 }

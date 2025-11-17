@@ -29,12 +29,9 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link) {
     load_level_txt->setFillColor(sf::Color(20, 20, 20));
     load_level.init(&load_level_txt, &load_level_default_texture, &load_level_clicked_texture, false);
     load_level.set_position(sf::Vector2f(500, 500));
-    first_load_click = false;
-    release_await = false;
+    load_3_scene_flag = false;
 
     buttons1.push_back(&load_level);
-
-    // (window->getSize().x - load_level_txt.getScale().x) / 2, 500));
 
     main_theme.openFromFile("music/DSC2.flac");
     main_theme.setLoop(true);
@@ -58,17 +55,11 @@ int game::MainMenu::event(const Event &event) {
                 btn->check_release(event.mouseButton.x, event.mouseButton.y);
     }
 
-    if (load_level.is_clicked()) {
-        if (!first_load_click) {
-            first_load_click = true;
-            release_await = true;
-        }
-        else if (!release_await)
-            return_code = 3;
-    }
-    else
-        if (first_load_click)
-            release_await = false;
+    if (load_level.is_clicked())
+        if (!load_3_scene_flag)
+            load_3_scene_flag = true;
+    if (load_3_scene_flag && !load_level.is_clicked())
+        return_code = 3;
 
     return return_code;
 }
