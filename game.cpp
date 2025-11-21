@@ -5,16 +5,18 @@
 using std::to_string;
 
 
-game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link) {
-    if (fonts_link == nullptr) Engine(x, y, Fonts::instance());
+game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link, Music *music_link) {
+    if (fonts_link == nullptr) Engine(x, y, Fonts::instance(), music_link);
+    else if (music_link == nullptr) Engine(x, y, fonts_link, Music::instance());
     else {
         current_scene_index = 0;
 
         window = new sf::RenderWindow(sf::VideoMode({x, y}), "DSC");
         fonts = fonts_link;
-        loading_scene = new Loading(window, fonts);
-        main_menu_scene = new MainMenu(window, fonts);
-        level_scene = new Level(window, fonts);
+        music = music_link;
+        loading_scene = new Loading(window, fonts, music);
+        main_menu_scene = new MainMenu(window, fonts, music);
+        level_scene = new Level(window, fonts, music);
 
         fps.setCharacterSize(10);
         fps.setFont(*fonts->OCRA());
@@ -42,6 +44,7 @@ game::Engine::~Engine() {
     delete main_menu_scene;
     delete level_scene;
     delete fonts;
+    delete music;
 }
 
 

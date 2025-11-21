@@ -15,12 +15,10 @@ long long get_time() {
     return std::chrono::duration_cast<std::chrono::microseconds>( std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link) {
+game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *fonts_link, Music *music_link) {
     window = window_link;
     fonts = fonts_link;
-
-    logo_sound.openFromFile("music/DSC2.flac");
-    logo_sound.setLoop(false);
+    music = music_link;
 
     loading_text.setFont(*fonts->OCRA());
     loading_text.setString("|GriB28| presents...");
@@ -115,10 +113,10 @@ int game::Loading::proceed() {
 }
 
 void game::Loading::on_start() {
-    logo_sound.play();
+    music->loading()->play();
 }
 void game::Loading::on_end() {
-    logo_sound.stop();
+    music->loading()->stop();
     window->close();
     delete window;
     window = new sf::RenderWindow(sf::VideoMode::getDesktopMode(), "N-Core", sf::Style::Fullscreen);

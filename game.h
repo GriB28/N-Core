@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 #include "source/fonts.h"
+#include "source/music.h"
 #include "source/loading.h"
 #include "source/main_menu.h"
 #include "source/level.h"
@@ -12,7 +13,7 @@ using std::string;
 namespace game {
     class Engine {
     public:
-        Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link = nullptr);
+        Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link = nullptr, Music *music_link = nullptr);
         ~Engine();
 
         int current_scene_index;
@@ -23,6 +24,7 @@ namespace game {
         Level *level_scene;
         sf::RenderWindow *window;
         Fonts *fonts;
+        Music *music;
 
         sf::Text fps, fps_delta;
         unsigned short frames, last_fps_update_value;

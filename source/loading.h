@@ -1,9 +1,9 @@
 #ifndef LOADING_H
 #define LOADING_H
 #include "fonts.h"
+#include "music.h"
 #include "../utils/button.h"
 
-#include <SFML/Audio/Music.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -12,7 +12,7 @@
 namespace game {
     class Loading {
     public:
-        explicit Loading(sf::RenderWindow *&window_link, Fonts *&fonts_link);
+        explicit Loading(sf::RenderWindow *&window_link, Fonts *fonts_link, Music *music_link);
         ~Loading();
 
         int event(const sf::Event &event);
@@ -22,8 +22,7 @@ namespace game {
     private:
         sf::RenderWindow *window;
         Fonts *fonts;
-
-        sf::Music logo_sound;
+        Music *music;
 
         sf::Text loading_text;
         sf::Text alliance_text;

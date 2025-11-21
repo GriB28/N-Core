@@ -4,15 +4,17 @@
 #include <string>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
+
 using std::cout;
 using std::string;
 using sf::Event;
 using sf::Keyboard;
 
 
-game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link) {
+game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) {
     window = window_link;
     fonts = fonts_link;
+    music = music_link;
 
     bg_texture = sf::Texture();
     bg_texture.loadFromFile("resources/tr.jpg");
@@ -32,9 +34,6 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link) {
     load_3_scene_flag = false;
 
     buttons1.push_back(&load_level);
-
-    main_theme.openFromFile("music/DSC2.flac");
-    main_theme.setLoop(true);
 }
 
 game::MainMenu::~MainMenu() {
@@ -73,8 +72,8 @@ int game::MainMenu::proceed() {
 }
 
 void game::MainMenu::on_start() {
-    main_theme.play();
+    music->DSC5()->play();
 }
 void game::MainMenu::on_end() {
-    main_theme.stop();
+    music->DSC5()->stop();
 }

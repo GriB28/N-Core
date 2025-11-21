@@ -2,15 +2,12 @@
 
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Window/Mouse.hpp>
 using sf::Event;
 
-game::Level::Level(sf::RenderWindow *window_link, Fonts *fonts_link) {
+game::Level::Level(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) {
     window = window_link;
     fonts = fonts_link;
-
-    level_theme.openFromFile("music/DSC0.flac");
-    level_theme.setLoop(true);
+    music = music_link;
 
     level_generator = nullptr;
 }
@@ -43,8 +40,8 @@ void game::Level::on_start() {
     level_generator = new object::Generator("test");
     level_generator->set_scale(0.125);
     level_generator->set_offset(300, 100);
-    level_theme.play();
+    music->DSC0()->play();
 }
 void game::Level::on_end() {
-    level_theme.stop();
+    music->DSC0()->stop();
 }

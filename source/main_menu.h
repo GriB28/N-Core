@@ -1,16 +1,16 @@
 #ifndef MAIN_MENU_H
 #define MAIN_MENU_H
 #include "fonts.h"
+#include "music.h"
 #include "../utils/button.h"
 
-#include <SFML/Audio/Music.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 namespace game {
     class MainMenu {
     public:
-        explicit MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link);
+        explicit MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link);
         ~MainMenu();
 
         int event(const sf::Event &event);
@@ -20,6 +20,7 @@ namespace game {
     private:
         sf::RenderWindow *window;
         Fonts *fonts;
+        Music *music;
 
         sf::Texture bg_texture;
         sf::Sprite bg;
@@ -30,8 +31,6 @@ namespace game {
         sf::Texture *load_level_default_texture, *load_level_clicked_texture;
         sf::Text* load_level_txt;
         bool load_3_scene_flag;
-
-        sf::Music main_theme;
     };
 }
 #endif
