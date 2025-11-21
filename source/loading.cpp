@@ -58,6 +58,7 @@ game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *fonts_link, Music 
 }
 game::Loading::~Loading() {
     delete fonts;
+    delete music;
 }
 
 int game::Loading::event(const Event &event) {

@@ -13,6 +13,7 @@ game::Level::Level(sf::RenderWindow *window_link, Fonts *fonts_link, Music *musi
 }
 game::Level::~Level() {
     delete fonts;
+    delete music;
     delete level_generator;
 }
 
