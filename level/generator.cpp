@@ -1,4 +1,5 @@
 #include "generator.h"
+#include "void.h"
 #include "platform.h"
 
 #include <fstream>
@@ -59,10 +60,20 @@ void game::object::Generator::load_level(const string &level_id) {
                 << static_cast<short>(input) << "\"\n"; } while (input == '\n');
             switch (input) {
                 case '0':
-                    cout << "\tmaking a platform object...\n";
-                    matrix[y][x] = new Platform(true);
+                    cout << "\tmaking a 'void' object...\n";
+                    matrix[y][x] = new Void();
                     break;
                 case '1':
+                    cout << "\tmaking a 'platform' object...\n";
+                    matrix[y][x] = new Platform();
+                    break;
+                case '2':
+                    cout << "\tmaking a 'platform with spawn flag' object...\n";
+                    matrix[y][x] = new Platform(true, true);
+                    break;
+                case '3':
+                    cout << "\tmaking a 'platform with end flag' object...\n";
+                    matrix[y][x] = new Platform(true, false);
                     break;
                 default:
                     break;

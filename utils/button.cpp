@@ -54,9 +54,7 @@ float game::utils::Button::delta_border_y() const { return (*current_sprite)->ge
 
 
 void game::utils::Button::check_click(const sf::Vector2f &click) {
-    if (click.x > (*current_sprite)->getPosition().x && click.x < (*current_sprite)->getPosition().x + delta_border_x() &&
-        click.y > (*current_sprite)->getPosition().y && click.y < (*current_sprite)->getPosition().y + delta_border_y())
-        set_state(!state);
+    check_click(click.x, click.y);
 }
 void game::utils::Button::check_click(const float &x, const float &y) {
     if (x > (*current_sprite)->getPosition().x && x < (*current_sprite)->getPosition().x + delta_border_x() &&
@@ -64,10 +62,7 @@ void game::utils::Button::check_click(const float &x, const float &y) {
         set_state(!state);
 }
 void game::utils::Button::check_release(const sf::Vector2f &release) {
-    if (release.x > (*current_sprite)->getPosition().x && release.x < (*current_sprite)->getPosition().x + delta_border_x() &&
-        release.y > (*current_sprite)->getPosition().y && release.y < (*current_sprite)->getPosition().y + delta_border_y() &&
-        !sticky)
-        set_state(!state);
+    check_release(release.x, release.y);
 }
 void game::utils::Button::check_release(const float &x, const float &y) {
     if (x > (*current_sprite)->getPosition().x && x < (*current_sprite)->getPosition().x + delta_border_x() &&
@@ -88,12 +83,13 @@ void game::utils::Button::set_state(const bool &new_state) {
 void game::utils::Button::set_position(const sf::Vector2f &position) const {
     default_sprite->setPosition(position);
     clicked_sprite->setPosition(position);
-    text_->setPosition(position.x + 3, position.y + 3);
+    text_->setPosition(
+        position.x + ((*current_sprite)->getGlobalBounds().width - text_->getGlobalBounds().width) / 2,
+        position.y + ((*current_sprite)->getGlobalBounds().height - text_->getGlobalBounds().height) / 2
+        );
 }
 void game::utils::Button::set_position(const float &x, const float &y) const {
-    default_sprite->setPosition(sf::Vector2f(x, y));
-    clicked_sprite->setPosition(sf::Vector2f(x, y));
-    text_->setPosition(x + 3, y + 3);
+    set_position(sf::Vector2f(x, y));
 }
 
 
