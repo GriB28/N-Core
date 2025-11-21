@@ -8,10 +8,10 @@ namespace game {
         static Fonts* instance();
         ~Fonts();
 
-        sf::Font* XKCD();
-        sf::Font* PAG();
-        sf::Font* OCRA();
-        sf::Font* Penacony();
+        [[nodiscard]] sf::Font* XKCD() const;
+        [[nodiscard]] sf::Font* PAG() const;
+        [[nodiscard]] sf::Font* OCRA() const;
+        [[nodiscard]] sf::Font* Penacony() const;
     private:
         Fonts();
         static sf::Font* XKCD_origin;
