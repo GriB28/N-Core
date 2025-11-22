@@ -2,11 +2,10 @@
 #define GAME_H
 #include "source/fonts.h"
 #include "source/music.h"
-#include "source/loading.h"
-#include "source/main_menu.h"
-#include "source/level.h"
+#include "scenes/scene.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <string>
 using std::string;
 
@@ -15,13 +14,9 @@ namespace game {
     public:
         Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link = nullptr, Music *music_link = nullptr);
         ~Engine();
-
         int current_scene_index;
-
     private:
-        Loading *loading_scene;
-        MainMenu *main_menu_scene;
-        Level *level_scene;
+        Scene **scenes;
         sf::RenderWindow *window;
         Fonts *fonts;
         Music *music;

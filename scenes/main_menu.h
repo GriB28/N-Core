@@ -1,27 +1,21 @@
 #ifndef MAIN_MENU_H
 #define MAIN_MENU_H
-#include "fonts.h"
-#include "music.h"
+#include "scene.h"
 #include "../utils/button.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 namespace game {
-    class MainMenu {
+    class MainMenu final : public Scene {
     public:
-        explicit MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link);
-        ~MainMenu();
+        MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link);
+        ~MainMenu() override;
 
-        int event(const sf::Event &event);
-        int proceed();
-        void on_start();
-        void on_end();
+        int event(const sf::Event &event) override;
+        int proceed() override;
+        void on_start() override;
     private:
-        sf::RenderWindow *window;
-        Fonts *fonts;
-        Music *music;
-
         sf::Texture *bg_texture_day, *bg_texture_night;
         sf::Sprite *bg;
 

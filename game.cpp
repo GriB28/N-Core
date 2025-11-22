@@ -1,4 +1,7 @@
 #include "game.h"
+#include "scenes/level.h"
+#include "scenes/loading.h"
+#include "scenes/main_menu.h"
 
 #include <SFML/Window/Event.hpp>
 #include <chrono>
@@ -14,9 +17,11 @@ game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fo
         window = new sf::RenderWindow(sf::VideoMode({x, y}), "DSC");
         fonts = fonts_link;
         music = music_link;
-        loading_scene = new Loading(window, fonts, music);
-        main_menu_scene = new MainMenu(window, fonts, music);
-        level_scene = new Level(window, fonts, music);
+        scenes = new Scene*[3+1];
+        scenes[0] = new Scene; // void scene
+        scenes[1] = new Loading(window, fonts, music);
+        scenes[2] = new MainMenu(window, fonts, music);
+        scenes[3] = new Level(window, fonts, music);
 
         fps.setCharacterSize(10);
         fps.setFont(*fonts->OCRA());
@@ -40,9 +45,10 @@ game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fo
 }
 game::Engine::~Engine() {
     delete window;
-    delete loading_scene;
-    delete main_menu_scene;
-    delete level_scene;
+
+    for (unsigned short i = 0; i < 4; i++) delete scenes[i];
+    delete[] scenes;
+
     delete fonts;
     delete music;
 }
@@ -104,72 +110,20 @@ void game::Engine::loop() {
 }
 
 void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
-    int return_code;
-    switch (current_scene_index) {
-        case 1:
-            return_code = loading_scene->event(event);
-            break;
-        case 2:
-            return_code = main_menu_scene->event(event);
-            break;
-        case 3:
-            return_code = level_scene->event(event);
-            break;
-        default:
-            return_code = 0;
-            break;
-    }
+    const int return_code = scenes[current_scene_index]->event(event);
     update_scene_index(return_code);
 }
 void game::Engine::proceed_scenes() {
-    int return_code;
-    switch (current_scene_index) {
-        case 1:
-            return_code = loading_scene->proceed();
-            break;
-        case 2:
-            return_code = main_menu_scene->proceed();
-            break;
-        case 3:
-            return_code = level_scene->proceed();
-            break;
-        default:
-            return_code = 0;
-            break;
-    }
+    const int return_code = scenes[current_scene_index]->proceed();
     update_scene_index(return_code);
 }
 
 void game::Engine::update_scene_index(const int &return_code) {
     if (return_code != 0) {
-        switch (current_scene_index) {
-            case 1:
-                loading_scene->on_end();
-                break;
-            case 2:
-                main_menu_scene->on_end();
-                break;
-            case 3:
-                level_scene->on_end();
-                break;
-            default:
-                break;
-        }
+        scenes[current_scene_index]->on_end();
         current_scene_index = return_code;
         scene_num.setString("scene " + to_string(current_scene_index));
         if (current_scene_index < 0) window->close();
-        else switch (current_scene_index) {
-            case 1:
-                loading_scene->on_start();
-                break;
-            case 2:
-                main_menu_scene->on_start();
-                break;
-            case 3:
-                level_scene->on_start();
-                break;
-            default:
-                break;
-        }
+        else scenes[current_scene_index]->on_start();
     }
 }

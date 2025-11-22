@@ -11,11 +11,7 @@ using sf::Event;
 using sf::Keyboard;
 
 
-game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) {
-    window = window_link;
-    fonts = fonts_link;
-    music = music_link;
-
+game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
     bg = new sf::Sprite();
     bg_texture_day = new sf::Texture();
     bg_texture_night = new sf::Texture();
@@ -45,6 +41,7 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
 }
 
 game::MainMenu::~MainMenu() {
+    cout << ">> 'MainMenu' destructor\n";
     delete fonts;
     delete music;
     delete bg_texture_night;
@@ -109,4 +106,3 @@ int game::MainMenu::proceed() {
 void game::MainMenu::on_start() {
     music->DSC5()->play();
 }
-void game::MainMenu::on_end() {}
