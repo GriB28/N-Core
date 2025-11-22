@@ -42,6 +42,7 @@ void game::Level::on_start() {
     level_generator->set_scale(0.125);
     level_generator->set_offset(300, 100);
     music->DSC0()->play();
+    music->DSC5()->stop();
 }
 void game::Level::on_end() {
     music->DSC0()->stop();

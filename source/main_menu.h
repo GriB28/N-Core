@@ -22,8 +22,8 @@ namespace game {
         Fonts *fonts;
         Music *music;
 
-        sf::Texture bg_texture;
-        sf::Sprite bg;
+        sf::Texture *bg_texture_day, *bg_texture_night;
+        sf::Sprite *bg;
 
         std::vector<utils::Button*> buttons1;
 
@@ -31,6 +31,9 @@ namespace game {
         sf::Texture *load_level_default_texture, *load_level_clicked_texture;
         sf::Text* load_level_txt;
         bool load_3_scene_flag;
+
+        unsigned short background_counter;
+        bool day_cycle, bg_fading_out, bg_fading_in, bg_change_state;
     };
 }
 #endif

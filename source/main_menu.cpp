@@ -16,9 +16,17 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
     fonts = fonts_link;
     music = music_link;
 
-    bg_texture = sf::Texture();
-    bg_texture.loadFromFile("resources/tr.jpg");
-    bg.setTexture(bg_texture);
+    bg = new sf::Sprite();
+    bg_texture_day = new sf::Texture();
+    bg_texture_night = new sf::Texture();
+    bg_texture_day->loadFromFile("resources/day.jpg");
+    bg_texture_night->loadFromFile("resources/night.jpg");
+    bg->setTexture(*bg_texture_day);
+    background_counter = 0;
+    day_cycle = false;
+    bg_fading_out = false;
+    bg_fading_in = false;
+    bg_change_state = false;
 
     load_level_default_texture = new sf::Texture;
     load_level_default_texture->loadFromFile("resources/btns/loadlvl_d.jpg");
@@ -38,6 +46,9 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
 
 game::MainMenu::~MainMenu() {
     delete fonts;
+    delete music;
+    delete bg_texture_night;
+    delete bg_texture_day;
 }
 
 int game::MainMenu::event(const Event &event) {
@@ -65,8 +76,32 @@ int game::MainMenu::event(const Event &event) {
 int game::MainMenu::proceed() {
     int return_code = 0;
 
-    window->draw(bg);
+    window->draw(*bg);
     load_level.draw_at(window);
+
+    if (++background_counter == 6000) bg_fading_out = true;
+
+    if (bg_change_state || bg_fading_in || bg_fading_out) {
+        background_counter = 0;
+        bg_change_state = true;
+        if (bg_fading_out) {
+            bg->setColor(sf::Color(255, 255, 255, bg->getColor().a - 1));
+            if (bg->getColor().a == 0) bg_fading_out = false;
+        }
+        else if (bg_fading_in) {
+            bg->setColor(sf::Color(255, 255, 255, bg->getColor().a + 1));
+            if (bg->getColor().a == 255) bg_fading_in = false;
+            bg_change_state = false;
+        }
+        else {
+            bg_fading_in = true;
+            if (day_cycle)
+                bg->setTexture(*bg_texture_day);
+            else
+                bg->setTexture(*bg_texture_night);
+            day_cycle = !day_cycle;
+        }
+    }
 
     return return_code;
 }
@@ -74,6 +109,4 @@ int game::MainMenu::proceed() {
 void game::MainMenu::on_start() {
     music->DSC5()->play();
 }
-void game::MainMenu::on_end() {
-    music->DSC5()->stop();
-}
+void game::MainMenu::on_end() {}
