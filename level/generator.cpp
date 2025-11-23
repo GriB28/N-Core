@@ -1,6 +1,7 @@
 #include "generator.h"
 #include "void.h"
 #include "platform.h"
+#include "ladder.h"
 
 #include <fstream>
 #include <iostream>
@@ -17,7 +18,10 @@ game::object::Generator::Generator() {
     scale = 1.;
     update_required = false;
 }
-game::object::Generator::Generator(const string &level_id) : Generator() { load_level(level_id); }
+game::object::Generator::Generator(const string &chapter_id, const string &level_id) : Generator() {
+    set_chapter_id(chapter_id);
+    load_level(level_id);
+}
 game::object::Generator::~Generator() {
     for (unsigned short y = 0; y < y_size; y++)
         for (unsigned short x = 0; x < x_size; x++)
@@ -45,6 +49,9 @@ void game::object::Generator::set_offset_x(const unsigned short &value) { x_offs
 void game::object::Generator::set_offset_y(const unsigned short &value) { y_offset = value; update_required = true; }
 
 
+void game::object::Generator::set_chapter_id(const string &chapter_id) {
+    chapter = chapter_id;
+}
 void game::object::Generator::load_level(const string &level_id) {
     name = level_id;
     std::fstream level_stream("level/" + level_id + ".mtrx", std::ios::in);
@@ -61,19 +68,27 @@ void game::object::Generator::load_level(const string &level_id) {
             switch (input) {
                 case '0':
                     cout << "\tmaking a 'void' object...\n";
-                    matrix[y][x] = new Void();
+                    matrix[y][x] = new Void(chapter);
                     break;
                 case '1':
                     cout << "\tmaking a 'platform' object...\n";
-                    matrix[y][x] = new Platform();
+                    matrix[y][x] = new Platform(chapter);
                     break;
                 case '2':
                     cout << "\tmaking a 'platform with spawn flag' object...\n";
-                    matrix[y][x] = new Platform(true, true);
+                    matrix[y][x] = new Platform(chapter, true, false);
                     break;
                 case '3':
                     cout << "\tmaking a 'platform with end flag' object...\n";
-                    matrix[y][x] = new Platform(true, false);
+                    matrix[y][x] = new Platform(chapter, false, true);
+                    break;
+                case '4':
+                    cout << "\tmaking a 'platform with a ladder' object...\n";
+                    matrix[y][x] = new Platform(chapter, false, false, true);
+                    break;
+                case '5':
+                    cout << "\tmaking a 'ladder' object...\n";
+                    matrix[y][x] = new Ladder(chapter);
                     break;
                 default:
                     break;
@@ -88,7 +103,9 @@ void game::object::Generator::load_level(const string &level_id) {
 void game::object::Generator::update_positions() const {
     for (unsigned short y = 0; y < y_size; y++)
         for (unsigned short x = 0; x < x_size; x++) {
-            matrix[y][x]->set_position(x_offset + x * scale * 1024, y_offset + y * scale * 1024);
+            matrix[y][x]->set_position(x * scale * 1024, y * scale * 1024);
+            matrix[y][x]->move(x_offset, y_offset);
+            matrix[y][x]->constant_position_delta();
             cout << "sprite[" << y << ':' << x << "]: new position is set to "
             << x_offset + x * scale * 1024 << ", " << y_offset + y * scale * 1024 << '\n';
         }

@@ -33,7 +33,7 @@ int game::Level::proceed() {
 }
 
 void game::Level::on_start() {
-    level_generator = new object::Generator("test");
+    level_generator = new object::Generator("ch0", "test");
     level_generator->set_scale(0.125);
     level_generator->set_offset(300, 100);
     music->DSC0()->play();

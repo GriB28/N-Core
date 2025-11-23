@@ -5,9 +5,10 @@ namespace game::object {
     class Generator {
     public:
         Generator();
-        explicit Generator(const string &level_id);
+        explicit Generator(const string &chapter_id, const string &level_id);
         ~Generator();
 
+        void set_chapter_id(const string &chapter_id);
         void load_level(const string &level_id);
         void render_level(sf::RenderWindow* window);
 
@@ -18,7 +19,7 @@ namespace game::object {
     private:
         void update_positions() const;
 
-        string name;
+        string name, chapter;
         float scale;
         unsigned short x_size, y_size, x_offset, y_offset;
         bool update_required;

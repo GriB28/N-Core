@@ -9,13 +9,17 @@ using std::string;
 namespace game::object {
     class Object {
     public:
-        Object();
+        explicit Object(const string &chapter);
         virtual ~Object();
 
-        void reset_sprite(const string &origin_id);
+        void reset_sprite(const string &object, const string &model = "");
 
         void set_position(const float &x, const float &y) const;
         void set_position(const sf::Vector2f &position) const;
+        void move(const float &dx, const float &dy) const;
+        void move(const sf::Vector2f &delta) const;
+
+        void virtual constant_position_delta();
 
         void set_scale(const float &factor_x, const float &factor_y) const;
         void set_scale(const sf::Vector2f &scale) const;
@@ -23,8 +27,8 @@ namespace game::object {
         virtual void on_touch(const Player &player);
 
         void draw_at(sf::RenderWindow* window) const;
-    private:
-        string id;
+    protected:
+        string chapter_id, object_id, model_id;
         sf::Sprite* sprite;
         sf::Texture* texture;
     };
