@@ -9,39 +9,42 @@ using std::to_string;
 
 
 game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link, Music *music_link) {
-    if (fonts_link == nullptr) Engine(x, y, Fonts::instance(), music_link);
-    else if (music_link == nullptr) Engine(x, y, fonts_link, Music::instance());
-    else {
-        current_scene_index = 0;
+    if (fonts_link == nullptr) fonts_link = Fonts::instance();
+    if (music_link == nullptr) music_link = Music::instance();
+    initialize(x, y, fonts_link, music_link);
+}
+void game::Engine::initialize(const unsigned short &x, const unsigned short &y, Fonts *fonts_link, Music *music_link) {
+    current_scene_index = 0;
 
-        window = new sf::RenderWindow(sf::VideoMode({x, y}), "DSC");
-        fonts = fonts_link;
-        music = music_link;
-        scenes = new Scene*[3+1];
-        scenes[0] = new Scene; // void scene
-        scenes[1] = new Loading(window, fonts, music);
-        scenes[2] = new MainMenu(window, fonts, music);
-        scenes[3] = new Level(window, fonts, music);
+    window = new sf::RenderWindow(sf::VideoMode({x, y}), "DSC");
+    window->setFramerateLimit(120);
+    closing_flag = false;
+    fonts = fonts_link;
+    music = music_link;
+    scenes = new Scene*[3+1];
+    scenes[0] = new Scene; // void scene
+    scenes[1] = new Loading(window, fonts, music);
+    scenes[2] = new MainMenu(window, fonts, music);
+    scenes[3] = new Level(window, fonts, music);
 
-        fps.setCharacterSize(10);
-        fps.setFont(*fonts->OCRA());
-        fps_delta.setCharacterSize(10);
-        fps_delta.setFont(*fonts->OCRA());
-        frames = 0;
-        last_fps_update = 0;
-        last_fps_update_value = 0;
+    fps.setCharacterSize(10);
+    fps.setFont(*fonts->OCRA());
+    fps_delta.setCharacterSize(10);
+    fps_delta.setFont(*fonts->OCRA());
+    frames = 0;
+    last_fps_update = 0;
+    last_fps_update_value = 0;
 
-        mouse_position.setCharacterSize(10);
-        mouse_position.setFont(*fonts->OCRA());
-        mouse_position.setFillColor(sf::Color(147, 147, 147, 141));
+    mouse_position.setCharacterSize(10);
+    mouse_position.setFont(*fonts->OCRA());
+    mouse_position.setFillColor(sf::Color(147, 147, 147, 141));
 
-        scene_num.setCharacterSize(10);
-        scene_num.setFont(*fonts->OCRA());
-        scene_num.setFillColor(sf::Color(147, 147, 147, 141));
+    scene_num.setCharacterSize(10);
+    scene_num.setFont(*fonts->OCRA());
+    scene_num.setFillColor(sf::Color(147, 147, 147, 141));
 
-        update_scene_index(1);
-        loop();
-    }
+    update_scene_index(1);
+    loop();
 }
 game::Engine::~Engine() {
     delete window;
@@ -62,8 +65,10 @@ void game::Engine::loop() {
 
         while (window->pollEvent(event)) {
             proceed_event_on_scenes(event);
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 window->close();
+                return;
+            }
         }
         proceed_scenes();
 
@@ -106,24 +111,31 @@ void game::Engine::loop() {
         window->draw(scene_num);
         window->display();
         frames++;
+
+        if (closing_flag) window->close();
     }
 }
 
 void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
-    const int return_code = scenes[current_scene_index]->event(event);
-    update_scene_index(return_code);
+    if (current_scene_index > 0) {
+        const int return_code = scenes[current_scene_index]->event(event);
+        update_scene_index(return_code);
+    }
 }
 void game::Engine::proceed_scenes() {
-    const int return_code = scenes[current_scene_index]->proceed();
-    update_scene_index(return_code);
+    if (current_scene_index > 0) {
+        const int return_code = scenes[current_scene_index]->proceed();
+        update_scene_index(return_code);
+    }
 }
 
 void game::Engine::update_scene_index(const int &return_code) {
     if (return_code != 0) {
-        scenes[current_scene_index]->on_end();
+        if (current_scene_index > 0)
+            scenes[current_scene_index]->on_end();
         current_scene_index = return_code;
         scene_num.setString("scene " + to_string(current_scene_index));
-        if (current_scene_index < 0) window->close();
+        if (current_scene_index < 0) closing_flag = true;
         else scenes[current_scene_index]->on_start();
     }
 }

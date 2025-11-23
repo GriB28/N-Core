@@ -13,11 +13,6 @@ game::Scene::Scene(sf::RenderWindow *window_link, Fonts *fonts_link, Music *musi
     fonts = fonts_link;
     music = music_link;
 }
-game::Scene::~Scene() {
-    std::cout << "[!] >> 'Scene' destructor\n";
-    delete fonts;
-    delete music;
-}
 int game::Scene::event(const sf::Event &event) { return 0; }
 int game::Scene::proceed() { return 0; }
 void game::Scene::on_start() {}

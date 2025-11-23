@@ -41,9 +41,6 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
 }
 
 game::MainMenu::~MainMenu() {
-    cout << ">> 'MainMenu' destructor\n";
-    delete fonts;
-    delete music;
     delete bg_texture_night;
     delete bg_texture_day;
 }

@@ -10,7 +10,7 @@ namespace game {
     public:
         Scene();
         Scene(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link);
-        virtual ~Scene();
+        virtual ~Scene() = default;
 
         virtual int event(const sf::Event &event);
         virtual int proceed();

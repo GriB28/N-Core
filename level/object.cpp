@@ -5,7 +5,7 @@
 
 
 game::object::Object::Object() {
-    sprite = nullptr;
+    sprite = new sf::Sprite;
     texture = nullptr;
 }
 game::object::Object::~Object() {
@@ -31,8 +31,8 @@ void game::object::Object::set_position(const sf::Vector2f &position) const {
 
 void game::object::Object::set_scale(const float &factor_x, const float &factor_y) const {
     sprite->setScale(factor_x, factor_y);
-    std::cout << "\tscale is now " << factor_x << " and " << factor_y << '\n';
-    std::cout << "\tlocal size: " << sprite->getGlobalBounds().width << " and " << sprite->getGlobalBounds().height << '\n';
+    // std::cout << "\tscale is now " << factor_x << " and " << factor_y << '\n';
+    // std::cout << "\tlocal size: " << sprite->getGlobalBounds().width << " and " << sprite->getGlobalBounds().height << '\n';
 }
 void game::object::Object::set_scale(const sf::Vector2f &scale) const {
     set_scale(scale.x, scale.x);

@@ -14,16 +14,18 @@ namespace game {
     public:
         Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link = nullptr, Music *music_link = nullptr);
         ~Engine();
-        int current_scene_index;
+        int current_scene_index{};
     private:
-        Scene **scenes;
-        sf::RenderWindow *window;
-        Fonts *fonts;
-        Music *music;
+        void initialize(const unsigned short &x, const unsigned short &y, Fonts *fonts_link, Music *music_link);
+        Scene **scenes{};
+        sf::RenderWindow *window{};
+        bool closing_flag{};
+        Fonts *fonts{};
+        Music *music{};
 
         sf::Text fps, fps_delta;
-        unsigned short frames, last_fps_update_value;
-        long long last_fps_update;
+        unsigned short frames{}, last_fps_update_value{};
+        long long last_fps_update{};
 
         sf::Text mouse_position;
 

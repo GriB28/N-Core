@@ -2,7 +2,6 @@
 
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
-#include <iostream>
 using sf::Event;
 
 game::Level::Level(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
@@ -10,9 +9,6 @@ game::Level::Level(sf::RenderWindow *window_link, Fonts *fonts_link, Music *musi
 }
 
 game::Level::~Level() {
-    std::cout << ">> 'Level' destructor\n";
-    delete fonts;
-    delete music;
     delete level_generator;
 }
 

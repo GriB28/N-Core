@@ -15,7 +15,7 @@ long long get_time() {
     return std::chrono::duration_cast<std::chrono::microseconds>( std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
+game::Loading::Loading(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
     loading_text = new sf::Text;
     loading_text->setFont(*fonts->OCRA());
     loading_text->setString("|GriB28| presents...");
@@ -57,10 +57,6 @@ game::Loading::Loading(sf::RenderWindow *&window_link, Fonts *fonts_link, Music 
     );
 }
 game::Loading::~Loading() {
-    cout << ">> 'Loading' destructor\n";
-    delete fonts;
-    delete music;
-
     delete loading_text;
 
     delete awaiting_text;
@@ -129,9 +125,8 @@ void game::Loading::on_start() {
 }
 void game::Loading::on_end() {
     music->loading()->stop();
-    window->close();
-    delete window;
-    window = new sf::RenderWindow(sf::VideoMode::getDesktopMode(), "N-Core", sf::Style::Fullscreen);
+    window->create(sf::VideoMode::getDesktopMode(), "N-Core", sf::Style::Fullscreen);
+    window->setFramerateLimit(120);
     auto icon = sf::Image();
     icon.loadFromFile("icons/test.png");
     window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());

@@ -11,7 +11,7 @@
 namespace game {
     class Loading final : public Scene {
     public:
-        Loading(sf::RenderWindow *&window_link, Fonts *fonts_link, Music *music_link);
+        Loading(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link);
         ~Loading() override;
 
         int event(const sf::Event &event) override;
