@@ -64,11 +64,15 @@ void game::object::Generator::load_level(const string &level_id) {
         matrix[y] = new Object*[x_size];
         for (unsigned short x = 0; x < x_size; x++) {
             do { level_stream.get(input); cout << "  > input reference [" << y << ':' << x << "]: \""
-                << static_cast<short>(input) << "\"\n"; } while (input < '0');
+                << static_cast<short>(input) << "\"\n"; } while (input < ' ');
             switch (input) {
-                case '0':
+                case ' ':
                     cout << "\tmaking a 'void' object...\n";
                     matrix[y][x] = new Void(chapter);
+                    break;
+                case '0':
+                    cout << "\tmaking a 'killzone' object...\n";
+                    matrix[y][x] = new Void(chapter, true);
                     break;
                 case '1':
                     cout << "\tmaking a 'platform' object...\n";
