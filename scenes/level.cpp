@@ -6,6 +6,7 @@ using sf::Event;
 
 game::Level::Level(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
     level_generator = nullptr;
+    player = nullptr;
 }
 
 game::Level::~Level() {

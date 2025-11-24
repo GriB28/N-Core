@@ -28,18 +28,12 @@ game::Loading::Loading(sf::RenderWindow *window_link, Fonts *fonts_link, Music *
     awaiting_text->setString("press Space to continue");
     awaiting_text->setCharacterSize(20);
     awaiting_text->setFillColor(sf::Color(255, 255, 255, 0));
-    std::cout << "loaded text size: " << awaiting_text->getGlobalBounds().width << ", " <<
-        awaiting_text->getGlobalBounds().height << '\n';
     awaiting_text_void_texture = new sf::Texture();
     awaiting_text_void_texture->loadFromFile("resources/btns/void.png");
-    std::cout << "loaded texture size: " << awaiting_text_void_texture->getSize().x << ", " <<
-        awaiting_text_void_texture->getSize().y << '\n';
     awaiting_button.initialize(&awaiting_text, &awaiting_text_void_texture, &awaiting_text_void_texture);
     awaiting_button.set_default_sprite_scale(244, 16);
     awaiting_button.set_clicked_sprite_scale(244, 16);
-    std::cout << (*awaiting_button.get_sprite())->getPosition().x << '\n';
     awaiting_button.set_position((window->getSize().x - awaiting_text->getGlobalBounds().width) / 2, 600);
-    std::cout << (*awaiting_button.get_sprite())->getPosition().x << '\n';
     awaiting_flag = false;
 
     frogl2_counter = 0;
