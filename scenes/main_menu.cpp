@@ -33,8 +33,8 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
     load_level_txt->setFont(*fonts->OCRA());
     load_level_txt->setCharacterSize(20);
     load_level_txt->setFillColor(sf::Color(20, 20, 20));
-    load_level.init(&load_level_txt, &load_level_default_texture, &load_level_clicked_texture, false);
-    load_level.set_position(sf::Vector2f(500, 500));
+    load_level.initialize(&load_level_txt, &load_level_default_texture, &load_level_clicked_texture, false);
+    load_level.set_position(sf::Vector2f(800, 650));
     load_3_scene_flag = false;
 
     buttons1.push_back(&load_level);

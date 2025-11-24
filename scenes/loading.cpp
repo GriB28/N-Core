@@ -28,12 +28,18 @@ game::Loading::Loading(sf::RenderWindow *window_link, Fonts *fonts_link, Music *
     awaiting_text->setString("press Space to continue");
     awaiting_text->setCharacterSize(20);
     awaiting_text->setFillColor(sf::Color(255, 255, 255, 0));
+    std::cout << "loaded text size: " << awaiting_text->getGlobalBounds().width << ", " <<
+        awaiting_text->getGlobalBounds().height << '\n';
     awaiting_text_void_texture = new sf::Texture();
-    awaiting_text_void_texture->loadFromFile("resources/sprites/void.png");
-    awaiting_button.init(&awaiting_text, &awaiting_text_void_texture, &awaiting_text_void_texture);
-    awaiting_button.set_default_sprite_scale(250, 30);
-    awaiting_button.set_clicked_sprite_scale(250, 30);
+    awaiting_text_void_texture->loadFromFile("resources/btns/void.png");
+    std::cout << "loaded texture size: " << awaiting_text_void_texture->getSize().x << ", " <<
+        awaiting_text_void_texture->getSize().y << '\n';
+    awaiting_button.initialize(&awaiting_text, &awaiting_text_void_texture, &awaiting_text_void_texture);
+    awaiting_button.set_default_sprite_scale(244, 16);
+    awaiting_button.set_clicked_sprite_scale(244, 16);
+    std::cout << (*awaiting_button.get_sprite())->getPosition().x << '\n';
     awaiting_button.set_position((window->getSize().x - awaiting_text->getGlobalBounds().width) / 2, 600);
+    std::cout << (*awaiting_button.get_sprite())->getPosition().x << '\n';
     awaiting_flag = false;
 
     frogl2_counter = 0;
@@ -126,7 +132,7 @@ void game::Loading::on_start() {
 void game::Loading::on_end() {
     music->loading()->stop();
     window->create(sf::VideoMode::getDesktopMode(), "N-Core", sf::Style::Fullscreen);
-    window->setFramerateLimit(120);
+    // window->setFramerateLimit(120);
     auto icon = sf::Image();
     icon.loadFromFile("icons/test.png");
     window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());

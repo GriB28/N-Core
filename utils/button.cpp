@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <iostream>
 
 
 game::utils::Button::Button() {
@@ -21,11 +22,11 @@ game::utils::Button::~Button() {
     delete clicked_sprite;
 }
 
-void game::utils::Button::init(sf::Text** text, sf::Texture** default_, sf::Texture** clicked_, const bool &is_sticky) {
+void game::utils::Button::initialize(sf::Text** text, sf::Texture** default_, sf::Texture** clicked_, const bool &is_sticky) {
     set_text(text);
     set_default_texture(default_);
     set_clicked_texture(clicked_);
-    sticky = is_sticky;
+    set_stickiness(is_sticky);
 }
 
 void game::utils::Button::set_text(sf::Text** text) { text_ = *text; }
@@ -42,9 +43,11 @@ void game::utils::Button::set_clicked_texture(sf::Texture** clicked_, const floa
 }
 void game::utils::Button::set_default_sprite_scale(const float &scale_x, const float &scale_y) const {
     default_sprite->setScale(scale_x, scale_y);
+    std::cout << "new default sprite bounds: " << default_sprite->getGlobalBounds().width << ", " << default_sprite->getGlobalBounds().height << '\n';
 }
 void game::utils::Button::set_clicked_sprite_scale(const float &scale_x, const float &scale_y) const {
     clicked_sprite->setScale(scale_x, scale_y);
+    std::cout << "new clicked sprite bounds: " << clicked_sprite->getGlobalBounds().width << ", " << clicked_sprite->getGlobalBounds().height << '\n';
 }
 void game::utils::Button::set_stickiness(const bool &stickiness) { sticky = stickiness; }
 
@@ -83,9 +86,10 @@ void game::utils::Button::set_state(const bool &new_state) {
 void game::utils::Button::set_position(const sf::Vector2f &position) const {
     default_sprite->setPosition(position);
     clicked_sprite->setPosition(position);
+    std::cout << "current X: " << (*current_sprite)->getPosition().x << ", current Y: " << (*current_sprite)->getPosition().y << "\ncurrent GlB: " << (*current_sprite)->getGlobalBounds().width << ", " << (*current_sprite)->getGlobalBounds().height << '\n';
     text_->setPosition(
-        position.x + ((*current_sprite)->getGlobalBounds().width - text_->getGlobalBounds().width) / 2,
-        position.y + ((*current_sprite)->getGlobalBounds().height - text_->getGlobalBounds().height) / 2
+        position.x + ((*current_sprite)->getGlobalBounds().width - text_->getGlobalBounds().width) * (*current_sprite)->getScale().x / 2,
+        position.y + ((*current_sprite)->getGlobalBounds().height - text_->getGlobalBounds().height) * (*current_sprite)->getScale().y / 2 - 5
         );
 }
 void game::utils::Button::set_position(const float &x, const float &y) const {

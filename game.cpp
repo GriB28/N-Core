@@ -17,7 +17,7 @@ void game::Engine::initialize(const unsigned short &x, const unsigned short &y, 
     current_scene_index = 0;
 
     window = new sf::RenderWindow(sf::VideoMode({x, y}), "DSC");
-    window->setFramerateLimit(120);
+    // window->setFramerateLimit(120);
     closing_flag = false;
     fonts = fonts_link;
     music = music_link;

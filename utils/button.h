@@ -10,7 +10,7 @@ namespace game::utils {
     public:
         Button();
         ~Button();
-        void init(sf::Text** text, sf::Texture** default_, sf::Texture** clicked_, const bool &is_sticky = false);
+        void initialize(sf::Text** text, sf::Texture** default_, sf::Texture** clicked_, const bool &is_sticky = false);
 
         void set_default_texture(sf::Texture** default_, const float &scale_x = 1., const float &scale_y = 1.);
         void set_clicked_texture(sf::Texture** clicked_, const float &scale_x = 1., const float &scale_y = 1.);
