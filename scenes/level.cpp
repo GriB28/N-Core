@@ -11,6 +11,7 @@ game::Level::Level(sf::RenderWindow *window_link, Fonts *fonts_link, Music *musi
 
 game::Level::~Level() {
     delete level_generator;
+    delete player;
 }
 
 int game::Level::event(const Event &event) {
@@ -30,12 +31,16 @@ int game::Level::event(const Event &event) {
 }
 int game::Level::proceed() {
     level_generator->render_level(window);
+    player->draw_at(window);
     return 0;
 }
 
 void game::Level::on_start() {
     level_generator = new object::Generator("ch0", "test");
-    level_generator->set_scale(0.125);
+    player = new Player("test");
+    level_generator->set_scale(.125);
+    player->set_scale(.125);
+    player->set_position(300, 100);
     level_generator->set_offset(300, 100);
     music->DSC0()->play();
     music->DSC5()->stop();

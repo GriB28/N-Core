@@ -2,7 +2,7 @@
 #define LEVEL_H
 #include "scene.h"
 #include "../level/generator.h"
-#include "player/player.h"
+#include "../player/player.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
