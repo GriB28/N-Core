@@ -6,6 +6,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <string>
 using std::string;
+
 namespace game::object {
     class Object {
     public:
@@ -23,6 +24,11 @@ namespace game::object {
 
         void set_scale(const float &factor_x, const float &factor_y) const;
         void set_scale(const sf::Vector2f &scale) const;
+
+        string get_name() const;
+        string get_chapter_id() const;
+        string get_object_id() const;
+        string get_model_id() const;
 
         virtual void on_touch(const Player &player);
 

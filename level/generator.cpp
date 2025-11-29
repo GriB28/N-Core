@@ -48,6 +48,12 @@ void game::object::Generator::set_offset(const unsigned short &x, const unsigned
 void game::object::Generator::set_offset_x(const unsigned short &value) { x_offset = value; update_required = true; }
 void game::object::Generator::set_offset_y(const unsigned short &value) { y_offset = value; update_required = true; }
 
+Vector2f game::object::Generator::get_start_point_abs() const {
+    for (short y = 0; y < y_size; y++) for (short x = 0; x < x_size; x++)
+        if (matrix[y][x]->get_object_id() == "flag_spawn")
+            return Vector2f{x_offset + x * scale * sprite_size_const, y_offset + y * scale * sprite_size_const};
+    return Vector2f{0, 0};
+}
 
 void game::object::Generator::set_chapter_id(const string &chapter_id) {
     chapter = chapter_id;
@@ -107,11 +113,11 @@ void game::object::Generator::load_level(const string &level_id) {
 void game::object::Generator::update_positions() const {
     for (unsigned short y = 0; y < y_size; y++)
         for (unsigned short x = 0; x < x_size; x++) {
-            matrix[y][x]->set_position(x * scale * 1024, y * scale * 1024);
+            matrix[y][x]->set_position(x * scale * sprite_size_const, y * scale * sprite_size_const);
             matrix[y][x]->move(x_offset, y_offset);
             matrix[y][x]->constant_position_delta();
             cout << "sprite[" << y << ':' << x << "]: new position is set to "
-            << x_offset + x * scale * 1024 << ", " << y_offset + y * scale * 1024 << '\n';
+            << x_offset + x * scale * sprite_size_const << ", " << y_offset + y * scale * sprite_size_const << '\n';
         }
 }
 

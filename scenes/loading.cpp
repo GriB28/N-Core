@@ -17,7 +17,7 @@ long long get_time() {
 
 game::Loading::Loading(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
     loading_text = new sf::Text;
-    loading_text->setFont(*fonts->OCRA());
+    loading_text->setFont(*fonts->pixel2());
     loading_text->setString("|GriB28| presents...");
     loading_text->setFillColor(sf::Color(220, 220, 220));
     loading_text->setCharacterSize(50);
@@ -78,6 +78,9 @@ int game::Loading::event(const Event &event) {
             case Keyboard::Space:
                 return_code = awaiting_flag * 2;
                 break;
+            case Keyboard::End:
+                return_code = 2;
+                break;
             default:
                 return_code = 0;
                 break;
@@ -87,11 +90,11 @@ int game::Loading::event(const Event &event) {
         if (awaiting_button.is_clicked()) return_code = awaiting_flag * 2;
         else return_code = 0;
     }
-    else return_code = 0;
+    else return_code = 2;
 
     return return_code;
 }
-int game::Loading::proceed() {
+int game::Loading::proceed() {/*
     if (frogl2_counter < 96) {
         if (get_time() - frogl2_timer >= frogl2_frame_timestamp) {
             frogl2_texture->loadFromFile("resources/frogl2/" + std::to_string(frogl2_counter) + ".jpg");
@@ -117,7 +120,7 @@ int game::Loading::proceed() {
     window->draw(*loading_text);
     window->draw(*alliance_text);
     awaiting_button.draw_at(window);
-    return 0;
+    */return 0;
 }
 
 void game::Loading::on_start() {

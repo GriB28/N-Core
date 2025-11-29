@@ -16,11 +16,14 @@ namespace game::object {
         void set_offset(const unsigned short &x, const unsigned short &y);
         void set_offset_x(const unsigned short &value);
         void set_offset_y(const unsigned short &value);
+
+        [[nodiscard]] sf::Vector2f get_start_point_abs() const;
     private:
         void update_positions() const;
 
         string name, chapter;
         float scale;
+        unsigned short sprite_size_const = 1024;
         unsigned short x_size, y_size, x_offset, y_offset;
         bool update_required;
         Object*** matrix;

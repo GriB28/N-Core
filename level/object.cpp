@@ -57,6 +57,11 @@ void game::object::Object::set_scale(const sf::Vector2f &scale) const {
     set_scale(scale.x, scale.x);
 }
 
+string game::object::Object::get_name() const { return chapter_id + '/' + object_id + '/' + model_id; }
+string game::object::Object::get_chapter_id() const { return chapter_id; }
+string game::object::Object::get_object_id() const { return object_id ; }
+string game::object::Object::get_model_id() const { return model_id; }
+
 void game::object::Object::on_touch(const Player &player) {}
 
 void game::object::Object::draw_at(sf::RenderWindow *window) const {

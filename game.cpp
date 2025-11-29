@@ -58,14 +58,14 @@ game::Engine::~Engine() {
 
 
 void game::Engine::loop() {
-    sf::Event event{};
+    Event event{};
 
     while (window->isOpen()) {
         window->clear();
 
         while (window->pollEvent(event)) {
             proceed_event_on_scenes(event);
-            if (event.type == sf::Event::Closed) {
+            if (event.type == Event::Closed) {
                 window->close();
                 return;
             }
@@ -116,7 +116,7 @@ void game::Engine::loop() {
     }
 }
 
-void game::Engine::proceed_event_on_scenes(const sf::Event &event) {
+void game::Engine::proceed_event_on_scenes(const Event &event) {
     if (current_scene_index > 0) {
         const int return_code = scenes[current_scene_index]->event(event);
         update_scene_index(return_code);
