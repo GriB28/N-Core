@@ -31,7 +31,7 @@ game::object::Generator::~Generator() {
     delete[] matrix;
 }
 
-void game::object::Generator::set_scale(const float &coefficient) {
+void game::object::Generator::set_scale(const float coefficient) {
     scale = coefficient;
     if (x_size != 0 && y_size != 0)
         for (unsigned short y = 0; y < y_size; y++)
@@ -40,13 +40,13 @@ void game::object::Generator::set_scale(const float &coefficient) {
     update_required = true;
 }
 
-void game::object::Generator::set_offset(const unsigned short &x, const unsigned short &y) {
+void game::object::Generator::set_offset(const unsigned short x, unsigned short y) {
     set_offset_x(x);
     set_offset_y(y);
     update_required = true;
 }
-void game::object::Generator::set_offset_x(const unsigned short &value) { x_offset = value; update_required = true; }
-void game::object::Generator::set_offset_y(const unsigned short &value) { y_offset = value; update_required = true; }
+void game::object::Generator::set_offset_x(const unsigned short value) { x_offset = value; update_required = true; }
+void game::object::Generator::set_offset_y(const unsigned short value) { y_offset = value; update_required = true; }
 
 Vector2f game::object::Generator::get_start_point_abs() const {
     for (short y = 0; y < y_size; y++) for (short x = 0; x < x_size; x++)

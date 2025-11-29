@@ -15,20 +15,20 @@ namespace game::object {
 
         void reset_sprite(const string &object, const string &model = "");
 
-        void set_position(const float &x, const float &y) const;
+        void set_position(float x, float y) const;
         void set_position(const sf::Vector2f &position) const;
-        void move(const float &dx, const float &dy) const;
+        void move(float dx, float dy) const;
         void move(const sf::Vector2f &delta) const;
 
         void virtual constant_position_delta();
 
-        void set_scale(const float &factor_x, const float &factor_y) const;
+        void set_scale(float factor_x, float factor_y) const;
         void set_scale(const sf::Vector2f &scale) const;
 
-        string get_name() const;
-        string get_chapter_id() const;
-        string get_object_id() const;
-        string get_model_id() const;
+        [[nodiscard]] string get_name() const;
+        [[nodiscard]] string get_chapter_id() const;
+        [[nodiscard]] string get_object_id() const;
+        [[nodiscard]] string get_model_id() const;
 
         virtual void on_touch(const Player &player);
 

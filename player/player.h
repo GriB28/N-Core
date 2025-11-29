@@ -10,19 +10,19 @@ namespace game {
         explicit Player(const std::string &name);
         ~Player();
 
-        void set_scale(const float &coefficient);
+        void set_scale(float coefficient);
 
-        void set_offset(const float &x, const float &y);
-        void set_offset_x(const float &value);
-        void set_offset_y(const float &value);
+        void set_offset(float x, float y);
+        void set_offset_x(float value);
+        void set_offset_y(float value);
 
-        void set_abs_position(const float &x, const float &y);
-        void abs_move_straight(const float &dx, const float &dy);
+        void set_abs_position(float x, float y);
+        void abs_move_straight(float dx, float dy);
 
-        void set_position(const float &x, const float &y);
-        void move_straight(const float &dx, const float &dy);
+        void set_position(float x, float y);
+        void move_straight(float dx, float dy);
 
-        void move(const float &dx, const float &dy);
+        void move(float dx, float dy);
 
         void draw_at(sf::RenderWindow* window);
     private:

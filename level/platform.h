@@ -7,7 +7,7 @@
 namespace game::object {
     class Platform final : public Object {
     public:
-        explicit Platform(const std::string &chapter_id, const bool &is_spawn = false, const bool &is_end = false, const bool &has_ladder = false);
+        explicit Platform(const std::string &chapter_id, bool is_spawn = false, bool is_end = false, bool has_ladder = false);
         void constant_position_delta() override;
         void on_touch(const Player &player) override;
     private:

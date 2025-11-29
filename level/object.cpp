@@ -35,13 +35,13 @@ void game::object::Object::reset_sprite(const string &object, const string &mode
     sprite->setTexture(*texture);
 }
 
-void game::object::Object::set_position(const float &x, const float &y) const {
+void game::object::Object::set_position(const float x, const float y) const {
     sprite->setPosition(x, y);
 }
 void game::object::Object::set_position(const sf::Vector2f &position) const {
     set_position(position.x, position.y);
 }
-void game::object::Object::move(const float &dx, const float &dy) const {
+void game::object::Object::move(const float dx, const float dy) const {
     sprite->move(dx, dy);
 }
 void game::object::Object::move(const sf::Vector2f &delta) const {
@@ -50,7 +50,7 @@ void game::object::Object::move(const sf::Vector2f &delta) const {
 
 void game::object::Object::constant_position_delta() {}
 
-void game::object::Object::set_scale(const float &factor_x, const float &factor_y) const {
+void game::object::Object::set_scale(const float factor_x, const float factor_y) const {
     sprite->setScale(factor_x, factor_y);
 }
 void game::object::Object::set_scale(const sf::Vector2f &scale) const {

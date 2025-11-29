@@ -12,11 +12,11 @@ using std::string;
 namespace game {
     class Engine {
     public:
-        Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link = nullptr, Music *music_link = nullptr);
+        Engine(unsigned short x, unsigned short y, Fonts *fonts_link = nullptr, Music *music_link = nullptr);
         ~Engine();
         int current_scene_index{};
     private:
-        void initialize(const unsigned short &x, const unsigned short &y, Fonts *fonts_link, Music *music_link);
+        void initialize(unsigned short x, unsigned short y, Fonts *fonts_link, Music *music_link);
         Scene **scenes{};
         sf::RenderWindow *window{};
         bool closing_flag{};
@@ -35,7 +35,7 @@ namespace game {
         void proceed_event_on_scenes(const sf::Event &event);
         void proceed_scenes();
 
-        void update_scene_index(const int &return_code);
+        void update_scene_index(int return_code);
     };
 }
 

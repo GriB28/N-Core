@@ -12,10 +12,10 @@ namespace game::object {
         void load_level(const string &level_id);
         void render_level(sf::RenderWindow* window);
 
-        void set_scale(const float &coefficient);
-        void set_offset(const unsigned short &x, const unsigned short &y);
-        void set_offset_x(const unsigned short &value);
-        void set_offset_y(const unsigned short &value);
+        void set_scale(float coefficient);
+        void set_offset(unsigned short x, unsigned short y);
+        void set_offset_x(unsigned short value);
+        void set_offset_y(unsigned short value);
 
         [[nodiscard]] sf::Vector2f get_start_point_abs() const;
     private:

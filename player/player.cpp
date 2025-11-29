@@ -6,7 +6,7 @@
 #include <iostream>
 
 
-bool epsilon(const float &value, const float &target, const float &radius) {
+bool epsilon(const float value, const float target, const float radius) {
     return value >= target - radius && value <= target + radius;
 }
 
@@ -30,25 +30,25 @@ game::Player::~Player() {
     delete texture;
 }
 
-void game::Player::set_abs_position(const float &x, const float &y) {
+void game::Player::set_abs_position(const float x, const float y) {
     this->x = x;
     this->y = y;
     update_required = true;
 }
-void game::Player::abs_move_straight(const float &dx, const float &dy) {
+void game::Player::abs_move_straight(const float dx, const float dy) {
     x += dx;
     y += dy;
     update_required = true;
 }
 
-void game::Player::set_position(const float &x, const float &y) {
+void game::Player::set_position(const float x, const float y) {
     set_abs_position(x * sprite_size_const * scale, y * sprite_size_const * scale);
 }
-void game::Player::move_straight(const float &dx, const float &dy) {
+void game::Player::move_straight(const float dx, const float dy) {
     abs_move_straight(dx * sprite_size_const * scale, dy * sprite_size_const * scale);
 }
 
-void game::Player::move(const float &dx, const float &dy) {
+void game::Player::move(const float dx, const float dy) {
     std::cout << "[player/move]\tin move function;\n";
     if (moves_blocked) {
         std::cout << "\taction blocked\n";
@@ -69,19 +69,19 @@ void game::Player::move(const float &dx, const float &dy) {
     << dy * sprite_size_const * scale << '\n';
 }
 
-void game::Player::set_scale(const float &coefficient) {
+void game::Player::set_scale(const float coefficient) {
     scale = coefficient;
     sprite->setScale(scale, scale);
     update_required = true;
 }
 
-void game::Player::set_offset(const float &x, const float &y) {
+void game::Player::set_offset(const float x, const float y) {
     set_offset_x(x);
     set_offset_y(y);
     update_required = true;
 }
-void game::Player::set_offset_x(const float &value) { x_offset = value; update_required = true; }
-void game::Player::set_offset_y(const float &value) { y_offset = value; update_required = true; }
+void game::Player::set_offset_x(const float value) { x_offset = value; update_required = true; }
+void game::Player::set_offset_y(const float value) { y_offset = value; update_required = true; }
 
 
 void game::Player::set_sprite(const std::string &name) {

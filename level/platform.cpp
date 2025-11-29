@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-game::object::Platform::Platform(const std::string &chapter_id, const bool &is_spawn, const bool &is_end, const bool &has_ladder) : Object(chapter_id) {
+game::object::Platform::Platform(const std::string &chapter_id, const bool is_spawn, const bool is_end, const bool has_ladder) : Object(chapter_id) {
     this->has_ladder = has_ladder;
     this->is_spawn = is_spawn;
     this->is_end = is_end;

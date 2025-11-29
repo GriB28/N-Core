@@ -8,12 +8,12 @@
 using std::to_string;
 
 
-game::Engine::Engine(const unsigned short &x, const unsigned short &y, Fonts *fonts_link, Music *music_link) {
+game::Engine::Engine(const unsigned short x, const unsigned short y, Fonts *fonts_link, Music *music_link) {
     if (fonts_link == nullptr) fonts_link = Fonts::instance();
     if (music_link == nullptr) music_link = Music::instance();
     initialize(x, y, fonts_link, music_link);
 }
-void game::Engine::initialize(const unsigned short &x, const unsigned short &y, Fonts *fonts_link, Music *music_link) {
+void game::Engine::initialize(const unsigned short x, const unsigned short y, Fonts *fonts_link, Music *music_link) {
     current_scene_index = 0;
 
     window = new sf::RenderWindow(sf::VideoMode({x, y}), "DSC");
@@ -129,7 +129,7 @@ void game::Engine::proceed_scenes() {
     }
 }
 
-void game::Engine::update_scene_index(const int &return_code) {
+void game::Engine::update_scene_index(const int return_code) {
     if (return_code != 0) {
         if (current_scene_index > 0)
             scenes[current_scene_index]->on_end();
