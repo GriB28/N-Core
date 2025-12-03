@@ -30,7 +30,7 @@ namespace game::object {
         [[nodiscard]] string get_object_id() const;
         [[nodiscard]] string get_model_id() const;
 
-        virtual void on_touch(const Player &player);
+        virtual void interact(Player *player);
 
         void draw_at(sf::RenderWindow* window) const;
     protected:

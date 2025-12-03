@@ -23,6 +23,7 @@ namespace game {
         Player* player;
 
         void check_movement_keys(const sf::Keyboard::Key &keycode) const;
+        void check_position() const;
     };
 }
 #endif

@@ -23,6 +23,6 @@ void game::object::Platform::constant_position_delta() {
         sprite->move(0, (1024-1260) * sprite->getScale().y);
 }
 
-void game::object::Platform::on_touch(const Player &player) {
+void game::object::Platform::interact(Player *player) {
     std::cout << "touched a player\n";
 }

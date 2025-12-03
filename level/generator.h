@@ -17,6 +17,8 @@ namespace game::object {
         void set_offset_x(unsigned short value);
         void set_offset_y(unsigned short value);
 
+        [[nodiscard]] Object* get_tile(short x, short y) const;
+
         [[nodiscard]] sf::Vector2f get_start_point_abs() const;
     private:
         void update_positions() const;

@@ -78,10 +78,17 @@ void game::Player::set_scale(const float coefficient) {
 void game::Player::set_offset(const float x, const float y) {
     set_offset_x(x);
     set_offset_y(y);
+}
+void game::Player::set_offset_x(const float value) {
+    x_offset = value;
+    local_x = value / sprite_size_const;
     update_required = true;
 }
-void game::Player::set_offset_x(const float value) { x_offset = value; update_required = true; }
-void game::Player::set_offset_y(const float value) { y_offset = value; update_required = true; }
+void game::Player::set_offset_y(const float value) {
+    y_offset = value;
+    local_y = value / sprite_size_const;
+    update_required = true;
+}
 
 
 void game::Player::set_sprite(const std::string &name) {
@@ -91,6 +98,10 @@ void game::Player::set_sprite(const std::string &name) {
     texture = new sf::Texture;
     texture->loadFromFile("resources/sprites/player/" + name + ".png");
     sprite->setTexture(*texture);
+}
+
+sf::Vector2<short> game::Player::get_position() const {
+    return sf::Vector2{local_x, local_y};
 }
 
 void game::Player::update_positions() const {

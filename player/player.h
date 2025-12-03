@@ -24,6 +24,8 @@ namespace game {
 
         void move(float dx, float dy);
 
+        [[nodiscard]] sf::Vector2<short> get_position() const;
+
         void draw_at(sf::RenderWindow* window);
     private:
         Player();

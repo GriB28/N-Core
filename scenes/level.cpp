@@ -2,6 +2,7 @@
 
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
+#include <iostream>
 
 
 game::Level::Level(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
@@ -58,7 +59,14 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) const {
         default:
             break;
     }
+    check_position();
 }
+void game::Level::check_position() const {
+    const auto player_position = player->get_position();
+    std::cout << "[level/check_position] player coords: " << player_position.x << ", " << player_position.y << '\n';
+    level_generator->get_tile(player_position.x, player_position.y - 1)->interact(player);
+}
+
 int game::Level::proceed() {
     level_generator->render_level(window);
     player->draw_at(window);

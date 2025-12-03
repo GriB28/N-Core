@@ -7,7 +7,7 @@ namespace game::object {
     public:
         explicit Void(const string &chapter_id, bool is_kill_zone = false);
 
-        void on_touch(const Player &player) override;
+        void interact(Player *player) override;
     private:
         bool is_kill_zone;
     };

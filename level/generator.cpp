@@ -110,6 +110,10 @@ void game::object::Generator::load_level(const string &level_id) {
     update_required = true;
 }
 
+game::object::Object* game::object::Generator::get_tile(short x, short y) const {
+    return matrix[y][x];
+}
+
 void game::object::Generator::update_positions() const {
     for (unsigned short y = 0; y < y_size; y++)
         for (unsigned short x = 0; x < x_size; x++) {

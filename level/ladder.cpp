@@ -11,6 +11,6 @@ void game::object::Ladder::constant_position_delta() {
     sprite->move(0, (1024-1260) * sprite->getScale().y);
 }
 
-void game::object::Ladder::on_touch(const Player &player) {
+void game::object::Ladder::interact(Player *player) {
     std::cout << "touched a player\n";
 }
