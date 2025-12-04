@@ -31,41 +31,53 @@ int game::Level::event(const Event &event) {
     return return_code;
 }
 void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) const {
+    const auto player_position = player->get_position();
+    const short x = player_position.x, y = player_position.y;
+    std::cout << "[level/check_movement_keys] player coords: " << x << ", " << y << '\n';
+
+    bool do_move = true;
+    short dx = 0, dy = 0;
     switch (keycode) {
         case sf::Keyboard::W:
-            player->move(0, -1);
+            dy = -1;
             break;
         case sf::Keyboard::A:
-            player->move(-1, 0);
+            dx = -1;
             break;
         case sf::Keyboard::S:
-            player->move(0, 1);
+            dy = 1;
             break;
         case sf::Keyboard::D:
-            player->move(1, 0);
+            dx = 1;
             break;
         case sf::Keyboard::Up:
-            player->move(0, -1);
+            dy = -1;
             break;
         case sf::Keyboard::Left:
-            player->move(-1, 0);
+            dx = -1;
             break;
         case sf::Keyboard::Down:
-            player->move(0, 1);
+            dy = 1;
             break;
         case sf::Keyboard::Right:
-            player->move(1, 0);
+            dx = 1;
             break;
         default:
+            do_move = false;
             break;
     }
-    check_position();
+    if (do_move &&
+        0 <= x+dx && x+dx < level_generator->get_matrix_size().x &&
+        0 <= y+dy && y+dy < level_generator->get_matrix_size().y) {
+        const auto origin = level_generator->get_tile(x, y);
+        const auto target = level_generator->get_tile(x+dx, y+dy);
+        if (!target->is_blocked_move_origin(x, y) && !origin->is_blocked_move_target(x+dx, y+dy)) {
+            origin->walk_out(player);
+            player->move(dx, dy);
+            target->walk_in(player);
+        }
+    }
 }
-void game::Level::check_position() const {/*
-    const auto player_position = player->get_position();
-    std::cout << "[level/check_position] player coords: " << player_position.x << ", " << player_position.y << '\n';
-    level_generator->get_tile(player_position.x, player_position.y - 1)->walk_in(player);
-*/}
 
 int game::Level::proceed() {
     level_generator->render_level(window);
@@ -75,14 +87,13 @@ int game::Level::proceed() {
 
 void game::Level::on_start() {
     level_generator = new object::Generator("ch0", "test");
-    player = new Player("test");
-
     level_generator->set_scale(.125);
     level_generator->set_abs_offset(300, 100);
 
+    const auto start_pos = level_generator->get_start_point();
+    player = new Player("test", start_pos.x, start_pos.y);
     player->set_scale(.125);
-    const auto start_pos = level_generator->get_start_point_abs();
-    player->set_abs_offset(start_pos.x, start_pos.y);
+    player->set_abs_offset(300, 100);
 
     music->DSC0()->play();
     music->DSC5()->stop();

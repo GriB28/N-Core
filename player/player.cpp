@@ -26,6 +26,7 @@ game::Player::Player() {
     texture = nullptr;
 }
 game::Player::Player(const std::string &name) : Player() { set_sprite(name); }
+game::Player::Player(const std::string &name, const short x, const short y) : Player(name) { set_position(x, y); }
 game::Player::~Player() {
     delete sprite;
     delete texture;
@@ -34,6 +35,8 @@ game::Player::~Player() {
 void game::Player::set_position(const short x, const short y) {
     local_x = x;
     local_y = y;
+    this->x = local_x * scale * sprite_size_const;
+    this->y = local_y * scale * sprite_size_const;
     position_update_required = true;
 }
 
@@ -45,13 +48,13 @@ bool game::Player::move(const short dx, const short dy) {
     }
     moves_blocked = true;
     move_clock.restart();
-    target_x = x + dx * sprite_size_const * scale;
-    initial_x = x;
-    target_y = y + dy * sprite_size_const * scale;
-    initial_y = y;
 
-    local_x = target_x / sprite_size_const;
-    local_y = target_y / sprite_size_const;
+    local_x += dx;
+    local_y += dy;
+    target_x = local_x * sprite_size_const * scale;
+    initial_x = x;
+    target_y = local_y * sprite_size_const * scale;
+    initial_y = y;
 
     std::cout << "\tnon-blocking, setting parameters:\n\ttarget_x=" << target_x << ",\n\ttarget_y=" << target_y << ",\n\tinitial_x="
     << initial_x << ",\n\tinitial_y=" << initial_y << ",\n\tcalculated deltas: x=" << dx * sprite_size_const * scale << ", y="
@@ -70,15 +73,12 @@ void game::Player::set_abs_offset(const float x_offset, const float y_offset) {
 }
 void game::Player::set_abs_offset_x(const float value) {
     x_abs_offset = value;
-    local_x = value / sprite_size_const;
     position_update_required = true;
 }
 void game::Player::set_abs_offset_y(const float value) {
     y_abs_offset = value;
-    local_y = value / sprite_size_const;
     position_update_required = true;
 }
-
 
 void game::Player::set_sprite(const std::string &name) {
     if (sprite != nullptr) delete sprite;
@@ -94,13 +94,17 @@ sf::Vector2<short> game::Player::get_position() const {
 }
 
 void game::Player::update_positions() const {
-    std::cout << "[player/drawcall]\tcasted a position update: new x = " << x + x_abs_offset << ", new y = " << y + y_abs_offset << '\n';
+    std::cout << "[player/drawcall]\tcasted a position update: new x = " << x << ", new y = " << y << '\n';
+    std::cout << "\t\t\tcasted an offset update: +x = " << x_abs_offset << ", +y = " << y_abs_offset << '\n';
     sprite->setPosition(x, y);
     sprite->move(x_abs_offset, y_abs_offset);
 }
-void game::Player::update_scales() const {
+void game::Player::update_scales() {
     std::cout << "[player/drawcall]\tcasted a scale update: new x = " << scale << ", new y = " << scale << '\n';
+    const float old = sprite->getScale().x;
     sprite->setScale(scale, scale);
+    x *= scale / old;
+    y *= scale / old;
 }
 
 void game::Player::draw_at(sf::RenderWindow* window) {

@@ -33,6 +33,9 @@ namespace game::object {
         [[nodiscard]] string get_object_id() const;
         [[nodiscard]] string get_model_id() const;
 
+        virtual bool is_blocked_move_origin(short x, short y);
+        virtual bool is_blocked_move_target(short x, short y);
+
         virtual void interact(Player* player);
         virtual void walk_in(Player* player);
         virtual void walk_out(Player* player);

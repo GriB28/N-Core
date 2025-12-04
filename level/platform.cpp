@@ -26,6 +26,13 @@ void game::object::Platform::constant_position_delta() const {
         sprite->move(0, (1024-1260) * sprite->getScale().y);
 }
 
+bool game::object::Platform::is_blocked_move_origin(short x, short y) {
+    return y == local_y + 1;
+}
+bool game::object::Platform::is_blocked_move_target(short x, short y) {
+    return y == local_y + 1;
+}
+
 void game::object::Platform::walk_in(Player *player) {
     std::cout << "a player has walked in\n";
     if (is_end) {}

@@ -17,8 +17,10 @@ namespace game::object {
         void set_abs_offset_y(float value);
 
         [[nodiscard]] Object* get_tile(short x, short y) const;
+        [[nodiscard]] sf::Vector2<unsigned short> get_matrix_size() const;
 
         [[nodiscard]] sf::Vector2f get_start_point_abs() const;
+        [[nodiscard]] sf::Vector2<short> get_start_point() const;
     private:
         Generator();
         unsigned short x_size, y_size;

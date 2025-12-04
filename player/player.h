@@ -8,6 +8,7 @@ namespace game {
     class Player {
     public:
         explicit Player(const std::string &name);
+        explicit Player(const std::string &name, short x, short y);
         ~Player();
 
         void set_scale(float coefficient);
@@ -41,7 +42,7 @@ namespace game {
 
         bool position_update_required, scale_update_required;
         void update_positions() const;
-        void update_scales() const;
+        void update_scales();
     };
 }
 #endif

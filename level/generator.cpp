@@ -49,10 +49,17 @@ void game::object::Generator::set_abs_offset_y(const float value) {
 }
 
 Vector2f game::object::Generator::get_start_point_abs() const {
+    const auto start_point = get_start_point();
+    return Vector2f{
+        start_point.x * scale * sprite_size_const + x_abs_offset,
+        start_point.y * scale * sprite_size_const + y_abs_offset,
+    };
+}
+sf::Vector2<short> game::object::Generator::get_start_point() const {
     for (short y = 0; y < y_size; y++) for (short x = 0; x < x_size; x++)
         if (matrix[y][x]->get_object_id() == "flag_spawn")
-            return Vector2f{x_abs_offset + x * scale * sprite_size_const, y_abs_offset + y * scale * sprite_size_const};
-    return Vector2f{0, 0};
+            return sf::Vector2{x, y};
+    return sf::Vector2<short>{0, 0};
 }
 
 void game::object::Generator::set_chapter_id(const string &chapter_id) {
@@ -73,9 +80,9 @@ void game::object::Generator::load_level(const string &level_id) {
                 level_stream.get(input);
                 cout << "\t> input reference [" << y << ':' << x << "]: \""
                 << static_cast<short>(input) << "\"\n";
-            } while (input < ' ');
+            } while (input < '0');
             switch (input) {
-                case ' ':
+                case '_':
                     cout << "\tmaking a 'void' object...\n";
                     matrix[y][x] = new Void(chapter, x, y);
                     break;
@@ -116,6 +123,9 @@ void game::object::Generator::load_level(const string &level_id) {
 
 game::object::Object* game::object::Generator::get_tile(short x, short y) const {
     return matrix[y][x];
+}
+sf::Vector2<unsigned short> game::object::Generator::get_matrix_size() const {
+    return sf::Vector2{x_size, y_size};
 }
 
 void game::object::Generator::update_position_offsets() const {
