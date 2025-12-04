@@ -4,14 +4,17 @@
 #include <iostream>
 
 
-game::object::Void::Void(const string &chapter_id, const bool is_kill_zone) : Object(chapter_id) {
+game::object::Void::Void(
+    const string &chapter_id, const short x, const short y,
+    const bool is_kill_zone
+    ) : Object(chapter_id, x, y) {
     this->is_kill_zone = is_kill_zone;
     reset_sprite("void", "1");
     std::cout << "\ta flag has been successfully created\n";
 }
 
-void game::object::Void::interact(Player *player) {
-    std::cout << "[void/interact] player instance: " << player << '\n';
+void game::object::Void::walk_in(Player* player) {
+    std::cout << "[void/walk_in] player instance: " << player << '\n';
 
     player->move(0, 1);
 }

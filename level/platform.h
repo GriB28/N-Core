@@ -7,9 +7,12 @@
 namespace game::object {
     class Platform final : public Object {
     public:
-        explicit Platform(const std::string &chapter_id, bool is_spawn = false, bool is_end = false, bool has_ladder = false);
-        void constant_position_delta() override;
-        void interact(Player *player) override;
+        explicit Platform(
+            const string &chapter_id, short x, short y,
+            bool is_spawn = false, bool is_end = false, bool has_ladder = false
+            );
+        void constant_position_delta() const override;
+        void walk_in(Player *player) override;
     private:
         bool has_ladder, is_spawn, is_end;
     };

@@ -3,7 +3,10 @@
 #include <iostream>
 
 
-game::object::Platform::Platform(const std::string &chapter_id, const bool is_spawn, const bool is_end, const bool has_ladder) : Object(chapter_id) {
+game::object::Platform::Platform(
+    const string &chapter_id, const short x, const short y,
+    const bool is_spawn, const bool is_end, const bool has_ladder
+    ) : Object(chapter_id, x, y) {
     this->has_ladder = has_ladder;
     this->is_spawn = is_spawn;
     this->is_end = is_end;
@@ -18,11 +21,12 @@ game::object::Platform::Platform(const std::string &chapter_id, const bool is_sp
         reset_sprite("platform");
     std::cout << "\ta platform has been successfully created\n";
 }
-void game::object::Platform::constant_position_delta() {
+void game::object::Platform::constant_position_delta() const {
     if (object_id == "platform_ladder")
         sprite->move(0, (1024-1260) * sprite->getScale().y);
 }
 
-void game::object::Platform::interact(Player *player) {
-    std::cout << "touched a player\n";
+void game::object::Platform::walk_in(Player *player) {
+    std::cout << "a player has walked in\n";
+    if (is_end) {}
 }

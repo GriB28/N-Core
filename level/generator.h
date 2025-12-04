@@ -4,7 +4,6 @@
 namespace game::object {
     class Generator {
     public:
-        Generator();
         explicit Generator(const string &chapter_id, const string &level_id);
         ~Generator();
 
@@ -13,22 +12,26 @@ namespace game::object {
         void render_level(sf::RenderWindow* window);
 
         void set_scale(float coefficient);
-        void set_offset(unsigned short x, unsigned short y);
-        void set_offset_x(unsigned short value);
-        void set_offset_y(unsigned short value);
+        void set_abs_offset(float x, float y);
+        void set_abs_offset_x(float value);
+        void set_abs_offset_y(float value);
 
         [[nodiscard]] Object* get_tile(short x, short y) const;
 
         [[nodiscard]] sf::Vector2f get_start_point_abs() const;
     private:
-        void update_positions() const;
+        Generator();
+        unsigned short x_size, y_size;
+        float x_abs_offset, y_abs_offset, scale;
+
+        unsigned short sprite_size_const = 1024;
 
         string name, chapter;
-        float scale;
-        unsigned short sprite_size_const = 1024;
-        unsigned short x_size, y_size, x_offset, y_offset;
-        bool update_required;
         Object*** matrix;
+
+        bool offset_update_required, scale_update_required;
+        void update_position_offsets() const;
+        void update_scales() const;
     };
 }
 #endif

@@ -5,9 +5,8 @@
 namespace game::object {
     class Ladder final : public Object {
     public:
-        explicit Ladder(const string &chapter_id);
-        void constant_position_delta() override;
-        void interact(Player *player) override;
+        explicit Ladder(const string &chapter_id, short x, short y);
+        void constant_position_delta() const override;
     };
 }
 #endif

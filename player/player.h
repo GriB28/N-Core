@@ -12,40 +12,36 @@ namespace game {
 
         void set_scale(float coefficient);
 
-        void set_offset(float x, float y);
-        void set_offset_x(float value);
-        void set_offset_y(float value);
+        void set_abs_offset(float x_offset, float y_offset);
+        void set_abs_offset_x(float value);
+        void set_abs_offset_y(float value);
 
-        void set_abs_position(float x, float y);
-        void abs_move_straight(float dx, float dy);
-
-        void set_position(float x, float y);
-        void move_straight(float dx, float dy);
-
-        void move(float dx, float dy);
+        void set_position(short x, short y);
+        bool move(short dx, short dy);
 
         [[nodiscard]] sf::Vector2<short> get_position() const;
 
         void draw_at(sf::RenderWindow* window);
     private:
         Player();
+        float x, y, x_abs_offset, y_abs_offset, scale;
         short local_x, local_y;
-        float x, y, x_offset, y_offset;
-        short sprite_size_const = 1024;
+
+        float sprite_size_const = 1024;
         float animation_time = 250;
         float precision_radius = 1;
-        float scale;
 
         void set_sprite(const std::string &name);
         sf::Sprite* sprite;
         sf::Texture* texture;
 
         bool moves_blocked;
-        short target_x, target_y, initial_x, initial_y;
+        float target_x, target_y, initial_x, initial_y;
         sf::Clock move_clock;
 
-        bool update_required;
+        bool position_update_required, scale_update_required;
         void update_positions() const;
+        void update_scales() const;
     };
 }
 #endif

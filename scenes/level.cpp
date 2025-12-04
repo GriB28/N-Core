@@ -61,11 +61,11 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) const {
     }
     check_position();
 }
-void game::Level::check_position() const {
+void game::Level::check_position() const {/*
     const auto player_position = player->get_position();
     std::cout << "[level/check_position] player coords: " << player_position.x << ", " << player_position.y << '\n';
-    level_generator->get_tile(player_position.x, player_position.y - 1)->interact(player);
-}
+    level_generator->get_tile(player_position.x, player_position.y - 1)->walk_in(player);
+*/}
 
 int game::Level::proceed() {
     level_generator->render_level(window);
@@ -78,11 +78,11 @@ void game::Level::on_start() {
     player = new Player("test");
 
     level_generator->set_scale(.125);
-    level_generator->set_offset(300, 100);
+    level_generator->set_abs_offset(300, 100);
 
     player->set_scale(.125);
     const auto start_pos = level_generator->get_start_point_abs();
-    player->set_offset(start_pos.x, start_pos.y);
+    player->set_abs_offset(start_pos.x, start_pos.y);
 
     music->DSC0()->play();
     music->DSC5()->stop();
