@@ -10,16 +10,16 @@ namespace game::utils {
     public:
         Button();
         ~Button();
-        void initialize(sf::Text** text, sf::Texture** default_, sf::Texture** clicked_, bool is_sticky = false);
+        void initialize(sf::Text* text, sf::Texture* default_, sf::Texture* clicked_, bool is_sticky = false);
 
-        void set_default_texture(sf::Texture** default_, float scale_x = 1., float scale_y = 1.);
-        void set_clicked_texture(sf::Texture** clicked_, float scale_x = 1., float scale_y = 1.);
+        void set_default_texture(sf::Texture* default_, float scale_x = 1., float scale_y = 1.);
+        void set_clicked_texture(sf::Texture* clicked_, float scale_x = 1., float scale_y = 1.);
         void set_default_sprite_scale(float scale_x, float scale_y) const;
         void set_clicked_sprite_scale(float scale_x, float scale_y) const;
 
         void set_stickiness(const bool &stickiness);
 
-        void set_text(sf::Text** text);
+        void set_text(sf::Text* text);
 
         void check_click(const sf::Vector2f &click);
         void check_click(float x, float y);

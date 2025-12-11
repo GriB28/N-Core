@@ -21,9 +21,18 @@ namespace game {
 
         std::vector<utils::Button*> buttons1;
 
-        utils::Button load_level;
-        sf::Texture *load_level_default_texture, *load_level_clicked_texture;
-        sf::Text* load_level_txt;
+        utils::Button* play;
+        sf::Texture *play_default_texture, *play_clicked_texture;
+        sf::Text* play_txt;
+
+        utils::Button* profile;
+        sf::Texture *profile_default_texture, *profile_clicked_texture;
+        sf::Text* profile_txt;
+
+        utils::Button* tutorial;
+        sf::Texture *tutorial_default_texture, *tutorial_clicked_texture;
+        sf::Text* tutorial_txt;
+
         bool load_3_scene_flag;
 
         unsigned short background_counter;

@@ -29,8 +29,8 @@ game::Loading::Loading(sf::RenderWindow *window_link, Fonts *fonts_link, Music *
     awaiting_text->setCharacterSize(20);
     awaiting_text->setFillColor(sf::Color(255, 255, 255, 0));
     awaiting_text_void_texture = new sf::Texture();
-    awaiting_text_void_texture->loadFromFile("resources/btns/void.png");
-    awaiting_button.initialize(&awaiting_text, &awaiting_text_void_texture, &awaiting_text_void_texture);
+    awaiting_text_void_texture->loadFromFile("resources/buttons/void.png");
+    awaiting_button.initialize(awaiting_text, awaiting_text_void_texture, awaiting_text_void_texture);
     awaiting_button.set_default_sprite_scale(244, 16);
     awaiting_button.set_clicked_sprite_scale(244, 16);
     awaiting_button.set_position((window->getSize().x - awaiting_text->getGlobalBounds().width) / 2, 600);
