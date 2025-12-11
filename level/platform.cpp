@@ -8,8 +8,11 @@ game::object::Platform::Platform(
     const bool is_spawn, const bool is_end, const bool has_ladder
     ) : Object(chapter_id, x, y) {
     this->has_ladder = has_ladder;
+    set_component("has_ladder", has_ladder);
     this->is_spawn = is_spawn;
+    set_component("is_spawn", is_spawn);
     this->is_end = is_end;
+    set_component("is_end", is_end);
 
     if (is_spawn)
         reset_sprite("flag_spawn");

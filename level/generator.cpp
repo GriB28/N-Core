@@ -119,6 +119,7 @@ void game::object::Generator::load_level(const string &level_id) {
     scale_update_required = true;
     offset_update_required = true;
     cout << "generating is complete.\n";
+    level_stream.close();
 }
 
 game::object::Object* game::object::Generator::get_tile(short x, short y) const {

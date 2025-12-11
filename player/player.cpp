@@ -11,6 +11,7 @@ bool epsilon(const float value, const float target, const float radius) {
 }
 
 game::Player::Player() {
+    alive = true;
     x = 0; y = 0;
     x_abs_offset = 0;
     y_abs_offset = 0;
@@ -20,6 +21,7 @@ game::Player::Player() {
     position_update_required = true;
     scale_update_required = true;
     moves_blocked = false;
+    while (!moves.empty()) moves.pop();
     target_x = 0; initial_x = 0;
     target_y = 0; initial_y = 0;
     sprite = nullptr;
@@ -32,6 +34,12 @@ game::Player::~Player() {
     delete texture;
 }
 
+bool game::Player::is_alive() const { return alive; }
+void game::Player::die() {
+    alive = false;
+    sprite->setColor(sf::Color(34, 34, 34));
+}
+
 void game::Player::set_position(const short x, const short y) {
     local_x = x;
     local_y = y;
@@ -40,7 +48,12 @@ void game::Player::set_position(const short x, const short y) {
     position_update_required = true;
 }
 
-bool game::Player::move(const short dx, const short dy) {
+void game::Player::move(const short dx, const short dy) {
+    if (alive) moves.push(std::pair{dx, dy});
+}
+bool game::Player::is_moving() const { return moves_blocked; }
+
+bool game::Player::actual_move(const short dx, const short dy) {
     std::cout << "[player/move]\tin move function;\n";
     if (moves_blocked) {
         std::cout << "\taction blocked\n";
@@ -94,13 +107,17 @@ sf::Vector2<short> game::Player::get_position() const {
 }
 
 void game::Player::update_positions() const {
+    /*
     std::cout << "[player/drawcall]\tcasted a position update: new x = " << x << ", new y = " << y << '\n';
     std::cout << "\t\t\tcasted an offset update: +x = " << x_abs_offset << ", +y = " << y_abs_offset << '\n';
+    */
     sprite->setPosition(x, y);
     sprite->move(x_abs_offset, y_abs_offset);
 }
 void game::Player::update_scales() {
+    /*
     std::cout << "[player/drawcall]\tcasted a scale update: new x = " << scale << ", new y = " << scale << '\n';
+    */
     const float old = sprite->getScale().x;
     sprite->setScale(scale, scale);
     x *= scale / old;
@@ -110,17 +127,21 @@ void game::Player::update_scales() {
 void game::Player::draw_at(sf::RenderWindow* window) {
     if (moves_blocked) {
         position_update_required = true;
+        /*
         std::cout << "[player/drawcall]\tcasted a move call with blocking; parameters:\n\ttarget_x=" << target_x
         << ",\n\ttarget_y=" << target_y << ",\n\tinitial_x=" << initial_x << ",\n\tinitial_y=" << initial_y << '\n';
+        */
         const auto t = move_clock.getElapsedTime().asMilliseconds();
         float new_x = x, new_y = y;
         if (!epsilon(x, target_x, precision_radius))
             new_x = initial_x + (target_x - initial_x) * std::sin(t / animation_time);
         if (!epsilon(y, target_y, precision_radius))
             new_y = initial_y + (target_y - initial_y) * std::sin(t / animation_time);
+        /*
         std::cout << "[player/drawcall]\tcasted a precision check:\n\tx: " << epsilon(x, target_x, precision_radius) << "(" << x
         << " vs " << target_x << "),\n\ty: " << epsilon(y, target_y, precision_radius) << "(" << y << " vs " << target_y << ")\n\t"
         << "values synced to time: new x = " << new_x << ", new y = " << new_y << '\n';
+        */
 
         if (!epsilon(x, target_x, precision_radius) || !epsilon(y, target_y, precision_radius)) {
             x = new_x;
@@ -131,6 +152,24 @@ void game::Player::draw_at(sf::RenderWindow* window) {
             x = target_x;
             y = target_y;
         }
+    }
+    else if (!moves.empty()) {
+        std::cout << "[player/movecall]\tcurrent awaiting queue: ";
+        auto st_copy = moves;
+        while (!st_copy.empty()) {
+            std::cout << '(' << st_copy.front().first << ':' << st_copy.front().second << "), ";
+            st_copy.pop();
+        }
+        std::cout << '\n';
+        short top_x = 0, top_y = 0;
+        std::pair<short, short> previous_front;
+        do {
+            top_x += moves.front().first;
+            top_y += moves.front().second;
+            previous_front = moves.front();
+            moves.pop();
+        } while (!moves.empty() && moves.front() == previous_front);
+        actual_move(top_x, top_y);
     }
 
     if (scale_update_required) {

@@ -113,3 +113,11 @@ void game::object::Object::draw_at(sf::RenderWindow* window) {
     }
     window->draw(*sprite);
 }
+
+bool game::object::Object::get_component(const string &name) {
+    if (components.count(name) > 0) return components[name];
+    return false;
+}
+void game::object::Object::set_component(const string &name, const bool value) {
+    components[name] = value;
+}

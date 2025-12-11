@@ -5,6 +5,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <string>
+#include <unordered_map>
 using std::string;
 
 namespace game::object {
@@ -42,9 +43,14 @@ namespace game::object {
 
         void virtual constant_position_delta() const;
         void draw_at(sf::RenderWindow* window);
+
+        bool get_component(const string &name);
     protected:
         float x_scale, y_scale, x_abs_offset, y_abs_offset;
         short local_x, local_y;
+
+        std::unordered_map<string, bool> components;
+        void set_component(const string &name, bool value);
 
         float sprite_size_const = 1024;
 

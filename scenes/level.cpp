@@ -32,8 +32,8 @@ int game::Level::event(const Event &event) {
 }
 void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) const {
     const auto player_position = player->get_position();
-    const short x = player_position.x, y = player_position.y;
-    std::cout << "[level/check_movement_keys] player coords: " << x << ", " << y << '\n';
+    short x = player_position.x, y = player_position.y;
+    std::cout << "[level/check_keys]\tplayer coords: " << x << ", " << y << '\n';
 
     bool do_move = true;
     short dx = 0, dy = 0;
@@ -66,15 +66,44 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) const {
             do_move = false;
             break;
     }
-    if (do_move &&
+    if (do_move && !player->is_moving() &&
         0 <= x+dx && x+dx < level_generator->get_matrix_size().x &&
         0 <= y+dy && y+dy < level_generator->get_matrix_size().y) {
-        const auto origin = level_generator->get_tile(x, y);
-        const auto target = level_generator->get_tile(x+dx, y+dy);
-        if (!target->is_blocked_move_origin(x, y) && !origin->is_blocked_move_target(x+dx, y+dy)) {
+        auto origin = level_generator->get_tile(x, y);
+        auto target = level_generator->get_tile(x+dx, y+dy);
+        std::cout << "[level/move]\ttarget name: " << target->get_name() << '\n'
+        << "\t\torigin: " << x << ':' << y << '\n'
+        << "\t\ttarget: " << x+dx << ':' << y+dy << '\n';
+        if (dx == 0 && (origin->get_object_id() == "ladder" || target->get_object_id() == "ladder")) {
+            while (((target->get_object_id() == "ladder" && dy < 0) ||
+                    (!target->get_component("has_ladder") && dy > 0)) &&
+                    !target->is_blocked_move_origin(x, y)) {
+                origin->walk_out(player);
+                player->move(0, dy);
+                target->walk_in(player);
+
+                origin = target;
+                y += dy;
+                target = level_generator->get_tile(x, y);
+            }
+        }
+        else if (!target->is_blocked_move_origin(x, y) && !origin->is_blocked_move_target(x+dx, y+dy)) {
             origin->walk_out(player);
             player->move(dx, dy);
             target->walk_in(player);
+
+            x += dx;
+            y += dy;
+            while (target->get_object_id() == "void" && player->is_alive()) {
+                origin = target;
+                target = level_generator->get_tile(x, y + 1);
+                if (!target->is_blocked_move_origin(x, y) && !origin->is_blocked_move_target(x, y + 1)) {
+                    origin->walk_out(player);
+                    player->move(0, 1);
+                    target->walk_in(player);
+                }
+                y++;
+            }
         }
     }
 }

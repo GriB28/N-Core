@@ -3,6 +3,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <string>
+#include <queue>
 
 namespace game {
     class Player {
@@ -11,6 +12,9 @@ namespace game {
         explicit Player(const std::string &name, short x, short y);
         ~Player();
 
+        [[nodiscard]] bool is_alive() const;
+        void die();
+
         void set_scale(float coefficient);
 
         void set_abs_offset(float x_offset, float y_offset);
@@ -18,13 +22,16 @@ namespace game {
         void set_abs_offset_y(float value);
 
         void set_position(short x, short y);
-        bool move(short dx, short dy);
+        [[nodiscard]] bool is_moving() const;
+        void move(short dx, short dy);
 
         [[nodiscard]] sf::Vector2<short> get_position() const;
 
         void draw_at(sf::RenderWindow* window);
     private:
         Player();
+        bool alive;
+
         float x, y, x_abs_offset, y_abs_offset, scale;
         short local_x, local_y;
 
@@ -39,6 +46,8 @@ namespace game {
         bool moves_blocked;
         float target_x, target_y, initial_x, initial_y;
         sf::Clock move_clock;
+        std::queue<std::pair<short, short>> moves;
+        bool actual_move(short dx, short dy);
 
         bool position_update_required, scale_update_required;
         void update_positions() const;
