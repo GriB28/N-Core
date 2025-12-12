@@ -26,6 +26,7 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
 
     constexpr float window_x = 1920., window_y = 1080.;
 
+
     play = new utils::Button;
     play_default_texture = new sf::Texture;
     play_default_texture->loadFromFile("resources/buttons/play/1.png");
@@ -35,40 +36,43 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
     play_txt->setString("Play");
     play_txt->setFont(*fonts->pixel2());
     play_txt->setCharacterSize(25);
-    play->initialize(play_txt, play_default_texture, play_clicked_texture, false);
-    play->set_position(sf::Vector2f(
-        (window_x - play_default_texture->getSize().x * .4f) / 2,
-        window_y * 65 / 108
-        ));
-    play->set_clicked_sprite_scale(.4, .4);
-    play->set_default_sprite_scale(.4, .4);
-    play_txt->setPosition(
-        (window_x - play_txt->getGlobalBounds().width) / 2,
-        window_y * 65 / 108 + 512 * 1.25
-        );
+
+    play->initialize(play_txt, play_default_texture, play_clicked_texture);
     buttons1.push_back(play);
 
-    profile = new utils::Button;
-    profile_default_texture = new sf::Texture;
-    profile_default_texture->loadFromFile("resources/buttons/profile/1.png");
-    profile_clicked_texture = new sf::Texture;
-    profile_clicked_texture->loadFromFile("resources/buttons/profile/2.png");
-    profile_txt = new sf::Text;
-    profile_txt->setString("Profile");
-    profile_txt->setFont(*fonts->pixel2());
-    profile_txt->setCharacterSize(17);
-    profile->initialize(profile_txt, profile_default_texture, profile_clicked_texture, false);
-    profile->set_position(sf::Vector2f(
-        (window_x - profile_default_texture->getSize().x * .25f) / 2 + profile_default_texture->getSize().x * .25f * 3,
-        window_y * 25 / 36
-        ));
-    profile->set_clicked_sprite_scale(.25, .25);
-    profile->set_default_sprite_scale(.25, .25);
-    profile_txt->setPosition(
-        (window_x - profile_txt->getGlobalBounds().width) / 2 + profile_txt->getGlobalBounds().width * 2,
-        window_y * 25 / 36 + 512 * 1.25
+    play->set_scale(.4);
+    play->set_text_y_align('d');
+    play->set_text_x_align('r');
+
+    play->set_position(
+        (window_x - play_default_texture->getSize().x * .4f) / 2,
+        window_y * 65 / 108
         );
-    buttons1.push_back(profile);
+    play_txt->move(0, 0);
+
+
+    settings = new utils::Button;
+    settings_default_texture = new sf::Texture;
+    settings_default_texture->loadFromFile("resources/buttons/profile/1.png");
+    settings_clicked_texture = new sf::Texture;
+    settings_clicked_texture->loadFromFile("resources/buttons/profile/2.png");
+    settings_txt = new sf::Text;
+    settings_txt->setString("Settings");
+    settings_txt->setFont(*fonts->pixel2());
+    settings_txt->setCharacterSize(17);
+
+    settings->initialize(settings_txt, settings_default_texture, settings_clicked_texture);
+    buttons1.push_back(settings);
+
+    settings->set_scale(.25);
+    settings->set_text_y_align('d');
+
+    settings->set_position(
+        (window_x - settings_default_texture->getSize().x * .25f) / 2 + settings_default_texture->getSize().x * .25f * 3,
+        window_y * 25 / 36
+        );
+    settings_txt->move(0, 0);
+
 
     tutorial = new utils::Button;
     tutorial_default_texture = new sf::Texture;
@@ -79,18 +83,19 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
     tutorial_txt->setString("Tutorial");
     tutorial_txt->setFont(*fonts->pixel2());
     tutorial_txt->setCharacterSize(17);
-    tutorial->initialize(tutorial_txt, tutorial_default_texture, tutorial_clicked_texture, false);
-    tutorial->set_position(sf::Vector2f(
+
+    tutorial->initialize(tutorial_txt, tutorial_default_texture, tutorial_clicked_texture);
+    buttons1.push_back(tutorial);
+
+    tutorial->set_scale(.25);
+    tutorial->set_text_y_align('d');
+
+    tutorial->set_position(
         (window_x - tutorial_default_texture->getSize().x * .25f) / 2 - tutorial_default_texture->getSize().x * .25f * 3,
         window_y * 25 / 36
-        ));
-    tutorial->set_clicked_sprite_scale(.25, .25);
-    tutorial->set_default_sprite_scale(.25, .25);
-    tutorial_txt->setPosition(
-        (window_x - tutorial_txt->getGlobalBounds().width) / 2 - tutorial_txt->getGlobalBounds().width * 2,
-        window_y * 25 / 36 + 512 * 1.25
         );
-    buttons1.push_back(tutorial);
+    tutorial_txt->move(0, 0);
+
 
     load_3_scene_flag = false;
 }
@@ -104,10 +109,10 @@ game::MainMenu::~MainMenu() {
     delete play_txt;
     delete play;
 
-    delete profile_default_texture;
-    delete profile_clicked_texture;
-    delete profile_txt;
-    delete profile;
+    delete settings_default_texture;
+    delete settings_clicked_texture;
+    delete settings_txt;
+    delete settings;
 
     delete tutorial_default_texture;
     delete tutorial_clicked_texture;

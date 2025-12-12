@@ -14,8 +14,11 @@ namespace game::utils {
 
         void set_default_texture(sf::Texture* default_, float scale_x = 1., float scale_y = 1.);
         void set_clicked_texture(sf::Texture* clicked_, float scale_x = 1., float scale_y = 1.);
+
         void set_default_sprite_scale(float scale_x, float scale_y) const;
         void set_clicked_sprite_scale(float scale_x, float scale_y) const;
+        void set_scale(float scale_x, float scale_y) const;
+        void set_scale(float scale) const;
 
         void set_stickiness(const bool &stickiness);
 
@@ -32,15 +35,20 @@ namespace game::utils {
         void set_position(const sf::Vector2f &position) const;
         void set_position(float x, float y) const;
 
-        [[nodiscard]] sf::Sprite** get_sprite() const;
+        void set_text_x_align(char align); // align = 'c' (default, center) | 'r' (right) | 'l' (left)
+        void set_text_y_align(char align); // align = 'c' (default, center) | 'u' (up) | 'd' (down)
+
+        [[nodiscard]] sf::Sprite* get_sprite() const;
         void draw_at(sf::RenderWindow* window_origin) const;
     private:
         [[nodiscard]] float delta_border_x() const;
         [[nodiscard]] float delta_border_y() const;
 
+        char x_align, y_align;
+
         sf::Sprite* default_sprite;
         sf::Sprite* clicked_sprite;
-        sf::Sprite** current_sprite;
+        sf::Sprite* current_sprite;
         sf::Texture* default_texture;
         sf::Texture* clicked_texture;
         sf::Text* text_;

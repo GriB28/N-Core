@@ -25,9 +25,9 @@ namespace game {
         sf::Texture *play_default_texture, *play_clicked_texture;
         sf::Text* play_txt;
 
-        utils::Button* profile;
-        sf::Texture *profile_default_texture, *profile_clicked_texture;
-        sf::Text* profile_txt;
+        utils::Button* settings;
+        sf::Texture *settings_default_texture, *settings_clicked_texture;
+        sf::Text* settings_txt;
 
         utils::Button* tutorial;
         sf::Texture *tutorial_default_texture, *tutorial_clicked_texture;
