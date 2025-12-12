@@ -9,12 +9,12 @@
 namespace game {
     class MainMenu final : public Scene {
     public:
-        MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link);
+        MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link);
         ~MainMenu() override;
 
         int event(const sf::Event &event) override;
         int proceed() override;
-        void on_start() override;
+        void on_end() override;
     private:
         sf::Texture *bg_texture_day, *bg_texture_night;
         sf::Sprite *bg;

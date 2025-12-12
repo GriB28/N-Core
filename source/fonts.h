@@ -1,25 +1,25 @@
 #ifndef GAME_FONTS_H
 #define GAME_FONTS_H
 #include <SFML/Graphics/Font.hpp>
-
+using sf::Font;
 namespace game {
-    class Fonts {
+    class FontSource {
     public:
-        static Fonts* instance();
-        ~Fonts();
+        static FontSource* instance();
+        ~FontSource();
 
-        [[nodiscard]] sf::Font* XKCD() const;
-        [[nodiscard]] sf::Font* PAG() const;
-        [[nodiscard]] sf::Font* OCRA() const;
-        [[nodiscard]] sf::Font* Penacony() const;
-        [[nodiscard]] sf::Font* pixel2() const;
+        [[nodiscard]] Font* XKCD() const;
+        [[nodiscard]] Font* PAG() const;
+        [[nodiscard]] Font* OCRA() const;
+        [[nodiscard]] Font* Penacony() const;
+        [[nodiscard]] Font* pixel2() const;
     private:
-        Fonts();
-        static sf::Font* XKCD_origin;
-        static sf::Font* PAG_origin;
-        static sf::Font* OCRA_origin;
-        static sf::Font* Penacony_origin;
-        static sf::Font* pixel2_origin;
+        FontSource();
+        static Font* XKCD_origin;
+        static Font* PAG_origin;
+        static Font* OCRA_origin;
+        static Font* Penacony_origin;
+        static Font* pixel2_origin;
     };
 }
 #endif

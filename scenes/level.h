@@ -11,7 +11,7 @@ using sf::Event;
 namespace game {
     class Level final : public Scene {
     public:
-        Level(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link);
+        Level(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link);
         ~Level() override;
 
         int event(const Event &event) override;

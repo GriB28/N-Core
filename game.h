@@ -12,24 +12,24 @@ using std::string;
 namespace game {
     class Engine {
     public:
-        Engine(unsigned short x, unsigned short y, Fonts *fonts_link = nullptr, Music *music_link = nullptr);
+        Engine(unsigned short x, unsigned short y, FontSource *fonts_link = nullptr);
         ~Engine();
         int current_scene_index{};
     private:
-        void initialize(unsigned short x, unsigned short y, Fonts *fonts_link, Music *music_link);
-        Scene **scenes{};
-        sf::RenderWindow *window{};
-        bool closing_flag{};
-        Fonts *fonts{};
-        Music *music{};
+        Scene** scenes;
+        sf::RenderWindow* window;
+        FontSource* fonts;
+        BoomBox *loading_boombox, *level_boombox;
+        Soundtrack *menu_theme,
+        *chapter1_1, *chapter1_2, *chapter1_f;
+
+        bool closing_flag;
 
         sf::Text fps, fps_delta;
         unsigned short frames{}, last_fps_update_value{};
         long long last_fps_update{};
 
-        sf::Text mouse_position;
-
-        sf::Text scene_num;
+        sf::Text mouse_position, scene_num, version_info;
 
         void loop();
         void proceed_event_on_scenes(const sf::Event &event);

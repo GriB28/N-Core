@@ -6,12 +6,12 @@
 game::Scene::Scene() {
     window = nullptr;
     fonts = nullptr;
-    music = nullptr;
+    boombox = nullptr;
 }
-game::Scene::Scene(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) {
+game::Scene::Scene(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link) {
     window = window_link;
     fonts = fonts_link;
-    music = music_link;
+    boombox = boombox_link;
 }
 int game::Scene::event(const sf::Event &event) { return 0; }
 int game::Scene::proceed() { return 0; }

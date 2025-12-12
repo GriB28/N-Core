@@ -8,24 +8,34 @@
 using std::to_string;
 
 
-game::Engine::Engine(const unsigned short x, const unsigned short y, Fonts *fonts_link, Music *music_link) {
-    if (fonts_link == nullptr) fonts_link = Fonts::instance();
-    if (music_link == nullptr) music_link = Music::instance();
-    initialize(x, y, fonts_link, music_link);
-}
-void game::Engine::initialize(const unsigned short x, const unsigned short y, Fonts *fonts_link, Music *music_link) {
+game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource *fonts_link) {
+    if (fonts_link == nullptr) fonts_link = FontSource::instance();
+
     current_scene_index = 0;
 
-    window = new sf::RenderWindow(sf::VideoMode({x, y}), "DSC");
+    window = new sf::RenderWindow(sf::VideoMode({x, y}), "Cores loading...");
     // window->setFramerateLimit(120);
     closing_flag = false;
     fonts = fonts_link;
-    music = music_link;
+
+    menu_theme = new Soundtrack("music/DSC6.ogg");
+    menu_theme->set_loop(true);
+    chapter1_1 = new Soundtrack("music/DSC8p1.ogg");
+    chapter1_2 = new Soundtrack("music/DSC8p2.ogg");
+    chapter1_f = new Soundtrack("music/DSC8f.ogg");
+
+    loading_boombox = new BoomBox;
+    loading_boombox->add_track(menu_theme);
+    level_boombox = new BoomBox;
+    level_boombox->add_track(chapter1_1);
+    level_boombox->add_track(chapter1_2);
+    level_boombox->add_track(chapter1_f);
+
     scenes = new Scene*[3+1];
     scenes[0] = new Scene; // void scene
-    scenes[1] = new Loading(window, fonts, music);
-    scenes[2] = new MainMenu(window, fonts, music);
-    scenes[3] = new Level(window, fonts, music);
+    scenes[1] = new Loading(window, fonts, loading_boombox);
+    scenes[2] = new MainMenu(window, fonts, loading_boombox);
+    scenes[3] = new Level(window, fonts, level_boombox);
 
     fps.setCharacterSize(10);
     fps.setFont(*fonts->OCRA());
@@ -43,6 +53,11 @@ void game::Engine::initialize(const unsigned short x, const unsigned short y, Fo
     scene_num.setFont(*fonts->OCRA());
     scene_num.setFillColor(sf::Color(147, 147, 147, 141));
 
+    version_info.setCharacterSize(12);
+    version_info.setFont(*fonts->OCRA());
+    version_info.setFillColor(sf::Color(147, 147, 147, 141));
+    version_info.setString("beta-v1.0b21-indev");
+
     update_scene_index(1);
     loop();
 }
@@ -52,8 +67,14 @@ game::Engine::~Engine() {
     for (unsigned short i = 0; i < 4; i++) delete scenes[i];
     delete[] scenes;
 
+    delete menu_theme;
+    delete chapter1_1;
+    delete chapter1_2;
+    delete chapter1_f;
+
     delete fonts;
-    delete music;
+    delete loading_boombox;
+    delete level_boombox;
 }
 
 
@@ -77,6 +98,7 @@ void game::Engine::loop() {
             ).count(); t - last_fps_update >= 500000) {
             frames = static_cast<unsigned short>(frames / (static_cast<double>(t - last_fps_update) / 1000000));
             const auto window_x_size = static_cast<float>(window->getSize().x);
+            const auto window_y_size = static_cast<float>(window->getSize().y);
 
             if (last_fps_update_value < frames)
                 fps_delta.setFillColor(sf::Color(0, 147, 20, 141));
@@ -103,12 +125,15 @@ void game::Engine::loop() {
             mouse_position.setPosition(window_x_size - 35, 30);
 
             scene_num.setPosition(window_x_size - 50, 65);
+
+            version_info.setPosition(5, window_y_size - 15);
         }
 
         window->draw(fps);
         window->draw(fps_delta);
         window->draw(mouse_position);
         window->draw(scene_num);
+        window->draw(version_info);
         window->display();
         frames++;
 

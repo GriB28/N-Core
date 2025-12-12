@@ -9,7 +9,7 @@ namespace game {
     class Scene {
     public:
         Scene();
-        Scene(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link);
+        Scene(sf::RenderWindow* window_link, FontSource* fonts_link, BoomBox* boombox_link);
         virtual ~Scene() = default;
 
         virtual int event(const sf::Event &event);
@@ -17,9 +17,9 @@ namespace game {
         virtual void on_start();
         virtual void on_end();
     protected:
-        sf::RenderWindow *window;
-        Fonts *fonts;
-        Music *music;
+        sf::RenderWindow* window;
+        FontSource* fonts;
+        BoomBox* boombox;
     };
 }
 #endif

@@ -5,7 +5,7 @@
 #include <iostream>
 
 
-game::Level::Level(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
+game::Level::Level(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link) : Scene(window_link, fonts_link, boombox_link) {
     level_generator = nullptr;
     player = nullptr;
 }
@@ -124,9 +124,8 @@ void game::Level::on_start() {
     player->set_scale(.125);
     player->set_abs_offset(300, 100);
 
-    music->DSC0()->play();
-    music->DSC5()->stop();
+    boombox->get_track("DSC8f")->play();
 }
 void game::Level::on_end() {
-    music->DSC0()->stop();
+    boombox->get_track("DSC8f")->stop();
 }

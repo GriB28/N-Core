@@ -15,7 +15,7 @@ long long get_time() {
     return std::chrono::duration_cast<std::chrono::microseconds>( std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-game::Loading::Loading(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
+game::Loading::Loading(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox) : Scene(window_link, fonts_link, boombox) {
     loading_text = new sf::Text;
     loading_text->setFont(*fonts->pixel2());
     loading_text->setString("|GriB28| presents...");
@@ -69,7 +69,7 @@ game::Loading::~Loading() {
 }
 
 int game::Loading::event(const Event &event) {
-    int return_code;
+    int return_code = 0;
     if (event.type == Event::KeyPressed)
         switch (event.key.code) {
             case Keyboard::Escape:
@@ -88,13 +88,11 @@ int game::Loading::event(const Event &event) {
     else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left) {
         awaiting_button.check_click(event.mouseButton.x, event.mouseButton.y);
         if (awaiting_button.is_clicked()) return_code = awaiting_flag * 2;
-        else return_code = 0;
     }
-    else return_code = 2;
 
     return return_code;
 }
-int game::Loading::proceed() {/*
+int game::Loading::proceed() {
     if (frogl2_counter < 96) {
         if (get_time() - frogl2_timer >= frogl2_frame_timestamp) {
             frogl2_texture->loadFromFile("resources/frogl2/" + std::to_string(frogl2_counter) + ".jpg");
@@ -120,14 +118,13 @@ int game::Loading::proceed() {/*
     window->draw(*loading_text);
     window->draw(*alliance_text);
     awaiting_button.draw_at(window);
-    */return 0;
+    return 0;
 }
 
 void game::Loading::on_start() {
-    music->loading()->play();
+    boombox->get_track("DSC6")->play();
 }
 void game::Loading::on_end() {
-    music->loading()->stop();
     window->create(sf::VideoMode::getDesktopMode(), "N-Core", sf::Style::Fullscreen);
     // window->setFramerateLimit(120);
     auto icon = sf::Image();

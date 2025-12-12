@@ -11,7 +11,7 @@ using sf::Event;
 using sf::Keyboard;
 
 
-game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music *music_link) : Scene(window_link, fonts_link, music_link) {
+game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link) : Scene(window_link, fonts_link, boombox_link) {
     bg = new sf::Sprite();
     bg_texture_day = new sf::Texture();
     bg_texture_night = new sf::Texture();
@@ -42,13 +42,11 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
 
     play->set_scale(.4);
     play->set_text_y_align('d');
-    play->set_text_x_align('r');
 
     play->set_position(
         (window_x - play_default_texture->getSize().x * .4f) / 2,
         window_y * 65 / 108
         );
-    play_txt->move(0, 0);
 
 
     settings = new utils::Button;
@@ -71,7 +69,6 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
         (window_x - settings_default_texture->getSize().x * .25f) / 2 + settings_default_texture->getSize().x * .25f * 3,
         window_y * 25 / 36
         );
-    settings_txt->move(0, 0);
 
 
     tutorial = new utils::Button;
@@ -94,7 +91,6 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, Fonts *fonts_link, Music
         (window_x - tutorial_default_texture->getSize().x * .25f) / 2 - tutorial_default_texture->getSize().x * .25f * 3,
         window_y * 25 / 36
         );
-    tutorial_txt->move(0, 0);
 
 
     load_3_scene_flag = false;
@@ -175,6 +171,6 @@ int game::MainMenu::proceed() {
     return return_code;
 }
 
-void game::MainMenu::on_start() {
-    music->DSC5()->play();
+void game::MainMenu::on_end() {
+    boombox->get_track("DSC6")->stop();
 }
