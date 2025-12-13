@@ -1,14 +1,11 @@
 #include "player.h"
+#include "../utils/numeric.h"
 
 #include <cmath>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <iostream>
 
-
-bool epsilon(const float value, const float target, const float radius) {
-    return value >= target - radius && value <= target + radius;
-}
 
 game::Player::Player() {
     alive = true;
@@ -133,9 +130,9 @@ void game::Player::draw_at(sf::RenderWindow* window) {
         */
         const auto t = move_clock.getElapsedTime().asMilliseconds();
         float new_x = x, new_y = y;
-        if (!epsilon(x, target_x, precision_radius))
+        if (!numeric::epsilon(x, target_x, precision_radius))
             new_x = initial_x + (target_x - initial_x) * std::sin(t / animation_time);
-        if (!epsilon(y, target_y, precision_radius))
+        if (!numeric::epsilon(y, target_y, precision_radius))
             new_y = initial_y + (target_y - initial_y) * std::sin(t / animation_time);
         /*
         std::cout << "[player/drawcall]\tcasted a precision check:\n\tx: " << epsilon(x, target_x, precision_radius) << "(" << x
@@ -143,7 +140,7 @@ void game::Player::draw_at(sf::RenderWindow* window) {
         << "values synced to time: new x = " << new_x << ", new y = " << new_y << '\n';
         */
 
-        if (!epsilon(x, target_x, precision_radius) || !epsilon(y, target_y, precision_radius)) {
+        if (!numeric::epsilon(x, target_x, precision_radius) || !numeric::epsilon(y, target_y, precision_radius)) {
             x = new_x;
             y = new_y;
         }

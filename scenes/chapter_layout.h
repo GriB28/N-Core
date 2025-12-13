@@ -26,10 +26,11 @@ namespace game {
 
         bool page_changing_animation_flag;
         short delta_page;
-        float animation_time = 500;
+        float animation_time = 500, target_page_animation_offset;
         sf::Clock swipe_clock;
         sf::View current_view, zero_initial_view;
         sf::Vector2f initial_view_center;
+        void start_page_animation_sequence();
 
         vector<sf::Sprite*> splash_screens;
         vector<sf::Texture*> splash_screens_day_textures, splash_screens_night_textures;

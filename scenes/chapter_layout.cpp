@@ -1,4 +1,5 @@
 #include "chapter_layout.h"
+#include "../utils/numeric.h"
 
 #include <iostream>
 #include <string>
@@ -13,6 +14,7 @@ game::ChapterLayout::ChapterLayout(sf::RenderWindow *window_link, FontSource *fo
     page = 0;
     page_changing_animation_flag = false;
     delta_page = 0;
+    target_page_animation_offset = 0;
 }
 
 void game::ChapterLayout::on_start() {
@@ -113,19 +115,21 @@ game::ChapterLayout::~ChapterLayout() {
     on_end();
 }
 
+void game::ChapterLayout::start_page_animation_sequence() {
+    swipe_clock.restart();
+    page_changing_animation_flag = true;
+    current_view = window->getView();
+    initial_view_center = current_view.getCenter();
+    target_page_animation_offset = delta_page * static_cast<float>(window->getSize().x);
+}
 int game::ChapterLayout::event(const Event &event) {
     int return_code = 0;
     if (event.type == Event::KeyPressed) {
         if (event.key.code == Keyboard::Escape) return_code = 2;
         else if (!page_changing_animation_flag) {
-            cout << "page before: " << page;
-            swipe_clock.restart();
-            page_changing_animation_flag = true;
-            current_view = window->getDefaultView();
-            initial_view_center = current_view.getCenter();
-
             switch (event.key.code) {
                 case Keyboard::Right:
+                    start_page_animation_sequence();
                     delta_page = 1;
                     if (++page > level_pages_cap) {
                         page = 0;
@@ -133,6 +137,7 @@ int game::ChapterLayout::event(const Event &event) {
                     }
                     break;
                 case Keyboard::D:
+                    start_page_animation_sequence();
                     delta_page = 1;
                     if (++page > level_pages_cap) {
                         page = 0;
@@ -140,6 +145,7 @@ int game::ChapterLayout::event(const Event &event) {
                     }
                     break;
                 case Keyboard::Left:
+                    start_page_animation_sequence();
                     delta_page = -1;
                     if (--page < 0) {
                         page = level_pages_cap;
@@ -147,6 +153,7 @@ int game::ChapterLayout::event(const Event &event) {
                     }
                     break;
                 case Keyboard::A:
+                    start_page_animation_sequence();
                     delta_page = -1;
                     if (--page < 0) {
                         page = level_pages_cap;
@@ -156,7 +163,6 @@ int game::ChapterLayout::event(const Event &event) {
                 default:
                     break;
             }
-            cout << ", page after: " << page << '\n';
         }
     }
     else if (event.type == Event::MouseButtonPressed) {
@@ -182,16 +188,18 @@ int game::ChapterLayout::proceed() {
     }
 
     if (page_changing_animation_flag) {
-        if (const auto t = swipe_clock.getElapsedTime().asMilliseconds(); t <= animation_time) {
+        if (current_view.getCenter().x >= 1e7) page_changing_animation_flag = false;
+        if (!numeric::epsilon(current_view.getCenter().x, initial_view_center.x + target_page_animation_offset, 1)) {
+            const auto t = swipe_clock.getElapsedTime().asMilliseconds();
             current_view.setCenter(
-                initial_view_center.x + delta_page * window->getSize().x * std::sin(t / animation_time),
+                initial_view_center.x + target_page_animation_offset * std::sin(t / animation_time),
                 initial_view_center.y
                 );
             window->setView(current_view);
         }
         else {
             page_changing_animation_flag = false;
-            current_view.setCenter(initial_view_center.x + delta_page * window->getSize().x, initial_view_center.y);
+            current_view.setCenter(initial_view_center.x + target_page_animation_offset, initial_view_center.y);
             window->setView(current_view);
         }
     }
