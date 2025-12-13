@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+using std::string;
+using sf::Event;
 
 namespace game {
     class MainMenu final : public Scene {
@@ -12,8 +14,9 @@ namespace game {
         MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link);
         ~MainMenu() override;
 
-        int event(const sf::Event &event) override;
+        int event(const Event &event) override;
         int proceed() override;
+        void on_start() override;
         void on_end() override;
     private:
         sf::Texture *bg_texture_day, *bg_texture_night;
@@ -33,7 +36,7 @@ namespace game {
         sf::Texture *tutorial_default_texture, *tutorial_clicked_texture;
         sf::Text* tutorial_txt;
 
-        bool load_3_scene_flag;
+        bool load_levels_scene_flag;
 
         unsigned short background_counter;
         bool day_cycle, bg_fading_out, bg_fading_in, bg_change_state;

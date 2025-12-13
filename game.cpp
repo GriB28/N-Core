@@ -2,6 +2,7 @@
 #include "scenes/level.h"
 #include "scenes/loading.h"
 #include "scenes/main_menu.h"
+#include "scenes/chapter_layout.h"
 
 #include <SFML/Window/Event.hpp>
 #include <chrono>
@@ -21,8 +22,11 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     menu_theme = new Soundtrack("music/DSC6.ogg");
     menu_theme->set_loop(true);
     chapter1_1 = new Soundtrack("music/DSC8p1.ogg");
+    chapter1_1->set_loop(true);
     chapter1_2 = new Soundtrack("music/DSC8p2.ogg");
+    chapter1_2->set_loop(true);
     chapter1_f = new Soundtrack("music/DSC8f.ogg");
+    chapter1_f->set_loop(true);
 
     loading_boombox = new BoomBox;
     loading_boombox->add_track(menu_theme);
@@ -31,11 +35,12 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     level_boombox->add_track(chapter1_2);
     level_boombox->add_track(chapter1_f);
 
-    scenes = new Scene*[3+1];
+    scenes = new Scene*[scenes_cap+1];
     scenes[0] = new Scene; // void scene
     scenes[1] = new Loading(window, fonts, loading_boombox);
     scenes[2] = new MainMenu(window, fonts, loading_boombox);
     scenes[3] = new Level(window, fonts, level_boombox);
+    scenes[4] = new ChapterLayout(window, fonts, level_boombox);
 
     fps.setCharacterSize(10);
     fps.setFont(*fonts->OCRA());
@@ -56,7 +61,7 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     version_info.setCharacterSize(12);
     version_info.setFont(*fonts->OCRA());
     version_info.setFillColor(sf::Color(147, 147, 147, 141));
-    version_info.setString("beta-v1.0b21-indev");
+    version_info.setString("beta-v1.0b22a-indev");
 
     update_scene_index(1);
     loop();
@@ -64,7 +69,7 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
 game::Engine::~Engine() {
     delete window;
 
-    for (unsigned short i = 0; i < 4; i++) delete scenes[i];
+    for (unsigned short i = 0; i <= scenes_cap; i++) delete scenes[i];
     delete[] scenes;
 
     delete menu_theme;

@@ -16,6 +16,7 @@ namespace game {
         ~Engine();
         int current_scene_index{};
     private:
+        unsigned short scenes_cap = 4;
         Scene** scenes;
         sf::RenderWindow* window;
         FontSource* fonts;

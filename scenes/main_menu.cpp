@@ -6,8 +6,6 @@
 #include <SFML/Window/Keyboard.hpp>
 
 using std::cout;
-using std::string;
-using sf::Event;
 using sf::Keyboard;
 
 
@@ -93,7 +91,7 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, 
         );
 
 
-    load_3_scene_flag = false;
+    load_levels_scene_flag = false;
 }
 
 game::MainMenu::~MainMenu() {
@@ -131,10 +129,10 @@ int game::MainMenu::event(const Event &event) {
     }
 
     if (play->is_clicked())
-        if (!load_3_scene_flag)
-            load_3_scene_flag = true;
-    if (load_3_scene_flag && !play->is_clicked())
-        return_code = 3;
+        if (!load_levels_scene_flag)
+            load_levels_scene_flag = true;
+    if (load_levels_scene_flag && !play->is_clicked())
+        return_code = 4;
 
     return return_code;
 }
@@ -171,6 +169,14 @@ int game::MainMenu::proceed() {
     return return_code;
 }
 
+void game::MainMenu::on_start() {
+    if (const auto dsc6 = boombox->get_track("DSC6"); dsc6->get_status() != Music::Playing) {
+        dsc6->stop();
+        dsc6->set_playing_offset(sf::milliseconds(13130));
+        dsc6->play();
+    }
+}
 void game::MainMenu::on_end() {
     boombox->get_track("DSC6")->stop();
+    load_levels_scene_flag = false;
 }

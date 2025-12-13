@@ -50,11 +50,9 @@ void game::utils::Button::set_clicked_texture(sf::Texture* clicked_, const float
 
 void game::utils::Button::set_default_sprite_scale(const float scale_x, const float scale_y) const {
     default_sprite->setScale(scale_x, scale_y);
-    std::cout << "new default sprite bounds: " << default_sprite->getGlobalBounds().width << ", " << default_sprite->getGlobalBounds().height << '\n';
 }
 void game::utils::Button::set_clicked_sprite_scale(const float scale_x, const float scale_y) const {
     clicked_sprite->setScale(scale_x, scale_y);
-    std::cout << "new clicked sprite bounds: " << clicked_sprite->getGlobalBounds().width << ", " << clicked_sprite->getGlobalBounds().height << '\n';
 }
 void game::utils::Button::set_scale(const float scale_x, const float scale_y) const {
     set_clicked_sprite_scale(scale_x, scale_y);
@@ -102,7 +100,6 @@ void game::utils::Button::set_state(const bool new_state) {
 void game::utils::Button::set_position(const sf::Vector2f &position) const {
     default_sprite->setPosition(position);
     clicked_sprite->setPosition(position);
-    std::cout << "current X: " << current_sprite->getPosition().x << ", current Y: " << current_sprite->getPosition().y << "\ncurrent GlB: " << current_sprite->getGlobalBounds().width << ", " << current_sprite->getGlobalBounds().height << '\n';
     if (text_ != nullptr) {
         float x_offset = 0, y_offset = 0; // 'c' | 0 | default -- center alignment
         if      (x_align == 'r') x_offset = text_->getGlobalBounds().width / 2;
