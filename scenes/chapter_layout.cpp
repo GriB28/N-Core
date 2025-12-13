@@ -188,7 +188,6 @@ int game::ChapterLayout::proceed() {
     }
 
     if (page_changing_animation_flag) {
-        if (current_view.getCenter().x >= 1e7) page_changing_animation_flag = false;
         if (!numeric::epsilon(current_view.getCenter().x, initial_view_center.x + target_page_animation_offset, 1)) {
             const auto t = swipe_clock.getElapsedTime().asMilliseconds();
             current_view.setCenter(

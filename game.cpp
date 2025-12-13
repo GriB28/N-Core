@@ -5,7 +5,6 @@
 #include "scenes/chapter_layout.h"
 
 #include <SFML/Window/Event.hpp>
-#include <chrono>
 using std::to_string;
 
 
@@ -47,8 +46,8 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     fps_delta.setCharacterSize(10);
     fps_delta.setFont(*fonts->OCRA());
     frames = 0;
-    last_fps_update = 0;
     last_fps_update_value = 0;
+    fps_timer.restart();
 
     mouse_position.setCharacterSize(10);
     mouse_position.setFont(*fonts->OCRA());
@@ -61,7 +60,7 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     version_info.setCharacterSize(12);
     version_info.setFont(*fonts->OCRA());
     version_info.setFillColor(sf::Color(147, 147, 147, 141));
-    version_info.setString("beta-v1.0b22a-indev");
+    version_info.setString("beta-v1.0b22c-indev");
 
     update_scene_index(1);
     loop();
@@ -98,12 +97,10 @@ void game::Engine::loop() {
         }
         proceed_scenes();
 
-        if (const auto t = std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::steady_clock::now().time_since_epoch()
-            ).count(); t - last_fps_update >= 500000) {
-            frames = static_cast<unsigned short>(frames / (static_cast<double>(t - last_fps_update) / 1000000));
-            const auto window_x_size = static_cast<float>(window->getSize().x);
-            const auto window_y_size = static_cast<float>(window->getSize().y);
+        if (fps_timer.getElapsedTime().asMilliseconds() >= 500) {
+            frames = static_cast<unsigned short>(static_cast<float>(frames) / fps_timer.getElapsedTime().asSeconds());
+            const auto window_x_max_coord = window->getView().getCenter().x + static_cast<float>(window->getSize().x) / 2;
+            const auto window_y_max_coord = window->getView().getCenter().y + static_cast<float>(window->getSize().y) / 2;
 
             if (last_fps_update_value < frames)
                 fps_delta.setFillColor(sf::Color(0, 147, 20, 141));
@@ -112,14 +109,14 @@ void game::Engine::loop() {
             else
                 fps_delta.setFillColor(sf::Color(147, 147, 147, 141));
             fps_delta.setString((frames - last_fps_update_value > 0 ? "(+" : "(") + to_string(frames - last_fps_update_value) + ')');
-            fps_delta.setPosition(window_x_size - 40, 15);
+            fps_delta.setPosition(window_x_max_coord - 40, 15);
 
             fps.setString(to_string(frames));
-            fps.setPosition(window_x_size - 35, 5);
+            fps.setPosition(window_x_max_coord - 35, 5);
 
-            last_fps_update = t;
             last_fps_update_value = frames;
             frames = 0;
+            fps_timer.restart();
 
             const auto local_mouse_position = sf::Mouse::getPosition(*window);
             mouse_position.setString(
@@ -127,11 +124,11 @@ void game::Engine::loop() {
                 + "\n ~\n"
                 + std::to_string(local_mouse_position.y)
                 );
-            mouse_position.setPosition(window_x_size - 35, 30);
+            mouse_position.setPosition(window_x_max_coord - 35, 30);
 
-            scene_num.setPosition(window_x_size - 50, 65);
+            scene_num.setPosition(window_x_max_coord - 50, 65);
 
-            version_info.setPosition(5, window_y_size - 15);
+            version_info.setPosition(window_x_max_coord - window->getSize().x + 5, window_y_max_coord - 15);
         }
 
         window->draw(fps);

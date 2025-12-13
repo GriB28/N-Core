@@ -14,7 +14,7 @@ namespace game {
     public:
         Engine(unsigned short x, unsigned short y, FontSource *fonts_link = nullptr);
         ~Engine();
-        int current_scene_index{};
+        int current_scene_index;
     private:
         unsigned short scenes_cap = 4;
         Scene** scenes;
@@ -27,8 +27,8 @@ namespace game {
         bool closing_flag;
 
         sf::Text fps, fps_delta;
-        unsigned short frames{}, last_fps_update_value{};
-        long long last_fps_update{};
+        sf::Clock fps_timer;
+        unsigned short frames, last_fps_update_value;
 
         sf::Text mouse_position, scene_num, version_info;
 
