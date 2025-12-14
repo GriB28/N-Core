@@ -60,14 +60,12 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     version_info.setCharacterSize(12);
     version_info.setFont(*fonts->OCRA());
     version_info.setFillColor(sf::Color(147, 147, 147, 141));
-    version_info.setString("beta-v1.0b22c-indev");
+    version_info.setString("beta-v1.0b22d-indev");
 
     update_scene_index(1);
     loop();
 }
 game::Engine::~Engine() {
-    delete window;
-
     for (unsigned short i = 0; i <= scenes_cap; i++) delete scenes[i];
     delete[] scenes;
 
@@ -79,6 +77,8 @@ game::Engine::~Engine() {
     delete fonts;
     delete loading_boombox;
     delete level_boombox;
+
+    delete window;
 }
 
 
