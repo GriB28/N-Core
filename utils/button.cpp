@@ -66,25 +66,18 @@ void game::utils::Button::set_text_x_align(const char align) { x_align = align; 
 void game::utils::Button::set_text_y_align(const char align) { y_align = align; }
 
 
-float game::utils::Button::delta_border_x() const { return current_sprite->getScale().x * current_sprite->getLocalBounds().getSize().x; }
-float game::utils::Button::delta_border_y() const { return current_sprite->getScale().y * current_sprite->getLocalBounds().getSize().y; }
-
-
 void game::utils::Button::check_click(const sf::Vector2f &click) {
     check_click(click.x, click.y);
 }
 void game::utils::Button::check_click(const float x, const float y) {
-    if (x > current_sprite->getPosition().x && x < current_sprite->getPosition().x + delta_border_x() &&
-        y > current_sprite->getPosition().y && y < current_sprite->getPosition().y + delta_border_y())
+    if (current_sprite->getGlobalBounds().contains(x, y))
         set_state(!state);
 }
 void game::utils::Button::check_release(const sf::Vector2f &release) {
     check_release(release.x, release.y);
 }
 void game::utils::Button::check_release(const float x, const float y) {
-    if (x > current_sprite->getPosition().x && x < current_sprite->getPosition().x + delta_border_x() &&
-        y > current_sprite->getPosition().y && y < current_sprite->getPosition().y + delta_border_y() &&
-        !sticky)
+    if (current_sprite->getGlobalBounds().contains(x, y) && !sticky)
         set_state(!state);
 }
 bool game::utils::Button::is_clicked() const { return state; }

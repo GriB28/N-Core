@@ -41,9 +41,6 @@ namespace game::utils {
         [[nodiscard]] sf::Sprite* get_sprite() const;
         void draw_at(sf::RenderWindow* window_origin) const;
     private:
-        [[nodiscard]] float delta_border_x() const;
-        [[nodiscard]] float delta_border_y() const;
-
         char x_align, y_align;
 
         sf::Sprite* default_sprite;

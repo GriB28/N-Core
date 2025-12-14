@@ -1,7 +1,6 @@
 #include "player.h"
 #include "../utils/numeric.h"
 
-#include <cmath>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <iostream>
@@ -128,22 +127,15 @@ void game::Player::draw_at(sf::RenderWindow* window) {
         std::cout << "[player/drawcall]\tcasted a move call with blocking; parameters:\n\ttarget_x=" << target_x
         << ",\n\ttarget_y=" << target_y << ",\n\tinitial_x=" << initial_x << ",\n\tinitial_y=" << initial_y << '\n';
         */
-        const auto t = move_clock.getElapsedTime().asMilliseconds();
-        float new_x = x, new_y = y;
-        if (!numeric::epsilon(x, target_x, precision_radius))
-            new_x = initial_x + (target_x - initial_x) * std::sin(t / animation_time);
-        if (!numeric::epsilon(y, target_y, precision_radius))
-            new_y = initial_y + (target_y - initial_y) * std::sin(t / animation_time);
+        if (const auto t = move_clock.getElapsedTime().asMilliseconds(); t <= animation_time) {
+            x = initial_x + (target_x - initial_x) * numeric::sine(t, animation_time);
+            y = initial_y + (target_y - initial_y) * numeric::sine(t, animation_time);
+        }
         /*
         std::cout << "[player/drawcall]\tcasted a precision check:\n\tx: " << epsilon(x, target_x, precision_radius) << "(" << x
         << " vs " << target_x << "),\n\ty: " << epsilon(y, target_y, precision_radius) << "(" << y << " vs " << target_y << ")\n\t"
         << "values synced to time: new x = " << new_x << ", new y = " << new_y << '\n';
         */
-
-        if (!numeric::epsilon(x, target_x, precision_radius) || !numeric::epsilon(y, target_y, precision_radius)) {
-            x = new_x;
-            y = new_y;
-        }
         else {
             moves_blocked = false;
             x = target_x;

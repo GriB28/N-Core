@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <cmath>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 using sf::Keyboard;
@@ -12,13 +11,18 @@ using std::cout;
 
 game::ChapterLayout::ChapterLayout(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link) : Scene(window_link, fonts_link, boombox_link) {
     page = 0;
-    page_changing_animation_flag = false;
+
+    page_swipe_animation_flag = false;
     delta_page = 0;
     target_page_animation_offset = 0;
+
+    day_night_cycle_animation_flag = false;
+    day_night_cycle = true;
+    day_night_animation_phase = false;
 }
 
 void game::ChapterLayout::on_start() {
-    zero_initial_view = window->getDefaultView();
+    zero_initial_view = window->getView();
     const short window_x_size = window->getSize().x, window_y_size = window->getSize().y;
     const float window_x_shrink = window_x_size / 1920, window_y_shrink = window_y_size / 1080;
 
@@ -37,7 +41,17 @@ void game::ChapterLayout::on_start() {
         splash_screens_night_textures.push_back(texture);
 
         auto text = new sf::Text();
-        text->setString(std::to_string(chapter_number) + ". <CHAPTER NAME>");
+        switch (chapter_number) {
+            case 0:
+                text->setString("0. Tutorial");
+                break;
+            case 1:
+                text->setString("1. Starfall Cliffs");
+                break;
+            default:
+                text->setString("undefined chapter ?!");
+                break;
+        }
         text->setCharacterSize(window_y_size * 5 / 54);
         text->setFont(*fonts->PAG());
         text->setFillColor(sf::Color(255, 255, 255, 128));
@@ -52,40 +66,59 @@ void game::ChapterLayout::on_start() {
         levels_buttons_texts.emplace_back(5);
         for (short btn = 1; btn <= 5; btn++) {
             levels[chapter_number][btn - 1] = new utils::Button;
-            levels_buttons_textures[chapter_number][btn - 1] = new sf::Texture;
-            levels_buttons_textures[chapter_number][btn - 1]->loadFromFile("resources/buttons/chapter_layout/1-4.png");
+            levels_buttons_textures[chapter_number][btn - 1] = std::pair(new sf::Texture, new sf::Texture);
+            levels_buttons_textures[chapter_number][btn - 1].first->loadFromFile("resources/buttons/chapter_layout/1-4.png");
+            levels_buttons_textures[chapter_number][btn - 1].second->loadFromFile("resources/buttons/chapter_layout/1-4 dim.png");
             levels_buttons_texts[chapter_number][btn - 1] = new sf::Text;
-            levels_buttons_texts[chapter_number][btn - 1]->setCharacterSize(20);
+            levels_buttons_texts[chapter_number][btn - 1]->setCharacterSize(28);
             levels_buttons_texts[chapter_number][btn - 1]->setFont(*fonts->pixel2());
             levels_buttons_texts[chapter_number][btn - 1]->setFillColor(sf::Color(2, 2, 2));
             levels_buttons_texts[chapter_number][btn - 1]->setString(std::to_string(btn));
             levels[chapter_number][btn - 1]->initialize(
                 levels_buttons_texts[chapter_number][btn - 1],
-                levels_buttons_textures[chapter_number][btn - 1],
-                levels_buttons_textures[chapter_number][btn - 1]
+                levels_buttons_textures[chapter_number][btn - 1].first,
+                levels_buttons_textures[chapter_number][btn - 1].second
                 );
             levels[chapter_number][btn - 1]->set_scale(.25);
             switch (btn) {
                 case 1:
-                    levels[chapter_number][0]->set_position(300 * window_x_shrink, 400 * window_y_shrink);
+                    levels[chapter_number][0]->set_position(
+                        300 * window_x_shrink + window_x_size * chapter_number,
+                        400 * window_y_shrink
+                        );
                     break;
                 case 2:
-                    levels[chapter_number][1]->set_position(550 * window_x_shrink, 660 * window_y_shrink);
+                    levels[chapter_number][1]->set_position(
+                        550 * window_x_shrink + window_x_size * chapter_number,
+                        660 * window_y_shrink
+                        );
                     break;
                 case 3:
-                    levels[chapter_number][2]->set_position(900 * window_x_shrink, 400 * window_y_shrink);
+                    levels[chapter_number][2]->set_position(
+                        900 * window_x_shrink + window_x_size * chapter_number,
+                        400 * window_y_shrink
+                        );
                     break;
                 case 4:
-                    levels[chapter_number][3]->set_position(1250 * window_x_shrink, 660 * window_y_shrink);
+                    levels[chapter_number][3]->set_position(
+                        1250 * window_x_shrink + window_x_size * chapter_number,
+                        660 * window_y_shrink
+                        );
                     break;
                 case 5:
-                    levels[chapter_number][4]->set_position(1500 * window_x_shrink, 400 * window_y_shrink);
+                    levels[chapter_number][4]->set_position(
+                        1500 * window_x_shrink + window_x_size * chapter_number,
+                        400 * window_y_shrink
+                        );
                     break;
                 default:
                     break;
             }
+            levels_buttons_texts[chapter_number][btn - 1]->move(-5, 5);
         }
     }
+
+    day_night_clock.restart();
 }
 void game::ChapterLayout::on_end() {
     window->setView(zero_initial_view);
@@ -100,7 +133,10 @@ void game::ChapterLayout::on_end() {
 
     for (short p = 0; p <= level_pages_cap; p++) {
         for (const auto b : levels[p]) delete b;
-        for (const auto t : levels_buttons_textures[p]) delete t;
+        for (const auto tt : levels_buttons_textures[p]) {
+            delete tt.first;
+            delete tt.second;
+        }
         for (const auto t : levels_buttons_texts[p]) delete t;
         levels[p].clear();
         levels_buttons_textures[p].clear();
@@ -116,49 +152,52 @@ game::ChapterLayout::~ChapterLayout() {
 }
 
 void game::ChapterLayout::start_page_animation_sequence() {
+    cout << "\nstarted sequence\n";
     swipe_clock.restart();
-    page_changing_animation_flag = true;
+    page_swipe_animation_flag = true;
     current_view = window->getView();
     initial_view_center = current_view.getCenter();
     target_page_animation_offset = delta_page * static_cast<float>(window->getSize().x);
+    cout << "curr: " << current_view.getCenter().x << " (= initial), target: " << target_page_animation_offset << '\n';
 }
+
 int game::ChapterLayout::event(const Event &event) {
     int return_code = 0;
-    if (event.type == Event::KeyPressed) {
+    if (event.type == Event::KeyReleased) {
         if (event.key.code == Keyboard::Escape) return_code = 2;
-        else if (!page_changing_animation_flag) {
+        else if (!page_swipe_animation_flag) {
             switch (event.key.code) {
                 case Keyboard::Right:
-                    start_page_animation_sequence();
                     delta_page = 1;
                     if (++page > level_pages_cap) {
                         page = 0;
                         delta_page = -level_pages_cap;
                     }
+                    start_page_animation_sequence();
                     break;
                 case Keyboard::D:
-                    start_page_animation_sequence();
                     delta_page = 1;
                     if (++page > level_pages_cap) {
                         page = 0;
                         delta_page = -level_pages_cap;
                     }
+                    start_page_animation_sequence();
                     break;
                 case Keyboard::Left:
-                    start_page_animation_sequence();
                     delta_page = -1;
                     if (--page < 0) {
                         page = level_pages_cap;
                         delta_page = level_pages_cap;
                     }
+                    start_page_animation_sequence();
                     break;
                 case Keyboard::A:
-                    start_page_animation_sequence();
                     delta_page = -1;
                     if (--page < 0) {
                         page = level_pages_cap;
                         delta_page = level_pages_cap;
                     }
+                    start_page_animation_sequence();
                     break;
                 default:
                     break;
@@ -166,18 +205,23 @@ int game::ChapterLayout::event(const Event &event) {
         }
     }
     else if (event.type == Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Button::Left)
+        if (event.mouseButton.button == sf::Mouse::Button::Left) {
+            const auto mouse_abs_position = window->mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
             for (const auto btn : levels[page])
-                btn->check_click(event.mouseButton.x, event.mouseButton.y);
+                btn->check_click(mouse_abs_position.x, mouse_abs_position.y);
+        }
     }
     else if (event.type == Event::MouseButtonReleased) {
-        if (event.mouseButton.button == sf::Mouse::Button::Left)
+        if (event.mouseButton.button == sf::Mouse::Button::Left) {
+            const auto mouse_abs_position = window->mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
             for (const auto btn : levels[page])
-                btn->check_release(event.mouseButton.x, event.mouseButton.y);
+                btn->check_release(mouse_abs_position.x, mouse_abs_position.y);
+        }
     }
 
     return return_code;
 }
+
 int game::ChapterLayout::proceed() {
     int return_code = 0;
 
@@ -187,17 +231,51 @@ int game::ChapterLayout::proceed() {
         for (const auto btn : levels[i]) btn->draw_at(window);
     }
 
-    if (page_changing_animation_flag) {
-        if (!numeric::epsilon(current_view.getCenter().x, initial_view_center.x + target_page_animation_offset, 1)) {
-            const auto t = swipe_clock.getElapsedTime().asMilliseconds();
+    if (day_night_clock.getElapsedTime().asMilliseconds() >= day_night_animation_delay) {
+        day_night_clock.restart();
+        day_night_cycle_animation_flag = true;
+        day_night_cycle = !day_night_cycle;
+        day_night_animation_phase = true;
+    }
+
+    if (day_night_cycle_animation_flag) {
+        const auto t = day_night_clock.getElapsedTime().asMilliseconds();
+        if (day_night_animation_phase) {
+            if (t <= day_night_animation_time)
+                for (const auto bg : splash_screens)
+                    bg->setColor(sf::Color(255, 255, 255, 255 * (1.f - t / day_night_animation_time)));
+            else {
+                day_night_clock.restart();
+                day_night_animation_phase = false;
+                for (unsigned short i = 0; i < splash_screens.size(); i++) {
+                    splash_screens[i]->setTexture(day_night_cycle ? *splash_screens_day_textures[i] : *splash_screens_night_textures[i]);
+                    splash_screens[i]->setColor(sf::Color(255, 255, 255, 0));
+                }
+            }
+        }
+        else {
+            if (t <= day_night_animation_time)
+                for (const auto bg : splash_screens)
+                    bg->setColor(sf::Color(255, 255, 255, 255 * (t / day_night_animation_time)));
+            else {
+                day_night_clock.restart();
+                day_night_cycle_animation_flag = false;
+                for (const auto bg : splash_screens)
+                    bg->setColor(sf::Color(255, 255, 255, 255));
+            }
+        }
+    }
+
+    if (page_swipe_animation_flag) {
+        if (const auto t = swipe_clock.getElapsedTime().asMilliseconds(); t <= day_night_animation_time) {
             current_view.setCenter(
-                initial_view_center.x + target_page_animation_offset * std::sin(t / animation_time),
+                initial_view_center.x + target_page_animation_offset * numeric::sine(t, day_night_animation_time),
                 initial_view_center.y
                 );
             window->setView(current_view);
         }
         else {
-            page_changing_animation_flag = false;
+            page_swipe_animation_flag = false;
             current_view.setCenter(initial_view_center.x + target_page_animation_offset, initial_view_center.y);
             window->setView(current_view);
         }

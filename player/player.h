@@ -35,9 +35,7 @@ namespace game {
         float x, y, x_abs_offset, y_abs_offset, scale;
         short local_x, local_y;
 
-        float sprite_size_const = 1024;
-        float animation_time = 250;
-        float precision_radius = 1;
+        const float sprite_size_const = 1024, animation_time = 250;
 
         void set_sprite(const std::string &name);
         sf::Sprite* sprite;
