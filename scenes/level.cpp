@@ -2,26 +2,34 @@
 
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <iostream>
 
 
-game::Level::Level(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link) : Scene(window_link, fonts_link, boombox_link) {
+game::Level::Level(sf::RenderWindow* window_link, FontSource* fonts_link, BoomBox* boombox_link) : Scene(window_link, fonts_link, boombox_link) {
     level_generator = nullptr;
     player = nullptr;
+    av = 0;
+    av_counter = new sf::Text;
+    av_counter->setFillColor(sf::Color(128, 128, 128));
+    av_counter->setCharacterSize(50);
+    av_counter->setFont(*fonts->pixel2());
+    av_counter->setPosition(55, 5);
 }
 
 game::Level::~Level() {
     delete level_generator;
     delete player;
+    delete av_counter;
 }
 
 int game::Level::event(const Event &event) {
     int return_code = 0;
-    if (event.type == Event::KeyPressed) {
+    if (event.type == Event::KeyReleased) {
         check_movement_keys(event.key.code);
         switch (event.key.code) {
             case sf::Keyboard::Escape:
-                return_code = -2056;
+                return_code = 4;
                 break;
             default:
                 break;
@@ -30,7 +38,7 @@ int game::Level::event(const Event &event) {
 
     return return_code;
 }
-void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) const {
+void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) {
     const auto player_position = player->get_position();
     short x = player_position.x, y = player_position.y;
     std::cout << "[level/check_keys]\tplayer coords: " << x << ", " << y << '\n';
@@ -75,6 +83,7 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) const {
         << "\t\torigin: " << x << ':' << y << '\n'
         << "\t\ttarget: " << x+dx << ':' << y+dy << '\n';
         if (dx == 0 && (origin->get_object_id() == "ladder" || target->get_object_id() == "ladder")) {
+            av_counter->setString(std::to_string(--av));
             while (((target->get_object_id() == "ladder" && dy < 0) ||
                     (!target->get_component("has_ladder") && dy > 0)) &&
                     !target->is_blocked_move_origin(x, y)) {
@@ -88,6 +97,7 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) const {
             }
         }
         else if (!target->is_blocked_move_origin(x, y) && !origin->is_blocked_move_target(x+dx, y+dy)) {
+            av_counter->setString(std::to_string(--av));
             origin->walk_out(player);
             player->move(dx, dy);
             target->walk_in(player);
@@ -105,27 +115,42 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) const {
                 y++;
             }
         }
+        if (av == 0) player->die();
     }
 }
 
 int game::Level::proceed() {
     level_generator->render_level(window);
     player->draw_at(window);
+
+    if (av < 256) window->draw(*av_counter);
     return 0;
 }
 
-void game::Level::on_start() {
-    level_generator = new object::Generator("ch0", "test");
-    level_generator->set_scale(.125);
-    level_generator->set_abs_offset(300, 100);
+void game::Level::on_start(const std::string &level_info) {
+    const auto sep = level_info.find('-');
+    const auto chapter_id = level_info.substr(0, sep),
+               level_id = level_info.substr(sep + 1);
+    level_generator = new object::Generator(chapter_id, level_id, av);
+    av_counter->setString(std::to_string(av));
+    level_generator->set_scale(global_scale);
 
     const auto start_pos = level_generator->get_start_point();
     player = new Player("test", start_pos.x, start_pos.y);
-    player->set_scale(.125);
-    player->set_abs_offset(300, 100);
+    player->set_scale(global_scale);
+    player->set_abs_offset(level_generator->auto_offset(window));
 
-    boombox->get_track("DSC8f")->play();
+    if (chapter_id == "ch0") current_ost = "DSC0";
+    else if (chapter_id == "ch1") {
+        if (level_id == "1" || level_id == "2") current_ost = "DSC8p1";
+        else if (level_id == "3" || level_id == "4") current_ost = "DSC8p2";
+        else current_ost = "DSC8f";
+    }
+
+    if (!current_ost.empty())
+        boombox->get_track(current_ost)->play();
 }
 void game::Level::on_end() {
-    boombox->get_track("DSC8f")->stop();
+    if (!current_ost.empty())
+        boombox->get_track(current_ost)->stop();
 }

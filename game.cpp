@@ -18,8 +18,11 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     closing_flag = false;
     fonts = fonts_link;
 
+    chapter_layout_theme = new Soundtrack("music/DSC2.ogg");
+    chapter_layout_theme->set_loop(true);
     menu_theme = new Soundtrack("music/DSC6.ogg");
     menu_theme->set_loop(true);
+    chapter0   = new Soundtrack("music/DSC0.ogg");
     chapter1_1 = new Soundtrack("music/DSC8p1.ogg");
     chapter1_1->set_loop(true);
     chapter1_2 = new Soundtrack("music/DSC8p2.ogg");
@@ -28,18 +31,21 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     chapter1_f->set_loop(true);
 
     loading_boombox = new BoomBox;
+    loading_boombox->add_track(chapter_layout_theme);
     loading_boombox->add_track(menu_theme);
     level_boombox = new BoomBox;
+    level_boombox->add_track(chapter0);
     level_boombox->add_track(chapter1_1);
     level_boombox->add_track(chapter1_2);
     level_boombox->add_track(chapter1_f);
 
+    level_link = new Level(window, fonts, level_boombox);
     scenes = new Scene*[scenes_cap+1];
     scenes[0] = new Scene; // void scene
     scenes[1] = new Loading(window, fonts, loading_boombox);
     scenes[2] = new MainMenu(window, fonts, loading_boombox);
-    scenes[3] = new Level(window, fonts, level_boombox);
-    scenes[4] = new ChapterLayout(window, fonts, level_boombox);
+    scenes[3] = level_link;
+    scenes[4] = new ChapterLayout(window, fonts, loading_boombox);
 
     fps.setCharacterSize(10);
     fps.setFont(*fonts->OCRA());
@@ -60,7 +66,7 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     version_info.setCharacterSize(12);
     version_info.setFont(*fonts->OCRA());
     version_info.setFillColor(sf::Color(147, 147, 147, 141));
-    version_info.setString("beta-1b24-indev");
+    version_info.setString("beta-1b25-indev");
 
     update_scene_index(1);
     loop();
@@ -70,6 +76,8 @@ game::Engine::~Engine() {
     delete[] scenes;
 
     delete menu_theme;
+    delete chapter_layout_theme;
+    delete chapter0;
     delete chapter1_1;
     delete chapter1_2;
     delete chapter1_f;
@@ -158,11 +166,17 @@ void game::Engine::proceed_scenes() {
 
 void game::Engine::update_scene_index(const int return_code) {
     if (return_code != 0) {
-        if (current_scene_index > 0)
+        std::string local_callback;
+        if (current_scene_index > 0) {
             scenes[current_scene_index]->on_end();
+            local_callback = scenes[current_scene_index]->get_callback();
+        }
         current_scene_index = return_code;
         scene_num.setString("scene " + to_string(current_scene_index));
         if (current_scene_index < 0) closing_flag = true;
-        else scenes[current_scene_index]->on_start();
+        else {
+            if (current_scene_index == 3) level_link->on_start(local_callback);
+            else scenes[current_scene_index]->on_start();
+        }
     }
 }

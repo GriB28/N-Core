@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <SFML/Graphics/Texture.hpp>
 using std::cout;
 using sf::Vector2f;
 
@@ -17,12 +18,14 @@ game::object::Generator::Generator() {
     scale = 1.;
     offset_update_required = true;
     scale_update_required = true;
+    bg = new sf::Sprite;
+    bg_texture = new sf::Texture;
 }
-game::object::Generator::Generator(const string &chapter_id, const string &level_id) : Generator() {
+game::object::Generator::Generator(const string &chapter_id, const string &level_id, unsigned short &av_link) : Generator() {
     set_chapter_id(chapter_id);
-    load_level(level_id);
+    av_link = load_level(level_id);
 }
-game::object::Generator::~Generator() {
+void game::object::Generator::clear_matrix() const {
     for (unsigned short y = 0; y < y_size; y++)
         for (unsigned short x = 0; x < x_size; x++)
             delete matrix[y][x];
@@ -30,11 +33,17 @@ game::object::Generator::~Generator() {
         delete[] matrix[y];
     delete[] matrix;
 }
+game::object::Generator::~Generator() {
+    clear_matrix();
+    delete bg;
+    delete bg_texture;
+}
 
 void game::object::Generator::set_scale(const float coefficient) {
     scale = coefficient;
     scale_update_required = true;
 }
+
 void game::object::Generator::set_abs_offset(const float x, const float y) {
     set_abs_offset_x(x);
     set_abs_offset_y(y);
@@ -48,9 +57,17 @@ void game::object::Generator::set_abs_offset_y(const float value) {
     offset_update_required = true;
 }
 
+Vector2f game::object::Generator::auto_offset(const sf::RenderWindow* window_ref) {
+    const float max_x = x_size * sprite_size_const * scale;
+    const float max_y = y_size * sprite_size_const * scale;
+    const auto window_size = window_ref->getSize();
+    set_abs_offset((window_size.x - max_x) / 2, (window_size.y - max_y) / 2);
+    return {(window_size.x - max_x) / 2, (window_size.y - max_y) / 2};
+}
+
 Vector2f game::object::Generator::get_start_point_abs() const {
     const auto start_point = get_start_point();
-    return Vector2f{
+    return {
         start_point.x * scale * sprite_size_const + x_abs_offset,
         start_point.y * scale * sprite_size_const + y_abs_offset,
     };
@@ -65,12 +82,19 @@ sf::Vector2<short> game::object::Generator::get_start_point() const {
 void game::object::Generator::set_chapter_id(const string &chapter_id) {
     chapter = chapter_id;
 }
-void game::object::Generator::load_level(const string &level_id) {
+unsigned short game::object::Generator::load_level(const string &level_id) {
     name = level_id;
-    std::fstream level_stream("level/" + level_id + ".mtrx", std::ios::in);
+    std::ifstream level_stream("level/" + chapter + '-' + level_id + ".mtrx");
+
+    bg_texture->loadFromFile("level/bg/" + chapter + '-' + level_id + ".png");
+    bg->setTexture(*bg_texture);
+
     cout << "[generator] read level stream '" << level_id << "' matrix:\n";
-    level_stream >> x_size >> y_size;
-    cout << "\t> sizes: " << x_size << ':' << y_size << '\n';
+    unsigned short av;
+    level_stream >> x_size >> y_size >> av;
+    cout << "\t> sizes: " << x_size << ':' << y_size << ", av: " << av << '\n';
+
+    if (matrix != nullptr) clear_matrix();
     matrix = new Object**[y_size];
     char input;
     for (unsigned short y = 0; y < y_size; y++) {
@@ -116,10 +140,13 @@ void game::object::Generator::load_level(const string &level_id) {
             matrix[y][x]->set_sprite_size(sprite_size_const);
         }
     }
+
     scale_update_required = true;
     offset_update_required = true;
     cout << "generating is complete.\n";
     level_stream.close();
+
+    return av;
 }
 
 game::object::Object* game::object::Generator::get_tile(short x, short y) const {
@@ -152,6 +179,7 @@ void game::object::Generator::render_level(sf::RenderWindow* window) {
         offset_update_required = false;
     }
 
+    window->draw(*bg);
     for (unsigned short y = 0; y < y_size; y++)
         for (unsigned short x = 0; x < x_size; x++)
             matrix[y][x]->draw_at(window);

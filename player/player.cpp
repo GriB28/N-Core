@@ -80,6 +80,10 @@ void game::Player::set_abs_offset(const float x_offset, const float y_offset) {
     set_abs_offset_x(x_offset);
     set_abs_offset_y(y_offset);
 }
+void game::Player::set_abs_offset(const sf::Vector2f offset) {
+    set_abs_offset_x(offset.x);
+    set_abs_offset_y(offset.y);
+}
 void game::Player::set_abs_offset_x(const float value) {
     x_abs_offset = value;
     position_update_required = true;

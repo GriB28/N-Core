@@ -4,6 +4,7 @@
 #include "../source/music.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <string>
 
 namespace game {
     class Scene {
@@ -16,10 +17,14 @@ namespace game {
         virtual int proceed();
         virtual void on_start();
         virtual void on_end();
+
+        void set_callback(const std::string &value);
+        std::string get_callback();
     protected:
         sf::RenderWindow* window;
         FontSource* fonts;
         BoomBox* boombox;
+        std::string callback;
     };
 }
 #endif

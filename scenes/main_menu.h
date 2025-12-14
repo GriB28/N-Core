@@ -32,9 +32,9 @@ namespace game {
         sf::Texture *settings_default_texture, *settings_clicked_texture;
         sf::Text* settings_txt;
 
-        utils::Button* tutorial;
-        sf::Texture *tutorial_default_texture, *tutorial_clicked_texture;
-        sf::Text* tutorial_txt;
+        utils::Button* about;
+        sf::Texture *about_default_texture, *about_clicked_texture;
+        sf::Text* about_txt;
 
         sf::Text* logo_text;
 

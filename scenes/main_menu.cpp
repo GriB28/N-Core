@@ -75,24 +75,24 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, 
         );
 
 
-    tutorial = new utils::Button;
-    tutorial_default_texture = new sf::Texture;
-    tutorial_default_texture->loadFromFile("resources/buttons/tutorial/1.png");
-    tutorial_clicked_texture = new sf::Texture;
-    tutorial_clicked_texture->loadFromFile("resources/buttons/tutorial/2.png");
-    tutorial_txt = new sf::Text;
-    tutorial_txt->setString("Tutorial");
-    tutorial_txt->setFont(*fonts->pixel2());
-    tutorial_txt->setCharacterSize(17);
+    about = new utils::Button;
+    about_default_texture = new sf::Texture;
+    about_default_texture->loadFromFile("resources/buttons/tutorial/1.png");
+    about_clicked_texture = new sf::Texture;
+    about_clicked_texture->loadFromFile("resources/buttons/tutorial/2.png");
+    about_txt = new sf::Text;
+    about_txt->setString("About");
+    about_txt->setFont(*fonts->pixel2());
+    about_txt->setCharacterSize(17);
 
-    tutorial->initialize(tutorial_txt, tutorial_default_texture, tutorial_clicked_texture);
-    buttons1.push_back(tutorial);
+    about->initialize(about_txt, about_default_texture, about_clicked_texture);
+    buttons1.push_back(about);
 
-    tutorial->set_scale(.25);
-    tutorial->set_text_y_align('d');
+    about->set_scale(.25);
+    about->set_text_y_align('d');
 
-    tutorial->set_position(
-        (window_x - tutorial_default_texture->getSize().x * .25f) / 2 - tutorial_default_texture->getSize().x * .25f * 3,
+    about->set_position(
+        (window_x - about_default_texture->getSize().x * .25f) / 2 - about_default_texture->getSize().x * .25f * 3,
         window_y * 25 / 36
         );
 
@@ -116,10 +116,10 @@ game::MainMenu::~MainMenu() {
     delete settings_txt;
     delete settings;
 
-    delete tutorial_default_texture;
-    delete tutorial_clicked_texture;
-    delete tutorial_txt;
-    delete tutorial;
+    delete about_default_texture;
+    delete about_clicked_texture;
+    delete about_txt;
+    delete about;
 }
 
 int game::MainMenu::event(const Event &event) {

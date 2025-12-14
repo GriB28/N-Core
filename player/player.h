@@ -18,6 +18,7 @@ namespace game {
         void set_scale(float coefficient);
 
         void set_abs_offset(float x_offset, float y_offset);
+        void set_abs_offset(sf::Vector2f offset);
         void set_abs_offset_x(float value);
         void set_abs_offset_y(float value);
 

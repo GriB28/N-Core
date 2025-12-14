@@ -22,7 +22,10 @@ game::ChapterLayout::ChapterLayout(sf::RenderWindow *window_link, FontSource *fo
 }
 
 void game::ChapterLayout::on_start() {
-    zero_initial_view = window->getView();
+    const auto default_view = window->getDefaultView().getCenter();
+    auto initial_view = window->getView();
+    initial_view.setCenter(default_view.x + page * static_cast<float>(window->getSize().x), default_view.y);
+    window->setView(initial_view);
     const short window_x_size = window->getSize().x, window_y_size = window->getSize().y;
     const float window_x_shrink = window_x_size / 1920, window_y_shrink = window_y_size / 1080;
 
@@ -30,6 +33,8 @@ void game::ChapterLayout::on_start() {
         auto texture = new sf::Texture();
         if (0 < chapter_number && chapter_number < level_pages_cap)
             texture->loadFromFile("level/bg/chapter" + std::to_string(chapter_number) + "-day.png");
+        else if (chapter_number == 0)
+            texture->loadFromFile("level/bg/chapter0.png");
         else
             texture->loadFromFile("level/bg/0.png");
         splash_screens_day_textures.push_back(texture);
@@ -91,31 +96,31 @@ void game::ChapterLayout::on_start() {
                 switch (btn) {
                     case 1:
                         levels[chapter_number][0]->set_position(
-                            300 * window_x_shrink + window_x_size * chapter_number,
+                            280 * window_x_shrink + window_x_size * chapter_number,
                             500 * window_y_shrink
                             );
                         break;
                     case 2:
                         levels[chapter_number][1]->set_position(
-                            550 * window_x_shrink + window_x_size * chapter_number,
+                            530 * window_x_shrink + window_x_size * chapter_number,
                             760 * window_y_shrink
                             );
                         break;
                     case 3:
                         levels[chapter_number][2]->set_position(
-                            900 * window_x_shrink + window_x_size * chapter_number,
+                            880 * window_x_shrink + window_x_size * chapter_number,
                             500 * window_y_shrink
                             );
                         break;
                     case 4:
                         levels[chapter_number][3]->set_position(
-                            1250 * window_x_shrink + window_x_size * chapter_number,
+                            1230 * window_x_shrink + window_x_size * chapter_number,
                             760 * window_y_shrink
                             );
                         break;
                     case 5:
                         levels[chapter_number][4]->set_position(
-                            1500 * window_x_shrink + window_x_size * chapter_number,
+                            1480 * window_x_shrink + window_x_size * chapter_number,
                             500 * window_y_shrink
                             );
                         break;
@@ -128,9 +133,11 @@ void game::ChapterLayout::on_start() {
     }
 
     day_night_clock.restart();
+    boombox->get_track("DSC2")->play();
 }
 void game::ChapterLayout::on_end() {
-    window->setView(zero_initial_view);
+    window->setView(window->getDefaultView());
+
     for (const auto s : splash_screens) delete s;
     for (const auto t : splash_screens_day_textures) delete t;
     for (const auto t : splash_screens_night_textures) delete t;
@@ -154,6 +161,8 @@ void game::ChapterLayout::on_end() {
     levels.clear();
     levels_buttons_textures.clear();
     levels_buttons_texts.clear();
+
+    boombox->get_track("DSC2")->stop();
 }
 
 game::ChapterLayout::~ChapterLayout() {
@@ -161,13 +170,12 @@ game::ChapterLayout::~ChapterLayout() {
 }
 
 void game::ChapterLayout::start_page_animation_sequence() {
-    cout << "\nstarted sequence\n";
     swipe_clock.restart();
     page_swipe_animation_flag = true;
     current_view = window->getView();
     initial_view_center = current_view.getCenter();
     target_page_animation_offset = delta_page * static_cast<float>(window->getSize().x);
-    cout << "curr: " << current_view.getCenter().x << " (= initial), target: " << target_page_animation_offset << '\n';
+    cout << "\nstarted sequence\ncurrent x: " << current_view.getCenter().x << " (= initial), target delta x: " << target_page_animation_offset << '\n';
 }
 
 int game::ChapterLayout::event(const Event &event) {
@@ -213,20 +221,28 @@ int game::ChapterLayout::event(const Event &event) {
             }
         }
     }
-    else if (event.type == Event::MouseButtonPressed) {
+    else if (event.type == Event::MouseButtonPressed && page < level_pages_cap) {
         if (event.mouseButton.button == sf::Mouse::Button::Left) {
             const auto mouse_abs_position = window->mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
             for (const auto btn : levels[page])
                 btn->check_click(mouse_abs_position.x, mouse_abs_position.y);
         }
     }
-    else if (event.type == Event::MouseButtonReleased) {
+    else if (event.type == Event::MouseButtonReleased && page < level_pages_cap) {
         if (event.mouseButton.button == sf::Mouse::Button::Left) {
             const auto mouse_abs_position = window->mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
             for (const auto btn : levels[page])
                 btn->check_release(mouse_abs_position.x, mouse_abs_position.y);
         }
     }
+
+    if (page < level_pages_cap)
+        for (short i = 0; i < 5; i++)
+            if (levels[page][i]->is_clicked()) {
+                set_callback("ch" + std::to_string(page) + '-' + std::to_string(i + 1));
+                return_code = 3;
+                break;
+            }
 
     return return_code;
 }

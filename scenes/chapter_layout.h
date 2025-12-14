@@ -30,10 +30,10 @@ namespace game {
 
         bool page_swipe_animation_flag;
         short delta_page;
-        const float page_swipe_animation_time = 1000;
+        const float page_swipe_animation_time = 500;
         float target_page_animation_offset;
         sf::Clock swipe_clock;
-        sf::View current_view, zero_initial_view;
+        sf::View current_view;
         sf::Vector2f initial_view_center;
         void start_page_animation_sequence();
 
