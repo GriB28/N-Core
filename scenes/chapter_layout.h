@@ -21,7 +21,7 @@ namespace game {
         void on_start() override;
         void on_end() override;
     private:
-        short level_pages_cap = 1;
+        short level_pages_cap = 2; // + coming soon screen
         short page;
 
         bool day_night_cycle_animation_flag, day_night_animation_phase, day_night_cycle;

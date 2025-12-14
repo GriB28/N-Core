@@ -28,7 +28,10 @@ void game::ChapterLayout::on_start() {
 
     for (short chapter_number = 0; chapter_number <= level_pages_cap; chapter_number++) {
         auto texture = new sf::Texture();
-        texture->loadFromFile("level/bg/chapter" + std::to_string(chapter_number) + "-day.png");
+        if (0 < chapter_number && chapter_number < level_pages_cap)
+            texture->loadFromFile("level/bg/chapter" + std::to_string(chapter_number) + "-day.png");
+        else
+            texture->loadFromFile("level/bg/0.png");
         splash_screens_day_textures.push_back(texture);
 
         auto s = new sf::Sprite();
@@ -37,7 +40,10 @@ void game::ChapterLayout::on_start() {
         splash_screens.push_back(s);
 
         texture = new sf::Texture();
-        texture->loadFromFile("level/bg/chapter" + std::to_string(chapter_number) + "-night.png");
+        if (0 < chapter_number && chapter_number < level_pages_cap)
+            texture->loadFromFile("level/bg/chapter" + std::to_string(chapter_number) + "-night.png");
+        else
+            texture->loadFromFile("level/bg/0.png");
         splash_screens_night_textures.push_back(texture);
 
         auto text = new sf::Text();
@@ -49,7 +55,7 @@ void game::ChapterLayout::on_start() {
                 text->setString("1. Starfall Cliffs");
                 break;
             default:
-                text->setString("undefined chapter ?!");
+                text->setString("Coming soon...");
                 break;
         }
         text->setCharacterSize(window_y_size * 5 / 54);
@@ -59,62 +65,65 @@ void game::ChapterLayout::on_start() {
             (window_x_size - text->getGlobalBounds().width) / 2 + window_x_size * chapter_number,
             window_y_size / 12
             );
+        if (chapter_number == level_pages_cap) text->move(0, window_y_size / 3);
         chapters_names.push_back(text);
 
-        levels.emplace_back(5);
-        levels_buttons_textures.emplace_back(5);
-        levels_buttons_texts.emplace_back(5);
-        for (short btn = 1; btn <= 5; btn++) {
-            levels[chapter_number][btn - 1] = new utils::Button;
-            levels_buttons_textures[chapter_number][btn - 1] = std::pair(new sf::Texture, new sf::Texture);
-            levels_buttons_textures[chapter_number][btn - 1].first->loadFromFile("resources/buttons/chapter_layout/1-4.png");
-            levels_buttons_textures[chapter_number][btn - 1].second->loadFromFile("resources/buttons/chapter_layout/1-4 dim.png");
-            levels_buttons_texts[chapter_number][btn - 1] = new sf::Text;
-            levels_buttons_texts[chapter_number][btn - 1]->setCharacterSize(28);
-            levels_buttons_texts[chapter_number][btn - 1]->setFont(*fonts->pixel2());
-            levels_buttons_texts[chapter_number][btn - 1]->setFillColor(sf::Color(2, 2, 2));
-            levels_buttons_texts[chapter_number][btn - 1]->setString(std::to_string(btn));
-            levels[chapter_number][btn - 1]->initialize(
-                levels_buttons_texts[chapter_number][btn - 1],
-                levels_buttons_textures[chapter_number][btn - 1].first,
-                levels_buttons_textures[chapter_number][btn - 1].second
-                );
-            levels[chapter_number][btn - 1]->set_scale(.25);
-            switch (btn) {
-                case 1:
-                    levels[chapter_number][0]->set_position(
-                        300 * window_x_shrink + window_x_size * chapter_number,
-                        400 * window_y_shrink
-                        );
-                    break;
-                case 2:
-                    levels[chapter_number][1]->set_position(
-                        550 * window_x_shrink + window_x_size * chapter_number,
-                        660 * window_y_shrink
-                        );
-                    break;
-                case 3:
-                    levels[chapter_number][2]->set_position(
-                        900 * window_x_shrink + window_x_size * chapter_number,
-                        400 * window_y_shrink
-                        );
-                    break;
-                case 4:
-                    levels[chapter_number][3]->set_position(
-                        1250 * window_x_shrink + window_x_size * chapter_number,
-                        660 * window_y_shrink
-                        );
-                    break;
-                case 5:
-                    levels[chapter_number][4]->set_position(
-                        1500 * window_x_shrink + window_x_size * chapter_number,
-                        400 * window_y_shrink
-                        );
-                    break;
-                default:
-                    break;
+        if (chapter_number < level_pages_cap) {
+            levels.emplace_back(5);
+            levels_buttons_textures.emplace_back(5);
+            levels_buttons_texts.emplace_back(5);
+            for (short btn = 1; btn <= 5; btn++) {
+                levels[chapter_number][btn - 1] = new utils::Button;
+                levels_buttons_textures[chapter_number][btn - 1] = std::pair(new sf::Texture, new sf::Texture);
+                levels_buttons_textures[chapter_number][btn - 1].first->loadFromFile("resources/buttons/chapter_layout/1-4.png");
+                levels_buttons_textures[chapter_number][btn - 1].second->loadFromFile("resources/buttons/chapter_layout/1-4 dim.png");
+                levels_buttons_texts[chapter_number][btn - 1] = new sf::Text;
+                levels_buttons_texts[chapter_number][btn - 1]->setCharacterSize(50);
+                levels_buttons_texts[chapter_number][btn - 1]->setFont(*fonts->pixel2());
+                levels_buttons_texts[chapter_number][btn - 1]->setFillColor(sf::Color(2, 2, 2));
+                levels_buttons_texts[chapter_number][btn - 1]->setString(std::to_string(btn));
+                levels[chapter_number][btn - 1]->initialize(
+                    levels_buttons_texts[chapter_number][btn - 1],
+                    levels_buttons_textures[chapter_number][btn - 1].first,
+                    levels_buttons_textures[chapter_number][btn - 1].second
+                    );
+                levels[chapter_number][btn - 1]->set_scale(.5);
+                switch (btn) {
+                    case 1:
+                        levels[chapter_number][0]->set_position(
+                            300 * window_x_shrink + window_x_size * chapter_number,
+                            500 * window_y_shrink
+                            );
+                        break;
+                    case 2:
+                        levels[chapter_number][1]->set_position(
+                            550 * window_x_shrink + window_x_size * chapter_number,
+                            760 * window_y_shrink
+                            );
+                        break;
+                    case 3:
+                        levels[chapter_number][2]->set_position(
+                            900 * window_x_shrink + window_x_size * chapter_number,
+                            500 * window_y_shrink
+                            );
+                        break;
+                    case 4:
+                        levels[chapter_number][3]->set_position(
+                            1250 * window_x_shrink + window_x_size * chapter_number,
+                            760 * window_y_shrink
+                            );
+                        break;
+                    case 5:
+                        levels[chapter_number][4]->set_position(
+                            1500 * window_x_shrink + window_x_size * chapter_number,
+                            500 * window_y_shrink
+                            );
+                        break;
+                    default:
+                        break;
+                }
+                levels_buttons_texts[chapter_number][btn - 1]->move(-10, 10);
             }
-            levels_buttons_texts[chapter_number][btn - 1]->move(-5, 5);
         }
     }
 
@@ -131,7 +140,7 @@ void game::ChapterLayout::on_end() {
     splash_screens_night_textures.clear();
     chapters_names.clear();
 
-    for (short p = 0; p <= level_pages_cap; p++) {
+    for (short p = 0; p < level_pages_cap; p++) {
         for (const auto b : levels[p]) delete b;
         for (const auto tt : levels_buttons_textures[p]) {
             delete tt.first;
@@ -228,7 +237,7 @@ int game::ChapterLayout::proceed() {
     for (short i = page <= 1 ? 0 : page - 1; i <= (page + 1 >= level_pages_cap ? level_pages_cap : page + 1); i++) {
         window->draw(*splash_screens[i]);
         window->draw(*chapters_names[i]);
-        for (const auto btn : levels[i]) btn->draw_at(window);
+        if (i < level_pages_cap) for (const auto btn : levels[i]) btn->draw_at(window);
     }
 
     if (day_night_clock.getElapsedTime().asMilliseconds() >= day_night_animation_delay) {

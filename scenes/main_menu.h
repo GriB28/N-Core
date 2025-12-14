@@ -36,10 +36,13 @@ namespace game {
         sf::Texture *tutorial_default_texture, *tutorial_clicked_texture;
         sf::Text* tutorial_txt;
 
+        sf::Text* logo_text;
+
         bool load_levels_scene_flag;
 
-        unsigned short background_counter;
-        bool day_cycle, bg_fading_out, bg_fading_in, bg_change_state;
+        bool day_night_cycle_animation_flag, day_night_animation_phase, day_night_cycle;
+        const float day_night_animation_time = 1500, day_night_animation_delay = 10000;
+        sf::Clock day_night_clock;
     };
 }
 #endif

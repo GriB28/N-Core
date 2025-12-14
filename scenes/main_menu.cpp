@@ -16,13 +16,19 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, 
     bg_texture_day->loadFromFile("resources/day.jpg");
     bg_texture_night->loadFromFile("resources/night.jpg");
     bg->setTexture(*bg_texture_day);
-    background_counter = 0;
-    day_cycle = false;
-    bg_fading_out = false;
-    bg_fading_in = false;
-    bg_change_state = false;
 
-    constexpr float window_x = 1920., window_y = 1080.;
+    day_night_cycle_animation_flag = false;
+    day_night_cycle = true;
+    day_night_animation_phase = false;
+
+    constexpr float window_x = 1920, window_y = 1080;
+
+    logo_text = new sf::Text;
+    logo_text->setString("N-Core");
+    logo_text->setFillColor(sf::Color(255, 255, 255, 192));
+    logo_text->setFont(*fonts->PAG());
+    logo_text->setCharacterSize(150);
+    logo_text->setPosition((window_x - logo_text->getGlobalBounds().width) / 2, 50);
 
 
     play = new utils::Button;
@@ -98,6 +104,8 @@ game::MainMenu::~MainMenu() {
     delete bg_texture_night;
     delete bg_texture_day;
 
+    delete logo_text;
+
     delete play_default_texture;
     delete play_clicked_texture;
     delete play_txt;
@@ -140,29 +148,36 @@ int game::MainMenu::proceed() {
     int return_code = 0;
 
     window->draw(*bg);
+    window->draw(*logo_text);
     for (const auto btn : buttons1) btn->draw_at(window);
 
-    if (++background_counter == 6000) bg_fading_out = true;
+    if (day_night_clock.getElapsedTime().asMilliseconds() >= day_night_animation_delay) {
+        day_night_clock.restart();
+        day_night_cycle_animation_flag = true;
+        day_night_cycle = !day_night_cycle;
+        day_night_animation_phase = true;
+    }
 
-    if (bg_change_state || bg_fading_in || bg_fading_out) {
-        background_counter = 0;
-        bg_change_state = true;
-        if (bg_fading_out) {
-            bg->setColor(sf::Color(255, 255, 255, bg->getColor().a - 1));
-            if (bg->getColor().a == 0) bg_fading_out = false;
-        }
-        else if (bg_fading_in) {
-            bg->setColor(sf::Color(255, 255, 255, bg->getColor().a + 1));
-            if (bg->getColor().a == 255) bg_fading_in = false;
-            bg_change_state = false;
+    if (day_night_cycle_animation_flag) {
+        const auto t = day_night_clock.getElapsedTime().asMilliseconds();
+        if (day_night_animation_phase) {
+            if (t <= day_night_animation_time)
+                bg->setColor(sf::Color(255, 255, 255, 255 * (1.f - t / day_night_animation_time)));
+            else {
+                day_night_clock.restart();
+                day_night_animation_phase = false;
+                bg->setTexture(day_night_cycle ? *bg_texture_day : *bg_texture_night);
+                bg->setColor(sf::Color(255, 255, 255, 0));
+            }
         }
         else {
-            bg_fading_in = true;
-            if (day_cycle)
-                bg->setTexture(*bg_texture_day);
-            else
-                bg->setTexture(*bg_texture_night);
-            day_cycle = !day_cycle;
+            if (t <= day_night_animation_time)
+                bg->setColor(sf::Color(255, 255, 255, 255 * (t / day_night_animation_time)));
+            else {
+                day_night_clock.restart();
+                day_night_cycle_animation_flag = false;
+                bg->setColor(sf::Color(255, 255, 255, 255));
+            }
         }
     }
 
@@ -175,6 +190,7 @@ void game::MainMenu::on_start() {
         dsc6->set_playing_offset(sf::milliseconds(13130));
         dsc6->play();
     }
+    day_night_clock.restart();
 }
 void game::MainMenu::on_end() {
     boombox->get_track("DSC6")->stop();
