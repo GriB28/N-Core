@@ -35,6 +35,9 @@ void game::Player::die() {
     alive = false;
     sprite->setColor(sf::Color(34, 34, 34));
 }
+void game::Player::win() const {
+    std::cout << "[WIN]\n";
+}
 
 void game::Player::set_position(const short x, const short y) {
     local_x = x;

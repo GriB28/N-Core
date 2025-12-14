@@ -43,5 +43,5 @@ bool game::object::Platform::is_blocked_move_target(short x, short y) {
 void game::object::Platform::walk_in(Player *player) {
     std::cout << "a player has walked in\n";
     if (has_spikes) player->die();
-    else if (is_end) {}
+    else if (is_end) player->win();
 }

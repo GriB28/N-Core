@@ -25,6 +25,8 @@ namespace game {
         sf::Text* av_counter;
         unsigned short av;
 
+        sf::Vector2<short> start_pos, end_pos;
+
         std::string current_ost;
 
         const float global_scale = .125;

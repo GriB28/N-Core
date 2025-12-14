@@ -115,7 +115,11 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) {
                 y++;
             }
         }
-        if (av == 0) player->die();
+        if (av == 0) {
+            std::cout << "av = 0; player: " << x << ':' << y << ", end_pos: " << end_pos.x << ':' << end_pos.y << '\n';
+            if (end_pos.x != x || end_pos.y != y) player->die();
+            else player->win();
+        }
     }
 }
 
@@ -135,7 +139,8 @@ void game::Level::on_start(const std::string &level_info) {
     av_counter->setString(std::to_string(av));
     level_generator->set_scale(global_scale);
 
-    const auto start_pos = level_generator->get_start_point();
+    start_pos = level_generator->get_start_point();
+    end_pos = level_generator->get_end_point();
     player = new Player("test", start_pos.x, start_pos.y);
     player->set_scale(global_scale);
     player->set_abs_offset(level_generator->auto_offset(window));

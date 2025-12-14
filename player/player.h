@@ -14,6 +14,7 @@ namespace game {
 
         [[nodiscard]] bool is_alive() const;
         void die();
+        void win() const;
 
         void set_scale(float coefficient);
 

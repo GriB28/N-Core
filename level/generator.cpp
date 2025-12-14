@@ -75,8 +75,22 @@ Vector2f game::object::Generator::get_start_point_abs() const {
 sf::Vector2<short> game::object::Generator::get_start_point() const {
     for (short y = 0; y < y_size; y++) for (short x = 0; x < x_size; x++)
         if (matrix[y][x]->get_object_id() == "flag_spawn")
-            return sf::Vector2{x, y};
-    return sf::Vector2<short>{0, 0};
+            return {x, y};
+    return {0, 0};
+}
+
+Vector2f game::object::Generator::get_end_point_abs() const {
+    const auto end_point = get_end_point();
+    return {
+        end_point.x * scale * sprite_size_const + x_abs_offset,
+        end_point.y * scale * sprite_size_const + y_abs_offset,
+    };
+}
+sf::Vector2<short> game::object::Generator::get_end_point() const {
+    for (short y = 0; y < y_size; y++) for (short x = 0; x < x_size; x++)
+        if (matrix[y][x]->get_object_id() == "flag_end")
+            return {x, y};
+    return {0, 0};
 }
 
 void game::object::Generator::set_chapter_id(const string &chapter_id) {

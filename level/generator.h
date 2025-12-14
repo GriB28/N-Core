@@ -27,7 +27,9 @@ namespace game::object {
         [[nodiscard]] sf::Vector2<unsigned short> get_matrix_size() const;
 
         [[nodiscard]] sf::Vector2f get_start_point_abs() const;
+        [[nodiscard]] sf::Vector2f get_end_point_abs() const;
         [[nodiscard]] sf::Vector2<short> get_start_point() const;
+        [[nodiscard]] sf::Vector2<short> get_end_point() const;
     private:
         explicit Generator();
 
