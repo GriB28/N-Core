@@ -10,18 +10,32 @@ using sf::Keyboard;
 
 
 game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link) : Scene(window_link, fonts_link, boombox_link) {
-    bg = new sf::Sprite();
-    bg_texture_day = new sf::Texture();
-    bg_texture_night = new sf::Texture();
+    constexpr float window_x = 1920, window_y = 1080;
+
+    bg = new sf::Sprite;
+    bg_texture_day = new sf::Texture;
+    bg_texture_night = new sf::Texture;
     bg_texture_day->loadFromFile("resources/day.jpg");
     bg_texture_night->loadFromFile("resources/night.jpg");
     bg->setTexture(*bg_texture_day);
 
+    cloudy = new sf::Sprite;
+    cloudy_texture = new sf::Texture;
+    cloudy_texture->loadFromFile("resources/sprites/player/cloudy full.png");
+    cloudy->setTexture(*cloudy_texture);
+    cloudy->setScale(.5, .5);
+    cloudy->setPosition(-cloudy->getGlobalBounds().width / 2 - 17, 0);
+
+    cosmos = new sf::Sprite;
+    cosmos_texture = new sf::Texture;
+    cosmos_texture->loadFromFile("resources/sprites/player/cosmos full.png");
+    cosmos->setTexture(*cosmos_texture);
+    cosmos->setScale(.5, .5);
+    cosmos->setPosition(window_x - cosmos->getGlobalBounds().width / 2 - 17, 0);
+
     day_night_cycle_animation_flag = false;
     day_night_cycle = true;
     day_night_animation_phase = false;
-
-    constexpr float window_x = 1920, window_y = 1080;
 
     logo_text = new sf::Text;
     logo_text->setString("N-Core");
@@ -104,6 +118,11 @@ game::MainMenu::~MainMenu() {
     delete bg_texture_night;
     delete bg_texture_day;
 
+    delete cloudy;
+    delete cosmos;
+    delete cloudy_texture;
+    delete cosmos_texture;
+
     delete logo_text;
 
     delete play_default_texture;
@@ -150,6 +169,8 @@ int game::MainMenu::proceed() {
     window->draw(*bg);
     window->draw(*logo_text);
     for (const auto btn : buttons1) btn->draw_at(window);
+    window->draw(*cloudy);
+    window->draw(*cosmos);
 
     if (day_night_clock.getElapsedTime().asMilliseconds() >= day_night_animation_delay) {
         day_night_clock.restart();

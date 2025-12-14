@@ -20,7 +20,10 @@ namespace game {
         void on_end() override;
     private:
         sf::Texture *bg_texture_day, *bg_texture_night;
-        sf::Sprite *bg;
+        sf::Sprite* bg;
+
+        sf::Texture *cloudy_texture, *cosmos_texture;
+        sf::Sprite *cloudy, *cosmos;
 
         std::vector<utils::Button*> buttons1;
 

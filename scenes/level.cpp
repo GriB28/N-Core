@@ -74,7 +74,7 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) {
             do_move = false;
             break;
     }
-    if (do_move && !player->is_moving() &&
+    if (do_move && !player->is_moving() && player->is_alive() &&
         0 <= x+dx && x+dx < level_generator->get_matrix_size().x &&
         0 <= y+dy && y+dy < level_generator->get_matrix_size().y) {
         auto origin = level_generator->get_tile(x, y);

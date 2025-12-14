@@ -134,6 +134,10 @@ unsigned short game::object::Generator::load_level(const string &level_id) {
                     cout << "\tmaking a 'ladder' object...\n";
                     matrix[y][x] = new Ladder(chapter, x, y);
                     break;
+                case '6':
+                    cout << "\tmaking a 'spikes' object...\n";
+                    matrix[y][x] = new Platform(chapter, x, y, false, false, false, true);
+                    break;
                 default:
                     break;
             }
