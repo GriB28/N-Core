@@ -5,8 +5,8 @@
 
 game::object::Platform::Platform(
     const string &chapter_id, const short x, const short y,
-    const bool is_spawn, const bool is_end, const bool has_ladder, const bool has_spikes
-    ) : Object(chapter_id, x, y) {
+    const bool shading, const bool is_spawn, const bool is_end, const bool has_ladder, const bool has_spikes
+    ) : Object(chapter_id, x, y, shading) {
     this->has_ladder = has_ladder;
     set_component("has_ladder", has_ladder);
     this->is_spawn = is_spawn;

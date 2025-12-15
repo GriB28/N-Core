@@ -9,7 +9,7 @@ namespace game::object {
     public:
         explicit Platform(
             const string &chapter_id, short x, short y,
-            bool is_spawn = false, bool is_end = false, bool has_ladder = false, bool has_spikes = false
+            bool shading = false, bool is_spawn = false, bool is_end = false, bool has_ladder = false, bool has_spikes = false
             );
 
         void constant_position_delta() const override;

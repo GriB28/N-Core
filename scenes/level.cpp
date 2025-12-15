@@ -3,24 +3,43 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <filesystem>
 #include <iostream>
+
+using std::filesystem::exists;
 
 
 game::Level::Level(sf::RenderWindow* window_link, FontSource* fonts_link, BoomBox* boombox_link) : Scene(window_link, fonts_link, boombox_link) {
     level_generator = nullptr;
     player = nullptr;
+
+    bg = new sf::Sprite;
+    day_texture = new sf::Texture;
+    night_texture = new sf::Texture;
+
     av = 0;
     av_counter = new sf::Text;
     av_counter->setFillColor(sf::Color(128, 128, 128));
     av_counter->setCharacterSize(50);
     av_counter->setFont(*fonts->pixel2());
     av_counter->setPosition(55, 5);
+
+    is_day = true;
+    cycle_change_animation_flag = false;
+    cycle_change_animation_phase = false;
+}
+
+void game::Level::clear_bg_textures() const {
+    delete day_texture;
+    delete night_texture;
 }
 
 game::Level::~Level() {
     delete level_generator;
     delete player;
     delete av_counter;
+    delete bg;
+    clear_bg_textures();
 }
 
 int game::Level::event(const Event &event) {
@@ -30,6 +49,14 @@ int game::Level::event(const Event &event) {
         switch (event.key.code) {
             case sf::Keyboard::Escape:
                 return_code = 4;
+                break;
+            case sf::Keyboard::Space:
+                if (!cycle_change_animation_flag) {
+                    cycle_change_animation_flag = true;
+                    cycle_change_animation_phase = true;
+                    is_day = !is_day;
+                    cycle_change_clock.restart();
+                }
                 break;
             default:
                 break;
@@ -124,18 +151,47 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) {
 }
 
 int game::Level::proceed() {
+    window->draw(*bg);
     level_generator->render_level(window);
     player->draw_at(window);
 
     if (av < 256) window->draw(*av_counter);
+
+    if (cycle_change_animation_flag) {
+        const auto t = cycle_change_clock.getElapsedTime().asMilliseconds();
+        if (cycle_change_animation_phase) {
+            if (t <= cycle_change_animation_time)
+                bg->setColor(sf::Color(255, 255, 255, 255 * (1.f - t / cycle_change_animation_time)));
+            else {
+                cycle_change_clock.restart();
+                cycle_change_animation_phase = false;
+                bg->setTexture(is_day ? *day_texture : *night_texture);
+                bg->setColor(sf::Color(255, 255, 255, 0));
+            }
+        }
+        else {
+            if (t <= cycle_change_animation_time)
+                bg->setColor(sf::Color(255, 255, 255, 255 * (t / cycle_change_animation_time)));
+            else {
+                cycle_change_clock.restart();
+                cycle_change_animation_flag = false;
+                bg->setColor(sf::Color(255, 255, 255, 255));
+            }
+        }
+    }
+
     return 0;
 }
 
 void game::Level::on_start(const std::string &level_info) {
+    clear_bg_textures();
+
     const auto sep = level_info.find('-');
     const auto chapter_id = level_info.substr(0, sep),
                level_id = level_info.substr(sep + 1);
-    level_generator = new object::Generator(chapter_id, level_id, av);
+    bool have_shaded_tiles;
+
+    level_generator = new object::Generator(chapter_id, level_id, av, have_shaded_tiles);
     av_counter->setString(std::to_string(av));
     level_generator->set_scale(global_scale);
 
@@ -144,6 +200,18 @@ void game::Level::on_start(const std::string &level_info) {
     player = new Player("test", start_pos.x, start_pos.y);
     player->set_scale(global_scale);
     player->set_abs_offset(level_generator->auto_offset(window));
+
+    day_texture = new sf::Texture;
+    if (const std::string path = "level/bg/" + chapter_id + '-' + level_id + "-day.png"; exists(path))
+        day_texture->loadFromFile(path);
+    else day_texture->loadFromFile("level/bg/0.png");
+
+    night_texture = new sf::Texture;
+    if (const std::string path = "level/bg/" + chapter_id + '-' + level_id + "-night.png"; exists(path))
+        night_texture->loadFromFile(path);
+    else night_texture->loadFromFile("level/bg/0.png");
+
+    bg->setTexture(*day_texture);
 
     if (chapter_id == "ch0") current_ost = "DSC0";
     else if (chapter_id == "ch1") {

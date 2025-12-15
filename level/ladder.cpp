@@ -4,8 +4,8 @@
 
 
 game::object::Ladder::Ladder(
-    const string &chapter_id, const short x, const short y
-    ) : Object(chapter_id, x, y) {
+    const string &chapter_id, const short x, const short y, const bool shading
+    ) : Object(chapter_id, x, y, shading) {
     reset_sprite("ladder", "1");
     std::cout << "\ta ladder has been successfully created\n";
 }

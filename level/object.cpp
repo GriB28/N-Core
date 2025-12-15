@@ -8,21 +8,30 @@
 using std::string;
 
 
-game::object::Object::Object(const string &chapter, const short x, const short y) {
+game::object::Object::Object(const string &chapter, const short x, const short y, const bool shade_mode) {
     chapter_id = chapter;
     object_id = "";
     model_id = "";
+
+    shading = shade_mode;
+    set_component("shading", shade_mode);
+    is_shaded = false;
+
     position_update_required = true;
     scale_update_required = true;
+
     local_x = x; local_y = y;
     x_scale = 1; y_scale = 1;
     x_abs_offset = 0; y_abs_offset = 0;
+
     sprite = new sf::Sprite;
-    texture = nullptr;
+    default_texture = new sf::Texture;
+    if (shading) shaded_texture = new sf::Texture;
 }
 game::object::Object::~Object() {
     delete sprite;
-    delete texture;
+    delete default_texture;
+    delete shaded_texture;
 }
 
 void game::object::Object::reset_sprite(const string &object, const string &model) {
@@ -35,9 +44,9 @@ void game::object::Object::reset_sprite(const string &object, const string &mode
     }
     else model_id = model;
     sprite = new sf::Sprite;
-    texture = new sf::Texture;
-    texture->loadFromFile("resources/sprites/level/" + chapter_id + '/' + object_id + '/' + model_id + ".png");
-    sprite->setTexture(*texture);
+    default_texture->loadFromFile("resources/sprites/level/" + chapter_id + '/' + object_id + '/' + model_id + ".png");
+    if (shading) shaded_texture->loadFromFile("resources/sprites/level/" + chapter_id + '/' + object_id + '/' + model_id + "_shaded.png");
+    sprite->setTexture(*default_texture);
 }
 
 void game::object::Object::set_sprite_size(const float &sprite_size) {
@@ -89,6 +98,14 @@ string game::object::Object::get_model_id() const { return model_id; }
 
 bool game::object::Object::is_blocked_move_origin(short x, short y) { return false; }
 bool game::object::Object::is_blocked_move_target(short x, short y) { return false; }
+
+void game::object::Object::update_shading_cycle(const bool shade_state) {
+    if (shading) {
+        is_shaded = shade_state;
+        if (is_shaded) sprite->setTexture(*shaded_texture);
+        else sprite->setTexture(*default_texture);
+    }
+}
 
 void game::object::Object::interact(Player* player) {}
 void game::object::Object::walk_in(Player* player) {}

@@ -25,6 +25,14 @@ namespace game {
         sf::Text* av_counter;
         unsigned short av;
 
+        void clear_bg_textures() const;
+        sf::Sprite* bg;
+        sf::Texture *day_texture, *night_texture;
+
+        bool is_day, cycle_change_animation_flag, cycle_change_animation_phase;
+        const float cycle_change_animation_time = 1000;
+        sf::Clock cycle_change_clock;
+
         sf::Vector2<short> start_pos, end_pos;
 
         std::string current_ost;

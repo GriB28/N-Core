@@ -11,7 +11,7 @@ using std::string;
 namespace game::object {
     class Object {
     public:
-        explicit Object(const string &chapter, short x, short y);
+        explicit Object(const string &chapter, short x, short y, bool shade_mode = false);
         virtual ~Object();
 
         void reset_sprite(const string &object, const string &model = "");
@@ -45,6 +45,8 @@ namespace game::object {
         void draw_at(sf::RenderWindow* window);
 
         bool get_component(const string &name);
+
+        void update_shading_cycle(bool shade_state);
     protected:
         float x_scale, y_scale, x_abs_offset, y_abs_offset;
         short local_x, local_y;
@@ -56,7 +58,9 @@ namespace game::object {
 
         string chapter_id, object_id, model_id;
         sf::Sprite* sprite;
-        sf::Texture* texture;
+        sf::Texture *default_texture, *shaded_texture;
+
+        bool shading, is_shaded;
 
         bool position_update_required, scale_update_required;
         void update_positions() const;

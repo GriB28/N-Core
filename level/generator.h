@@ -8,7 +8,7 @@ using std::string;
 namespace game::object {
     class Generator {
     public:
-        Generator(const string &chapter_id, const string &level_id, unsigned short &av_link);
+        Generator(const string &chapter_id, const string &level_id, unsigned short &av_link, bool &have_shaded_tiles);
         ~Generator();
 
         void set_chapter_id(const string &chapter_id);
@@ -23,8 +23,10 @@ namespace game::object {
 
         sf::Vector2f auto_offset(const sf::RenderWindow* window_ref);
 
+        void update_shading_cycle(bool value) const;
+
         [[nodiscard]] Object* get_tile(short x, short y) const;
-        [[nodiscard]] sf::Vector2<unsigned short> get_matrix_size() const;
+        [[nodiscard]] sf::Vector2<short> get_matrix_size() const;
 
         [[nodiscard]] sf::Vector2f get_start_point_abs() const;
         [[nodiscard]] sf::Vector2f get_end_point_abs() const;
@@ -35,13 +37,12 @@ namespace game::object {
 
         void clear_matrix() const;
 
-        unsigned short x_size, y_size;
+        short x_size, y_size;
         float x_abs_offset, y_abs_offset, scale;
 
-        sf::Sprite* bg;
-        sf::Texture* bg_texture;
+        bool have_shaded_objects;
 
-        unsigned short sprite_size_const = 1024;
+        const float sprite_size_const = 1024;
 
         string name, chapter;
         Object*** matrix;

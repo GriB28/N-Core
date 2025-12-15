@@ -5,7 +5,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <SFML/Graphics/Texture.hpp>
 using std::cout;
 using sf::Vector2f;
 
@@ -18,12 +17,12 @@ game::object::Generator::Generator() {
     scale = 1.;
     offset_update_required = true;
     scale_update_required = true;
-    bg = new sf::Sprite;
-    bg_texture = new sf::Texture;
+    have_shaded_objects = false;
 }
-game::object::Generator::Generator(const string &chapter_id, const string &level_id, unsigned short &av_link) : Generator() {
+game::object::Generator::Generator(const string &chapter_id, const string &level_id, unsigned short &av_link, bool &have_shaded_tiles) : Generator() {
     set_chapter_id(chapter_id);
     av_link = load_level(level_id);
+    have_shaded_tiles = have_shaded_objects;
 }
 void game::object::Generator::clear_matrix() const {
     for (unsigned short y = 0; y < y_size; y++)
@@ -35,8 +34,6 @@ void game::object::Generator::clear_matrix() const {
 }
 game::object::Generator::~Generator() {
     clear_matrix();
-    delete bg;
-    delete bg_texture;
 }
 
 void game::object::Generator::set_scale(const float coefficient) {
@@ -56,7 +53,6 @@ void game::object::Generator::set_abs_offset_y(const float value) {
     y_abs_offset = value;
     offset_update_required = true;
 }
-
 Vector2f game::object::Generator::auto_offset(const sf::RenderWindow* window_ref) {
     const float max_x = x_size * sprite_size_const * scale;
     const float max_y = y_size * sprite_size_const * scale;
@@ -100,9 +96,6 @@ unsigned short game::object::Generator::load_level(const string &level_id) {
     name = level_id;
     std::ifstream level_stream("level/" + chapter + '-' + level_id + ".mtrx");
 
-    bg_texture->loadFromFile("level/bg/" + chapter + '-' + level_id + ".png");
-    bg->setTexture(*bg_texture);
-
     cout << "[generator] read level stream '" << level_id << "' matrix:\n";
     unsigned short av;
     level_stream >> x_size >> y_size >> av;
@@ -111,9 +104,9 @@ unsigned short game::object::Generator::load_level(const string &level_id) {
     if (matrix != nullptr) clear_matrix();
     matrix = new Object**[y_size];
     char input;
-    for (unsigned short y = 0; y < y_size; y++) {
+    for (short y = 0; y < y_size; y++) {
         matrix[y] = new Object*[x_size];
-        for (unsigned short x = 0; x < x_size; x++) {
+        for (short x = 0; x < x_size; x++) {
             do {
                 level_stream.get(input);
                 cout << "\t> input reference [" << y << ':' << x << "]: \""
@@ -134,23 +127,43 @@ unsigned short game::object::Generator::load_level(const string &level_id) {
                     break;
                 case '2':
                     cout << "\tmaking a 'platform with spawn flag' object...\n";
-                    matrix[y][x] = new Platform(chapter, x, y, true, false);
+                    matrix[y][x] = new Platform(chapter, x, y, false, true);
                     break;
                 case '3':
                     cout << "\tmaking a 'platform with end flag' object...\n";
-                    matrix[y][x] = new Platform(chapter, x, y, false, true);
+                    matrix[y][x] = new Platform(chapter, x, y, false, false, true);
                     break;
                 case '4':
                     cout << "\tmaking a 'platform with a ladder' object...\n";
-                    matrix[y][x] = new Platform(chapter, x, y, false, false, true);
+                    matrix[y][x] = new Platform(chapter, x, y, false, false, false, true);
                     break;
                 case '5':
                     cout << "\tmaking a 'ladder' object...\n";
                     matrix[y][x] = new Ladder(chapter, x, y);
                     break;
                 case '6':
-                    cout << "\tmaking a 'spikes' object...\n";
-                    matrix[y][x] = new Platform(chapter, x, y, false, false, false, true);
+                    cout << "\tmaking 'spikes' object...\n";
+                    matrix[y][x] = new Platform(chapter, x, y, false, false, false, false, true);
+                    break;
+                case '7':
+                    cout << "\tmaking a 'shading platform' object...\n";
+                    matrix[y][x] = new Platform(chapter, x, y, true);
+                    have_shaded_objects = true;
+                    break;
+                case '8':
+                    cout << "\tmaking a 'shading platform with a ladder' object...\n";
+                    matrix[y][x] = new Platform(chapter, x, y, true, false, false, true);
+                    have_shaded_objects = true;
+                    break;
+                case '9':
+                    cout << "\tmaking a 'shading ladder' object...\n";
+                    matrix[y][x] = new Ladder(chapter, x, y, true);
+                    have_shaded_objects = true;
+                    break;
+                case 'a':
+                    cout << "\tmaking 'shading spikes' object...\n";
+                    matrix[y][x] = new Platform(chapter, x, y, true, false, false, false, true);
+                    have_shaded_objects = true;
                     break;
                 default:
                     break;
@@ -170,20 +183,26 @@ unsigned short game::object::Generator::load_level(const string &level_id) {
 game::object::Object* game::object::Generator::get_tile(short x, short y) const {
     return matrix[y][x];
 }
-sf::Vector2<unsigned short> game::object::Generator::get_matrix_size() const {
+sf::Vector2<short> game::object::Generator::get_matrix_size() const {
     return sf::Vector2{x_size, y_size};
+}
+
+void game::object::Generator::update_shading_cycle(const bool value) const {
+    for (short y = 0; y < y_size; y++)
+        for (short x = 0; x < x_size; x++)
+            matrix[y][x]->update_shading_cycle(value);
 }
 
 void game::object::Generator::update_position_offsets() const {
     std::cout << "[generator/drawcall]\tcasted an offset update on all blocks: x = " << x_abs_offset << ", y = " << y_abs_offset << '\n';
-    for (unsigned short y = 0; y < y_size; y++)
-        for (unsigned short x = 0; x < x_size; x++)
+    for (short y = 0; y < y_size; y++)
+        for (short x = 0; x < x_size; x++)
             matrix[y][x]->set_abs_offset(x_abs_offset, y_abs_offset);
 }
 void game::object::Generator::update_scales() const {
     std::cout << "[generator/drawcall]\tcasted a scale update on all blocks: scale = " << scale << '\n';
-    for (unsigned short y = 0; y < y_size; y++)
-        for (unsigned short x = 0; x < x_size; x++)
+    for (short y = 0; y < y_size; y++)
+        for (short x = 0; x < x_size; x++)
             matrix[y][x]->set_scale(scale, scale);
 }
 
@@ -197,7 +216,6 @@ void game::object::Generator::render_level(sf::RenderWindow* window) {
         offset_update_required = false;
     }
 
-    window->draw(*bg);
     for (unsigned short y = 0; y < y_size; y++)
         for (unsigned short x = 0; x < x_size; x++)
             matrix[y][x]->draw_at(window);
