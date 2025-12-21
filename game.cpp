@@ -18,18 +18,27 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     closing_flag = false;
     fonts = fonts_link;
 
-    chapter_layout_theme = new Soundtrack("music/DSC2.ogg");
+    chapter_layout_theme = new Soundtrack("music/DSC2.mp3");
     chapter_layout_theme->set_loop(true);
-    menu_theme = new Soundtrack("music/DSC6.ogg");
-    menu_theme->set_volume(75);
-    chapter0   = new Soundtrack("music/DSC0.ogg");
+    menu_theme     = new Soundtrack("music/DSC6.mp3");
+    // menu_theme->set_volume(75);
+    chapter0       = new Soundtrack("music/DSC0.mp3");
     chapter0->set_loop(true);
-    chapter1_1 = new Soundtrack("music/DSC8p1.ogg");
+    chapter1_1     = new Soundtrack("music/DSC8p1.mp3");
     chapter1_1->set_loop(true);
-    chapter1_2 = new Soundtrack("music/DSC8p2.ogg");
+    chapter1_2     = new Soundtrack("music/DSC8p2.mp3");
     chapter1_2->set_loop(true);
-    chapter1_f = new Soundtrack("music/DSC8f.ogg");
+    chapter1_f     = new Soundtrack("music/DSC8f.mp3");
     chapter1_f->set_loop(true);
+
+    chapter0_alt   = new Soundtrack("music/DSC0_alt.ogg");
+    chapter0_alt->set_loop(true);
+    chapter1_1_alt = new Soundtrack("music/DSC8p1_alt.ogg");
+    chapter1_1_alt->set_loop(true);
+    chapter1_2_alt = new Soundtrack("music/DSC8p2_alt.ogg");
+    chapter1_2_alt->set_loop(true);
+    chapter1_f_alt = new Soundtrack("music/DSC8f_alt.ogg");
+    chapter1_f_alt->set_loop(true);
 
     loading_boombox = new BoomBox;
     loading_boombox->add_track(chapter_layout_theme);
@@ -39,6 +48,10 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     level_boombox->add_track(chapter1_1);
     level_boombox->add_track(chapter1_2);
     level_boombox->add_track(chapter1_f);
+    level_boombox->add_track(chapter0_alt);
+    level_boombox->add_track(chapter1_1_alt);
+    level_boombox->add_track(chapter1_2_alt);
+    level_boombox->add_track(chapter1_f_alt);
 
     level_link = new Level(window, fonts, level_boombox);
     scenes = new Scene*[scenes_cap+1];
@@ -67,7 +80,7 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     version_info.setCharacterSize(12);
     version_info.setFont(*fonts->OCRA());
     version_info.setFillColor(sf::Color(147, 147, 147, 141));
-    version_info.setString("beta-1b27c-indev");
+    version_info.setString("beta-1b27d-indev");
 
     update_scene_index(1);
     loop();
@@ -82,6 +95,10 @@ game::Engine::~Engine() {
     delete chapter1_1;
     delete chapter1_2;
     delete chapter1_f;
+    delete chapter0_alt;
+    delete chapter1_1_alt;
+    delete chapter1_2_alt;
+    delete chapter1_f_alt;
 
     delete fonts;
     delete loading_boombox;

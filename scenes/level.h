@@ -1,12 +1,12 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 #include "scene.h"
-#include "../player/player.h"
 #include "../level/generator.h"
+#include "../player/player.h"
 
 #include <string>
-#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Keyboard.hpp>
 using sf::Event;
 
 namespace game {
@@ -38,7 +38,7 @@ namespace game {
 
         sf::Vector2<short> start_pos, end_pos;
 
-        std::string current_ost;
+        std::string current_ost, opposite_ost;
 
         const float global_scale = .125;
 

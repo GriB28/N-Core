@@ -167,22 +167,31 @@ int game::Level::proceed() {
     if (cycle_change_animation_flag) {
         const auto t = cycle_change_clock.getElapsedTime().asMilliseconds();
         if (cycle_change_animation_phase) {
-            if (t <= cycle_change_animation_time)
+            if (t <= cycle_change_animation_time) {
                 bg->setColor(sf::Color(255, 255, 255, 255 * (1.f - t / cycle_change_animation_time)));
+                boombox->get_track(current_ost)->set_volume(100 * (1.f - t / cycle_change_animation_time));
+            }
             else {
                 cycle_change_clock.restart();
                 cycle_change_animation_phase = false;
                 bg->setTexture(is_day ? *day_texture : *night_texture);
                 bg->setColor(sf::Color(255, 255, 255, 0));
+                boombox->get_track(current_ost)->set_volume(0);
+                const auto tmp = current_ost;
+                current_ost = opposite_ost;
+                opposite_ost = tmp;
             }
         }
         else {
-            if (t <= cycle_change_animation_time)
+            if (t <= cycle_change_animation_time) {
                 bg->setColor(sf::Color(255, 255, 255, 255 * (t / cycle_change_animation_time)));
+                boombox->get_track(current_ost)->set_volume(100 * (t / cycle_change_animation_time));
+            }
             else {
                 cycle_change_clock.restart();
                 cycle_change_animation_flag = false;
                 bg->setColor(sf::Color(255, 255, 255, 255));
+                boombox->get_track(current_ost)->set_volume(100);
             }
         }
     }
@@ -224,11 +233,23 @@ void game::Level::on_start(const std::string &level_info) {
     bg->setTexture(*day_texture);
     bg->setScale(window_shrink, window_shrink);
 
-    if (chapter_id == "ch0") current_ost = "DSC0";
+    if (chapter_id == "ch0") {
+        current_ost = "DSC0";
+        opposite_ost = "DSC0_alt";
+    }
     else if (chapter_id == "ch1") {
-        if (level_id == "1" || level_id == "2") current_ost = "DSC8p1";
-        else if (level_id == "3" || level_id == "4") current_ost = "DSC8p2";
-        else current_ost = "DSC8f";
+        if (level_id == "1" || level_id == "2") {
+            current_ost = "DSC8p1";
+            opposite_ost = "DSC8p1_alt";
+        }
+        else if (level_id == "3" || level_id == "4") {
+            current_ost = "DSC8p2";
+            opposite_ost = "DSC8p2_alt";
+        }
+        else {
+            current_ost = "DSC8f";
+            opposite_ost = "DSC8f_alt";
+        }
     }
 
     if (!current_ost.empty())

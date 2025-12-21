@@ -25,7 +25,8 @@ namespace game {
         FontSource* fonts;
         BoomBox *loading_boombox, *level_boombox;
         Soundtrack *menu_theme, *chapter_layout_theme,
-        *chapter0, *chapter1_1, *chapter1_2, *chapter1_f;
+        *chapter0, *chapter1_1, *chapter1_2, *chapter1_f,
+        *chapter0_alt, *chapter1_1_alt, *chapter1_2_alt, *chapter1_f_alt;
 
         bool closing_flag;
 

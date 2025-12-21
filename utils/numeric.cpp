@@ -11,5 +11,5 @@ float game::numeric::sine(const float t, const float period) {
     return (1 + std::sin(pi * t / period - pi_2)) / 2;
 }
 float game::numeric::cosine(const float t, const float period) {
-    return std::cos(-pi * t / period) / 2;
+    return (1 + std::cos(-pi * t / period)) / 2;
 }
