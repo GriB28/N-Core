@@ -24,7 +24,7 @@ namespace game {
         void pause() const;
 
         [[nodiscard]] float get_volume() const;
-        void set_volume(float value) const; // 0 - 100
+        void set_volume(float percent) const; // 0 - 100
 
         [[nodiscard]] sf::Time get_playing_offset() const;
         void set_playing_offset(sf::Time offset) const;
@@ -41,7 +41,7 @@ namespace game {
         void add_track(Soundtrack* track);
         Soundtrack* get_track(const std::string &name);
 
-        void adjust_volume(float value) const; // 0 - 100
+        void adjust_volume(float new_percent) const; // 0 - 100
         void adjust_volume_relative(float percent) const;
     private:
         std::unordered_map<std::string, Soundtrack*> playlist;

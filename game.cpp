@@ -21,8 +21,9 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     chapter_layout_theme = new Soundtrack("music/DSC2.ogg");
     chapter_layout_theme->set_loop(true);
     menu_theme = new Soundtrack("music/DSC6.ogg");
-    menu_theme->set_loop(true);
+    menu_theme->set_volume(75);
     chapter0   = new Soundtrack("music/DSC0.ogg");
+    chapter0->set_loop(true);
     chapter1_1 = new Soundtrack("music/DSC8p1.ogg");
     chapter1_1->set_loop(true);
     chapter1_2 = new Soundtrack("music/DSC8p2.ogg");
@@ -66,7 +67,7 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     version_info.setCharacterSize(12);
     version_info.setFont(*fonts->OCRA());
     version_info.setFillColor(sf::Color(147, 147, 147, 141));
-    version_info.setString("beta-1b27a-indev");
+    version_info.setString("beta-1b27b-indev");
 
     update_scene_index(1);
     loop();

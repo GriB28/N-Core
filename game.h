@@ -9,6 +9,7 @@
 #include <SFML/Graphics/Text.hpp>
 #include <string>
 using std::string;
+using sf::Event;
 
 namespace game {
     class Engine {
@@ -35,7 +36,7 @@ namespace game {
         sf::Text mouse_position, scene_num, version_info;
 
         void loop();
-        void proceed_event_on_scenes(const sf::Event &event);
+        void proceed_event_on_scenes(const Event &event);
         void proceed_scenes();
 
         void update_scene_index(int return_code);

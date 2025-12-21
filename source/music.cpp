@@ -23,7 +23,7 @@ void game::Soundtrack::pause() const {
 }
 
 float game::Soundtrack::get_volume() const { return sample->getVolume(); }
-void game::Soundtrack::set_volume(const float value) const { sample->setVolume(value); }
+void game::Soundtrack::set_volume(const float percent) const { sample->setVolume(percent); }
 
 sf::Time game::Soundtrack::get_playing_offset() const { return sample->getPlayingOffset(); }
 void game::Soundtrack::set_playing_offset(const sf::Time offset) const { sample->setPlayingOffset(offset); }
@@ -45,9 +45,9 @@ game::Soundtrack* game::BoomBox::get_track(const std::string &name) {
     return nullptr;
 }
 
-void game::BoomBox::adjust_volume(const float value) const {
+void game::BoomBox::adjust_volume(const float new_percent) const {
     for (const auto &[_, track] : playlist)
-        track->set_volume(value);
+        track->set_volume(new_percent);
 }
 
 void game::BoomBox::adjust_volume_relative(const float percent) const {

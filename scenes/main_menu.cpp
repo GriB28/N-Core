@@ -10,8 +10,6 @@ using sf::Keyboard;
 
 
 game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link) : Scene(window_link, fonts_link, boombox_link) {
-    constexpr float window_x = 1920, window_y = 1080;
-
     bg = new sf::Sprite;
     bg_texture_day = new sf::Texture;
     bg_texture_night = new sf::Texture;
@@ -20,18 +18,15 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, 
     bg->setTexture(*bg_texture_day);
 
     cloudy = new sf::Sprite;
-    cloudy_texture = new sf::Texture;
-    cloudy_texture->loadFromFile("resources/sprites/player/cloudy full.png");
+    cloudy_texture = new sf::Texture;cloudy_texture->loadFromFile("resources/sprites/player/cloudy full.png");
     cloudy->setTexture(*cloudy_texture);
     cloudy->setScale(.5, .5);
-    cloudy->setPosition(-cloudy->getGlobalBounds().width / 2 - 17, 0);
 
     cosmos = new sf::Sprite;
     cosmos_texture = new sf::Texture;
     cosmos_texture->loadFromFile("resources/sprites/player/cosmos full.png");
     cosmos->setTexture(*cosmos_texture);
     cosmos->setScale(.5, .5);
-    cosmos->setPosition(window_x - cosmos->getGlobalBounds().width / 2 - 17, 0);
 
     day_night_cycle_animation_flag = false;
     day_night_cycle = true;
@@ -41,9 +36,6 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, 
     logo_text->setString("N-Core");
     logo_text->setFillColor(sf::Color(255, 255, 255, 192));
     logo_text->setFont(*fonts->PAG());
-    logo_text->setCharacterSize(150);
-    logo_text->setPosition((window_x - logo_text->getGlobalBounds().width) / 2, 50);
-
 
     play = new utils::Button;
     play_default_texture = new sf::Texture;
@@ -60,11 +52,6 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, 
 
     play->set_scale(.4);
     play->set_text_y_align('d');
-
-    play->set_position(
-        (window_x - play_default_texture->getSize().x * .4f) / 2,
-        window_y * 65 / 108
-        );
 
 
     settings = new utils::Button;
@@ -83,11 +70,6 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, 
     settings->set_scale(.25);
     settings->set_text_y_align('d');
 
-    settings->set_position(
-        (window_x - settings_default_texture->getSize().x * .25f) / 2 + settings_default_texture->getSize().x * .25f * 3,
-        window_y * 25 / 36
-        );
-
 
     about = new utils::Button;
     about_default_texture = new sf::Texture;
@@ -104,11 +86,6 @@ game::MainMenu::MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, 
 
     about->set_scale(.25);
     about->set_text_y_align('d');
-
-    about->set_position(
-        (window_x - about_default_texture->getSize().x * .25f) / 2 - about_default_texture->getSize().x * .25f * 3,
-        window_y * 25 / 36
-        );
 
 
     load_levels_scene_flag = false;
@@ -164,8 +141,6 @@ int game::MainMenu::event(const Event &event) {
     return return_code;
 }
 int game::MainMenu::proceed() {
-    int return_code = 0;
-
     window->draw(*bg);
     window->draw(*logo_text);
     for (const auto btn : buttons1) btn->draw_at(window);
@@ -202,10 +177,44 @@ int game::MainMenu::proceed() {
         }
     }
 
-    return return_code;
+    if (boombox->get_track("DSC6")->get_status() == Music::Stopped)
+        boombox->get_track("DSC2")->play();
+
+    return 0;
 }
 
 void game::MainMenu::on_start() {
+    const unsigned window_x_size_origin = window->getSize().x,
+                   window_y_size_origin = window->getSize().y;
+    const auto window_x_size = static_cast<float>(window_x_size_origin),
+               window_y_size = static_cast<float>(window_y_size_origin);
+    const float window_x_shrink = window_x_size / 1920,
+                window_y_shrink = window_y_size / 1080;
+
+    cout << "[main_menu] initialised with window: x = " << window_x_size << ", y = " << window_y_size
+    <<   ";\n            shrink: x = " << window_x_shrink << ", y = " << window_y_shrink << "\n";
+
+    bg->setScale(window_x_shrink, window_y_shrink);
+
+    cloudy->setPosition(-cloudy->getGlobalBounds().width / 2 - 17, 0);
+    cosmos->setPosition(window_x_size - cosmos->getGlobalBounds().width / 2 - 17, 0);
+
+    logo_text->setCharacterSize(150 * window_x_shrink);
+    logo_text->setPosition((window_x_size - logo_text->getGlobalBounds().width) / 2, 50);
+
+    play->set_position(
+        (window_x_size - play_default_texture->getSize().x * .4f) / 2,
+        window_y_size * 65 / 108
+        );
+    settings->set_position(
+        (window_x_size - settings_default_texture->getSize().x * .25f) / 2 + settings_default_texture->getSize().x * .25f * 3,
+        window_y_size * 25 / 36
+        );
+    about->set_position(
+        (window_x_size - about_default_texture->getSize().x * .25f) / 2 - about_default_texture->getSize().x * .25f * 3,
+        window_y_size * 25 / 36
+        );
+
     if (const auto dsc6 = boombox->get_track("DSC6"); dsc6->get_status() != Music::Playing) {
         dsc6->stop();
         dsc6->set_playing_offset(sf::milliseconds(13130));

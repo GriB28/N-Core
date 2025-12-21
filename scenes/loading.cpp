@@ -125,7 +125,11 @@ void game::Loading::on_start() {
     boombox->get_track("DSC6")->play();
 }
 void game::Loading::on_end() {
-    window->create(sf::VideoMode::getDesktopMode(), "N-Core", sf::Style::Fullscreen);
+    window->create(
+        sf::VideoMode({1920, 1080, sf::VideoMode::getDesktopMode().bitsPerPixel}),
+        "N-Core",
+        sf::Style::Fullscreen
+        );
     // window->setFramerateLimit(120);
     auto icon = sf::Image();
     icon.loadFromFile("icons/test.png");

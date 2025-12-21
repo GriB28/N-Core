@@ -26,8 +26,15 @@ void game::ChapterLayout::on_start() {
     auto initial_view = window->getView();
     initial_view.setCenter(default_view.x + page * static_cast<float>(window->getSize().x), default_view.y);
     window->setView(initial_view);
-    const short window_x_size = window->getSize().x, window_y_size = window->getSize().y;
-    const float window_x_shrink = window_x_size / 1920, window_y_shrink = window_y_size / 1080;
+    const unsigned window_x_size_origin = window->getSize().x,
+                   window_y_size_origin = window->getSize().y;
+    const auto window_x_size = static_cast<float>(window_x_size_origin),
+               window_y_size = static_cast<float>(window_y_size_origin);
+    const float window_x_shrink = window_x_size / 1920,
+                window_y_shrink = window_y_size / 1080;
+
+    cout << "[chapter_layout] initialised with window: x = " << window_x_size << ", y = " << window_y_size
+    <<   ";\n                 shrink: x = " << window_x_shrink << ", y = " << window_y_shrink << "\n";
 
     for (short chapter_number = 0; chapter_number <= level_pages_cap; chapter_number++) {
         auto texture = new sf::Texture();
@@ -42,6 +49,7 @@ void game::ChapterLayout::on_start() {
         auto s = new sf::Sprite();
         s->setTexture(*texture);
         s->setPosition(window_x_size * chapter_number, 0);
+        s->setScale(window_x_shrink, window_y_shrink);
         splash_screens.push_back(s);
 
         texture = new sf::Texture();
@@ -63,7 +71,7 @@ void game::ChapterLayout::on_start() {
                 text->setString("Coming soon...");
                 break;
         }
-        text->setCharacterSize(window_y_size * 5 / 54);
+        text->setCharacterSize(window_y_size_origin * 5 / 54);
         text->setFont(*fonts->PAG());
         text->setFillColor(sf::Color(255, 255, 255, 128));
         text->setPosition(
