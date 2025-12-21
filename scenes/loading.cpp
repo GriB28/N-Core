@@ -104,14 +104,29 @@ int game::Loading::proceed() {
     if (frogl2_counter == 96 * 7 / 8) frogl2_fading_flag = true;
 
     if (frogl2_fading_flag && frogl2->getColor().a > 1) {
-        loading_text->setFillColor(sf::Color(220, 220, 220, frogl2->getColor().a - 1));
-        frogl2->setColor(sf::Color(255, 255, 255, frogl2->getColor().a - 1));
+        loading_text->setFillColor(sf::Color(
+            220,
+            220,
+            220,
+            frogl2->getColor().a - 1
+        ));
+        frogl2->setColor(sf::Color(
+            255,
+            255,
+            255,
+            frogl2->getColor().a - 1
+        ));
     }
     else if (frogl2->getColor().a == 1) frogl2->setColor(sf::Color(255, 255, 255, 0));
     if (frogl2->getColor().a == 0) awaiting_flag = true;
 
     if (awaiting_flag && awaiting_text->getFillColor().a < 255)
-        awaiting_text->setFillColor(sf::Color(255, 255, 255, awaiting_text->getFillColor().a + 1));
+        awaiting_text->setFillColor(sf::Color(
+            255,
+            255,
+            255,
+            awaiting_text->getFillColor().a + 1
+        ));
 
 
     window->draw(*frogl2);
@@ -125,12 +140,31 @@ void game::Loading::on_start() {
     boombox->get_track("DSC6")->play();
 }
 void game::Loading::on_end() {
-    window->create(
-        sf::VideoMode({1920, 1080, sf::VideoMode::getDesktopMode().bitsPerPixel}),
+    const auto local_display_size = sf::VideoMode::getDesktopMode();
+    const float vertical_k = static_cast<float>(local_display_size.height) / 1080;
+    const float horizontal_k = static_cast<float>(local_display_size.width) / 1920;
+    if (1920 * vertical_k <= local_display_size.width) window->create(
+        sf::VideoMode({
+            static_cast<unsigned>(1920 * vertical_k),
+            local_display_size.height,
+            sf::VideoMode::getDesktopMode().bitsPerPixel
+        }),
         "N-Core",
         sf::Style::Fullscreen
-        );
-    // window->setFramerateLimit(120);
+    );
+    else window->create(
+        sf::VideoMode({
+            local_display_size.width,
+            static_cast<unsigned>(1080 * horizontal_k),
+            sf::VideoMode::getDesktopMode().bitsPerPixel
+        }),
+        "N-Core",
+        sf::Style::Fullscreen
+    );
+    cout << "[loading/create_window] created: " << window->getSize().x << ':' << window->getSize().y
+    << ", origin k-s: vertical = " << vertical_k << " (1920 * vk = " << 1920 * vertical_k
+    << "), horizontal = " << horizontal_k << " (1080 * hk = " << 1080 * horizontal_k << ")\n";
+    window->setVerticalSyncEnabled(true);
     auto icon = sf::Image();
     icon.loadFromFile("icons/test.png");
     window->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());

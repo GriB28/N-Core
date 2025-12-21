@@ -34,9 +34,10 @@ bool game::Player::is_alive() const { return alive; }
 void game::Player::die() {
     alive = false;
     sprite->setColor(sf::Color(34, 34, 34));
+    std::cout << "[player] DEATH flag raised\n";
 }
 void game::Player::win() const {
-    std::cout << "[WIN]\n";
+    std::cout << "[player] WIN flag raised\n";
 }
 
 void game::Player::set_position(const short x, const short y) {

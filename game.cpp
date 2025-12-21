@@ -67,7 +67,7 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     version_info.setCharacterSize(12);
     version_info.setFont(*fonts->OCRA());
     version_info.setFillColor(sf::Color(147, 147, 147, 141));
-    version_info.setString("beta-1b27b-indev");
+    version_info.setString("beta-1b27c-indev");
 
     update_scene_index(1);
     loop();

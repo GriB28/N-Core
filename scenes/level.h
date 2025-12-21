@@ -22,15 +22,18 @@ namespace game {
     private:
         object::Generator* level_generator;
         Player* player;
-        sf::Text* av_counter;
+        sf::Text *av_counter, *av_counter_0;
         unsigned short av;
 
         void clear_bg_textures() const;
         sf::Sprite* bg;
         sf::Texture *day_texture, *night_texture;
 
+        sf::Shader* raw_negative_shader;
+        sf::RenderStates *negative_shader;
+
         bool is_day, cycle_change_animation_flag, cycle_change_animation_phase;
-        const float cycle_change_animation_time = 1000;
+        const float cycle_change_animation_time = 500;
         sf::Clock cycle_change_clock;
 
         sf::Vector2<short> start_pos, end_pos;

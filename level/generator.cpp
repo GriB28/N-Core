@@ -57,6 +57,7 @@ Vector2f game::object::Generator::auto_offset(const sf::RenderWindow* window_ref
     const float max_x = x_size * sprite_size_const * scale;
     const float max_y = y_size * sprite_size_const * scale;
     const auto window_size = window_ref->getSize();
+    cout << "[generator/auto_offset] got window ref with scale: " << window_size.x << ':' << window_size.y << '\n';
     set_abs_offset((window_size.x - max_x) / 2, (window_size.y - max_y) / 2);
     return {(window_size.x - max_x) / 2, (window_size.y - max_y) / 2};
 }

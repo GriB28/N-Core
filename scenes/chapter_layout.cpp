@@ -39,9 +39,9 @@ void game::ChapterLayout::on_start() {
     for (short chapter_number = 0; chapter_number <= level_pages_cap; chapter_number++) {
         auto texture = new sf::Texture();
         if (0 < chapter_number && chapter_number < level_pages_cap)
-            texture->loadFromFile("level/bg/chapter" + std::to_string(chapter_number) + "-day.png");
+            texture->loadFromFile("level/bg/splash/" + std::to_string(chapter_number) + "-day.png");
         else if (chapter_number == 0)
-            texture->loadFromFile("level/bg/chapter0.png");
+            texture->loadFromFile("level/bg/splash/0.png");
         else
             texture->loadFromFile("level/bg/0.png");
         splash_screens_day_textures.push_back(texture);
@@ -54,7 +54,7 @@ void game::ChapterLayout::on_start() {
 
         texture = new sf::Texture();
         if (0 < chapter_number && chapter_number < level_pages_cap)
-            texture->loadFromFile("level/bg/chapter" + std::to_string(chapter_number) + "-night.png");
+            texture->loadFromFile("level/bg/splash/" + std::to_string(chapter_number) + "-night.png");
         else
             texture->loadFromFile("level/bg/0.png");
         splash_screens_night_textures.push_back(texture);

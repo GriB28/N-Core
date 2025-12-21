@@ -1,11 +1,11 @@
 #include "level.h"
 
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/Text.hpp>
 #include <filesystem>
 #include <iostream>
-
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 using std::filesystem::exists;
 
 
@@ -17,12 +17,22 @@ game::Level::Level(sf::RenderWindow* window_link, FontSource* fonts_link, BoomBo
     day_texture = new sf::Texture;
     night_texture = new sf::Texture;
 
+    raw_negative_shader = new sf::Shader;
+    raw_negative_shader->loadFromFile("shaders/negative.frag", sf::Shader::Fragment);
+    negative_shader = new sf::RenderStates;
+    negative_shader->shader = raw_negative_shader;
+
     av = 0;
     av_counter = new sf::Text;
     av_counter->setFillColor(sf::Color(128, 128, 128));
     av_counter->setCharacterSize(50);
     av_counter->setFont(*fonts->pixel2());
     av_counter->setPosition(55, 5);
+    av_counter_0 = new sf::Text;
+    av_counter_0->setFillColor(sf::Color(128, 64, 64));
+    av_counter_0->setCharacterSize(50);
+    av_counter_0->setFont(*fonts->pixel2());
+    av_counter_0->setPosition(55, 5);
 
     is_day = true;
     cycle_change_animation_flag = false;
@@ -39,18 +49,22 @@ game::Level::~Level() {
     delete player;
     delete av_counter;
     delete bg;
+
+    delete raw_negative_shader;
+    delete negative_shader;
+
     clear_bg_textures();
 }
 
 int game::Level::event(const Event &event) {
     int return_code = 0;
-    if (event.type == Event::KeyReleased) {
-        check_movement_keys(event.key.code);
+    if (event.type == Event::KeyReleased)
         switch (event.key.code) {
             case sf::Keyboard::Escape:
                 return_code = 4;
                 break;
             case sf::Keyboard::Space:
+            case sf::Keyboard::Q:
                 if (!cycle_change_animation_flag) {
                     cycle_change_animation_flag = true;
                     cycle_change_animation_phase = true;
@@ -59,9 +73,9 @@ int game::Level::event(const Event &event) {
                 }
                 break;
             default:
+                check_movement_keys(event.key.code);
                 break;
         }
-    }
 
     return return_code;
 }
@@ -74,26 +88,18 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) {
     short dx = 0, dy = 0;
     switch (keycode) {
         case sf::Keyboard::W:
-            dy = -1;
-            break;
-        case sf::Keyboard::A:
-            dx = -1;
-            break;
-        case sf::Keyboard::S:
-            dy = 1;
-            break;
-        case sf::Keyboard::D:
-            dx = 1;
-            break;
         case sf::Keyboard::Up:
             dy = -1;
             break;
+        case sf::Keyboard::A:
         case sf::Keyboard::Left:
             dx = -1;
             break;
+        case sf::Keyboard::S:
         case sf::Keyboard::Down:
             dy = 1;
             break;
+        case sf::Keyboard::D:
         case sf::Keyboard::Right:
             dx = 1;
             break;
@@ -155,7 +161,8 @@ int game::Level::proceed() {
     level_generator->render_level(window);
     player->draw_at(window);
 
-    if (av < 256) window->draw(*av_counter);
+    if (0 < av && av < 256) window->draw(*av_counter);
+    else window->draw(*av_counter_0);
 
     if (cycle_change_animation_flag) {
         const auto t = cycle_change_clock.getElapsedTime().asMilliseconds();
@@ -184,34 +191,38 @@ int game::Level::proceed() {
 }
 
 void game::Level::on_start(const std::string &level_info) {
+    const float window_shrink = static_cast<float>(window->getSize().x) / 1920;
     clear_bg_textures();
 
     const auto sep = level_info.find('-');
     const auto chapter_id = level_info.substr(0, sep),
-               level_id = level_info.substr(sep + 1);
+               level_id   = level_info.substr(sep + 1);
     bool have_shaded_tiles;
 
     level_generator = new object::Generator(chapter_id, level_id, av, have_shaded_tiles);
     av_counter->setString(std::to_string(av));
-    level_generator->set_scale(global_scale);
+    std::cout << "[level] got av: " << av << ", av if-statement: av+1 = " << static_cast<unsigned short>(av + 1) << '\n';
+    av_counter_0->setString(static_cast<unsigned short>(av + 1) == 0 ? "" : "0");
+    level_generator->set_scale(global_scale * window_shrink);
 
     start_pos = level_generator->get_start_point();
     end_pos = level_generator->get_end_point();
     player = new Player("test", start_pos.x, start_pos.y);
-    player->set_scale(global_scale);
+    player->set_scale(global_scale * window_shrink);
     player->set_abs_offset(level_generator->auto_offset(window));
 
     day_texture = new sf::Texture;
-    if (const std::string path = "level/bg/" + chapter_id + '-' + level_id + "-day.png"; exists(path))
+    if (const std::string path = "level/bg/" + chapter_id + '/' + level_id + "-day.png"; exists(path))
         day_texture->loadFromFile(path);
     else day_texture->loadFromFile("level/bg/0.png");
 
     night_texture = new sf::Texture;
-    if (const std::string path = "level/bg/" + chapter_id + '-' + level_id + "-night.png"; exists(path))
+    if (const std::string path = "level/bg/" + chapter_id + '/' + level_id + "-night.png"; exists(path))
         night_texture->loadFromFile(path);
     else night_texture->loadFromFile("level/bg/0.png");
 
     bg->setTexture(*day_texture);
+    bg->setScale(window_shrink, window_shrink);
 
     if (chapter_id == "ch0") current_ost = "DSC0";
     else if (chapter_id == "ch1") {
