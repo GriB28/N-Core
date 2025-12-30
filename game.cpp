@@ -14,7 +14,7 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     current_scene_index = 0;
 
     window = new sf::RenderWindow(sf::VideoMode({x, y}), "Cores loading...");
-    // window->setFramerateLimit(120);
+    window->setVerticalSyncEnabled(true);
     closing_flag = false;
     fonts = fonts_link;
 
@@ -80,7 +80,7 @@ game::Engine::Engine(const unsigned short x, const unsigned short y, FontSource 
     version_info.setCharacterSize(12);
     version_info.setFont(*fonts->OCRA());
     version_info.setFillColor(sf::Color(147, 147, 147, 141));
-    version_info.setString("beta-1b27d-indev");
+    version_info.setString("beta-1b27e-indev");
 
     update_scene_index(1);
     loop();

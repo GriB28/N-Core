@@ -21,7 +21,7 @@ namespace game {
     private:
         sf::Text *loading_text, *alliance_text;
 
-        bool awaiting_flag;
+        bool awaiting_flag, awaiting_animation_flag;
         utils::Button awaiting_button;
         sf::Text *awaiting_text;
         sf::Texture *awaiting_text_void_texture;
@@ -31,8 +31,8 @@ namespace game {
         short frogl2_counter;
         bool frogl2_fading_flag;
         char frogl2_alpha_fading;
-        long long frogl2_timer;
-        unsigned short frogl2_frame_timestamp;
+        sf::Clock frogl2_clock, frogl2_fading_clock;
+        const float frogl2_frame_timestamp = 50, frogl2_frame_fade_total_time = 500;
     };
 }
 #endif

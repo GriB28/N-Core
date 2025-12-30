@@ -1,7 +1,6 @@
 #include "loading.h"
 
 #include <iostream>
-#include <chrono>
 #include <string>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
@@ -10,10 +9,6 @@ using std::string;
 using sf::Event;
 using sf::Keyboard;
 
-
-long long get_time() {
-    return std::chrono::duration_cast<std::chrono::microseconds>( std::chrono::system_clock::now().time_since_epoch()).count();
-}
 
 game::Loading::Loading(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox) : Scene(window_link, fonts_link, boombox) {
     loading_text = new sf::Text;
@@ -35,12 +30,11 @@ game::Loading::Loading(sf::RenderWindow *window_link, FontSource *fonts_link, Bo
     awaiting_button.set_clicked_sprite_scale(244, 16);
     awaiting_button.set_position((window->getSize().x - awaiting_text->getGlobalBounds().width) / 2, 600);
     awaiting_flag = false;
+    awaiting_animation_flag = false;
 
     frogl2_counter = 0;
     frogl2_fading_flag = false;
     frogl2_alpha_fading = 0;
-    frogl2_timer = get_time();
-    frogl2_frame_timestamp = 1000000 / 25;
     frogl2_texture = new sf::Texture;
     frogl2 = new sf::Sprite;
     frogl2->setPosition(1280 * .8 / 2, 400);
@@ -94,39 +88,51 @@ int game::Loading::event(const Event &event) {
 }
 int game::Loading::proceed() {
     if (frogl2_counter < 96) {
-        if (get_time() - frogl2_timer >= frogl2_frame_timestamp) {
+        if (frogl2_clock.getElapsedTime().asMilliseconds() >= frogl2_frame_timestamp) {
             frogl2_texture->loadFromFile("resources/frogl2/" + std::to_string(frogl2_counter) + ".jpg");
             frogl2->setTexture(*frogl2_texture);
             frogl2_counter++;
-            frogl2_timer = get_time();
+            frogl2_clock.restart();
         }
     }
-    if (frogl2_counter == 96 * 7 / 8) frogl2_fading_flag = true;
+    if (frogl2_counter == 96 * 7 / 8) {
+        frogl2_fading_flag = true;
+        frogl2_fading_clock.restart();
+    }
 
-    if (frogl2_fading_flag && frogl2->getColor().a > 1) {
+    const auto frogl2_color_a = frogl2->getColor().a;
+    if (frogl2_fading_flag && frogl2_color_a > 5) {
         loading_text->setFillColor(sf::Color(
             220,
             220,
             220,
-            frogl2->getColor().a - 1
+            220 * (1 - frogl2_fading_clock.getElapsedTime().asMilliseconds() / frogl2_frame_fade_total_time)
         ));
         frogl2->setColor(sf::Color(
             255,
             255,
             255,
-            frogl2->getColor().a - 1
+            255 * (1 - frogl2_fading_clock.getElapsedTime().asMilliseconds() / frogl2_frame_fade_total_time)
         ));
     }
-    else if (frogl2->getColor().a == 1) frogl2->setColor(sf::Color(255, 255, 255, 0));
-    if (frogl2->getColor().a == 0) awaiting_flag = true;
+    else if (frogl2_color_a <= 5) frogl2->setColor(sf::Color(255, 255, 255, 0));
+    if (frogl2_color_a == 0 && !awaiting_flag) {
+        awaiting_flag = true;
+        awaiting_animation_flag = true;
+        frogl2_fading_clock.restart();
+    }
 
-    if (awaiting_flag && awaiting_text->getFillColor().a < 255)
+    if (awaiting_animation_flag && awaiting_text->getFillColor().a < 250)
         awaiting_text->setFillColor(sf::Color(
             255,
             255,
             255,
-            awaiting_text->getFillColor().a + 1
+            255 * (frogl2_fading_clock.getElapsedTime().asMilliseconds() / frogl2_frame_fade_total_time)
         ));
+    else if (awaiting_animation_flag) {
+        awaiting_text->setFillColor(sf::Color(255, 255, 255, 255));
+        awaiting_animation_flag = false;
+    }
 
 
     window->draw(*frogl2);
@@ -138,6 +144,7 @@ int game::Loading::proceed() {
 
 void game::Loading::on_start() {
     boombox->get_track("DSC6")->play();
+    frogl2_clock.restart();
 }
 void game::Loading::on_end() {
     const auto local_display_size = sf::VideoMode::getDesktopMode();
@@ -159,7 +166,7 @@ void game::Loading::on_end() {
             sf::VideoMode::getDesktopMode().bitsPerPixel
         }),
         "N-Core",
-        sf::Style::Fullscreen
+        sf::Style::Fullscreen // sf::Style::Default -- для того, чтобы было видно при записи экрана (странный баг)
     );
     cout << "[loading/create_window] created: " << window->getSize().x << ':' << window->getSize().y
     << ", origin k-s: vertical = " << vertical_k << " (1920 * vk = " << 1920 * vertical_k
