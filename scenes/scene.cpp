@@ -13,10 +13,10 @@ game::Scene::Scene(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBo
     fonts = fonts_link;
     boombox = boombox_link;
 }
-int game::Scene::event(const sf::Event &event) { return 0; }
-int game::Scene::proceed() { return 0; }
+game::SceneCode game::Scene::event(const sf::Event &event) { return SceneCode::None; }
+game::SceneCode game::Scene::proceed() { return SceneCode::None; }
 void game::Scene::on_start() {}
 void game::Scene::on_end() {}
 
 void game::Scene::set_callback(const std::string &value) { callback = value; }
-std::string game::Scene::get_callback() { return callback; }
+std::string game::Scene::get_callback() const { return callback; }

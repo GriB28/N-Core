@@ -16,8 +16,8 @@ namespace game {
     public:
         Engine(unsigned short x, unsigned short y, FontSource *fonts_link = nullptr);
         ~Engine();
-        int current_scene_index;
     private:
+        int current_scene_index;
         unsigned short scenes_cap = 4;
         Scene** scenes;
         Level* level_link;
@@ -40,7 +40,7 @@ namespace game {
         void proceed_event_on_scenes(const Event &event);
         void proceed_scenes();
 
-        void update_scene_index(int return_code);
+        void update_scene_index(SceneCode return_code);
     };
 }
 

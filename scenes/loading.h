@@ -14,8 +14,8 @@ namespace game {
         Loading(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox);
         ~Loading() override;
 
-        int event(const sf::Event &event) override;
-        int proceed() override;
+        SceneCode event(const sf::Event &event) override;
+        SceneCode proceed() override;
         void on_start() override;
         void on_end() override;
     private:

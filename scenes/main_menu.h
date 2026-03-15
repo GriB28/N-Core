@@ -14,8 +14,8 @@ namespace game {
         MainMenu(sf::RenderWindow *window_link, FontSource *fonts_link, BoomBox *boombox_link);
         ~MainMenu() override;
 
-        int event(const Event &event) override;
-        int proceed() override;
+        SceneCode event(const Event &event) override;
+        SceneCode proceed() override;
         void on_start() override;
         void on_end() override;
     private:

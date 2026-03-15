@@ -186,10 +186,10 @@ void game::ChapterLayout::start_page_animation_sequence() {
     cout << "\nstarted sequence\ncurrent x: " << current_view.getCenter().x << " (= initial), target delta x: " << target_page_animation_offset << '\n';
 }
 
-int game::ChapterLayout::event(const Event &event) {
-    int return_code = 0;
+game::SceneCode game::ChapterLayout::event(const Event &event) {
+    auto return_code = SceneCode::None;
     if (event.type == Event::KeyReleased) {
-        if (event.key.code == Keyboard::Escape) return_code = 2;
+        if (event.key.code == Keyboard::Escape) return_code = SceneCode::MainMenu;
         else if (!page_swipe_animation_flag) {
             switch (event.key.code) {
                 case Keyboard::Right:
@@ -248,15 +248,13 @@ int game::ChapterLayout::event(const Event &event) {
         for (short i = 0; i < 5; i++)
             if (levels[page][i]->is_clicked()) {
                 set_callback("ch" + std::to_string(page) + '-' + std::to_string(i + 1));
-                return_code = 3;
+                return_code = SceneCode::Level;
                 break;
             }
-
     return return_code;
 }
 
-int game::ChapterLayout::proceed() {
-    int return_code = 0;
+game::SceneCode game::ChapterLayout::proceed() {
 
     for (short i = page <= 1 ? 0 : page - 1; i <= (page + 1 >= level_pages_cap ? level_pages_cap : page + 1); i++) {
         window->draw(*splash_screens[i]);
@@ -314,5 +312,5 @@ int game::ChapterLayout::proceed() {
         }
     }
 
-    return return_code;
+    return SceneCode::None;
 }

@@ -62,18 +62,18 @@ game::Loading::~Loading() {
     delete alliance_text;
 }
 
-int game::Loading::event(const Event &event) {
-    int return_code = 0;
+game::SceneCode game::Loading::event(const Event &event) {
+    auto return_code = SceneCode::None;
     if (event.type == Event::KeyPressed)
         switch (event.key.code) {
             case Keyboard::Escape:
-                return_code = -2056;
+                return_code = SceneCode::Exit;
                 break;
             case Keyboard::Space:
-                return_code = awaiting_flag * 2;
+                return_code = awaiting_flag ? SceneCode::MainMenu : SceneCode::None;
                 break;
             case Keyboard::End:
-                return_code = 2;
+                return_code = SceneCode::MainMenu;
                 break;
             default:
                 return_code = 0;
@@ -81,12 +81,13 @@ int game::Loading::event(const Event &event) {
         }
     else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left) {
         awaiting_button.check_click(event.mouseButton.x, event.mouseButton.y);
-        if (awaiting_button.is_clicked()) return_code = awaiting_flag * 2;
+        if (awaiting_button.is_clicked())
+            return_code = awaiting_flag ? SceneCode::MainMenu : SceneCode::None;
     }
 
     return return_code;
 }
-int game::Loading::proceed() {
+game::SceneCode game::Loading::proceed() {
     if (frogl2_counter < 96) {
         if (frogl2_clock.getElapsedTime().asMilliseconds() >= frogl2_frame_timestamp) {
             frogl2_texture->loadFromFile("resources/frogl2/" + std::to_string(frogl2_counter) + ".jpg");
@@ -139,7 +140,7 @@ int game::Loading::proceed() {
     window->draw(*loading_text);
     window->draw(*alliance_text);
     awaiting_button.draw_at(window);
-    return 0;
+    return SceneCode::None;
 }
 
 void game::Loading::on_start() {

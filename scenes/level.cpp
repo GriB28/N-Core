@@ -56,12 +56,12 @@ game::Level::~Level() {
     clear_bg_textures();
 }
 
-int game::Level::event(const Event &event) {
-    int return_code = 0;
+game::SceneCode game::Level::event(const Event &event) {
+    auto return_code = SceneCode::None;
     if (event.type == Event::KeyReleased)
         switch (event.key.code) {
             case sf::Keyboard::Escape:
-                return_code = 4;
+                return_code = SceneCode::ChapterLayout;
                 break;
             case sf::Keyboard::Space:
             case sf::Keyboard::Q:
@@ -156,7 +156,7 @@ void game::Level::check_movement_keys(const sf::Keyboard::Key &keycode) {
     }
 }
 
-int game::Level::proceed() {
+game::SceneCode game::Level::proceed() {
     window->draw(*bg);
     level_generator->render_level(window);
     player->draw_at(window);
@@ -196,7 +196,7 @@ int game::Level::proceed() {
         }
     }
 
-    return 0;
+    return SceneCode::None;
 }
 
 void game::Level::on_start(const std::string &level_info) {
