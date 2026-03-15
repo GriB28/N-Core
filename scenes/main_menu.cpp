@@ -118,9 +118,9 @@ game::MainMenu::~MainMenu() {
     delete about;
 }
 
-int game::MainMenu::event(const Event &event) {
-    int return_code = 0;
-    if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) return_code = -2056;
+game::SceneCode game::MainMenu::event(const Event &event) {
+    auto return_code = SceneCode::None;
+    if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) return_code = SceneCode::Exit;
     else if (event.type == Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Button::Left)
             for (const auto btn : buttons1)
@@ -136,11 +136,11 @@ int game::MainMenu::event(const Event &event) {
         if (!load_levels_scene_flag)
             load_levels_scene_flag = true;
     if (load_levels_scene_flag && !play->is_clicked())
-        return_code = 4;
+        return_code = SceneCode::ChapterLayout;
 
     return return_code;
 }
-int game::MainMenu::proceed() {
+game::SceneCode game::MainMenu::proceed() {
     window->draw(*bg);
     window->draw(*logo_text);
     for (const auto btn : buttons1) btn->draw_at(window);
@@ -180,7 +180,7 @@ int game::MainMenu::proceed() {
     if (boombox->get_track("DSC6")->get_status() == Music::Stopped)
         boombox->get_track("DSC2")->play();
 
-    return 0;
+    return SceneCode::None;
 }
 
 void game::MainMenu::on_start() {

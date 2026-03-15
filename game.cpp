@@ -171,28 +171,29 @@ void game::Engine::loop() {
 
 void game::Engine::proceed_event_on_scenes(const Event &event) {
     if (current_scene_index > 0) {
-        const int return_code = scenes[current_scene_index]->event(event);
+        const auto return_code = scenes[current_scene_index]->event(event);
         update_scene_index(return_code);
     }
 }
 void game::Engine::proceed_scenes() {
     if (current_scene_index > 0) {
-        const int return_code = scenes[current_scene_index]->proceed();
+        const auto return_code = scenes[current_scene_index]->proceed();
         update_scene_index(return_code);
     }
 }
 
-void game::Engine::update_scene_index(const int return_code) {
-    if (return_code != 0) {
+void game::Engine::update_scene_index(const SceneCode return_code) {
+    if (return_code != SceneCode::None) {
         std::string local_callback;
         if (current_scene_index > 0) {
             scenes[current_scene_index]->on_end();
             local_callback = scenes[current_scene_index]->get_callback();
         }
-        current_scene_index = return_code;
+        current_scene_index = static_cast<int>(return_code);
         scene_num.setString("scene " + to_string(current_scene_index));
-        if (current_scene_index < 0) closing_flag = true;
-        else {
+        if (current_scene_index < 0) {
+            closing_flag = true;
+        } else {
             if (current_scene_index == 3) level_link->on_start(local_callback);
             else scenes[current_scene_index]->on_start();
         }
